@@ -5,6 +5,12 @@ VisualStudioVersion = 17.14.36202.13 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Softela.PestManagement.API", "Softela.PestManagement.API\Softela.PestManagement.API.csproj", "{927D1265-9BFD-4439-A0FE-E70EEC6C0DE7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Softela.PestManagement.Domain", "Softela.PestManagement.Domain\Softela.PestManagement.Domain.csproj", "{1FE5B322-5F00-45B6-95BC-565FE5D915A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Softela.PestManagement.Application", "Softela.PestManagement.Application\Softela.PestManagement.Application.csproj", "{E105499F-A1E1-458A-9FC0-9E16F93E4C8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Softela.PestManagement.Infrastructure", "Softela.PestManagement.Infrastructure\Softela.PestManagement.Infrastructure.csproj", "{FAA46024-07D5-427F-9B39-8E262728C94D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{927D1265-9BFD-4439-A0FE-E70EEC6C0DE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{927D1265-9BFD-4439-A0FE-E70EEC6C0DE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{927D1265-9BFD-4439-A0FE-E70EEC6C0DE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FE5B322-5F00-45B6-95BC-565FE5D915A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FE5B322-5F00-45B6-95BC-565FE5D915A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FE5B322-5F00-45B6-95BC-565FE5D915A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FE5B322-5F00-45B6-95BC-565FE5D915A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E105499F-A1E1-458A-9FC0-9E16F93E4C8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E105499F-A1E1-458A-9FC0-9E16F93E4C8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E105499F-A1E1-458A-9FC0-9E16F93E4C8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E105499F-A1E1-458A-9FC0-9E16F93E4C8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAA46024-07D5-427F-9B39-8E262728C94D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAA46024-07D5-427F-9B39-8E262728C94D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAA46024-07D5-427F-9B39-8E262728C94D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAA46024-07D5-427F-9B39-8E262728C94D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

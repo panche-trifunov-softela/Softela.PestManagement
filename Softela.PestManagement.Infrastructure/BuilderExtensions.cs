@@ -1,0 +1,44 @@
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Softela.PestManagement.Application.Options;
+using Softela.PestManagement.Application.Repositories;
+using Softela.PestManagement.Infrastructure.Database.Connections;
+using Softela.PestManagement.Infrastructure.Database.Dapper;
+using Softela.PestManagement.Infrastructure.Database.Migrator;
+using Softela.PestManagement.Infrastructure.Database.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Softela.PestManagement.Infrastructure
+{
+    public static partial class BuilderExtensions
+    {
+        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            var dbOptions = configuration.GetSection(DatabaseOptions.SectionName).Get<DatabaseOptions>();
+
+            var connectionString = new DatabaseConnectionStringProvider(dbOptions, configuration).GetConnectionString();
+
+            services.AddSingleton(dbOptions)
+                .AddScoped<IDapperDataContext, DapperDataContext>()
+                .AddScoped<IDatabaseConnection, DatabaseConnection>()
+                .AddScoped<IDbMigrator, DbMigrator>();
+
+            services.AddHealthChecks()
+                .AddSqlServer(connectionString, "sqlserver");
+
+            services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<ISiteRepository, SiteRepository>();
+
+            var serviceProviderFactory = new DefaultServiceProviderFactory();
+            var serviceProvider = serviceProviderFactory.CreateServiceProvider(services);
+            var dbMigrator = serviceProvider.GetRequiredService<IDbMigrator>();
+            dbMigrator.Migrate();
+
+            return services;
+        }
+    }
+}
