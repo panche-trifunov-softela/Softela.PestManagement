@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Softela.PestManagement.Application.Core.Command;
 using Softela.PestManagement.Application.Core.Query;
+using Softela.PestManagement.Application.Services.AuthToken;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,8 @@ namespace Softela.PestManagement.Application
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(ApplicationAssembly))
             .AddScoped<ICommandDispatcher, CommandDispatcher>()
             .AddScoped<IQueryDispatcher, QueryDispatcher>();
+
+            services.AddScoped<IAuthToken, AuthToken>();
 
             return services;
         }

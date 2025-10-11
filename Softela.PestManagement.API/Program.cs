@@ -1,5 +1,11 @@
-using static Softela.PestManagement.Infrastructure.BuilderExtensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using Softela.PestManagement.Domain.Entities;
+using Softela.PestManagement.Infrastructure.Identity;
+using System.Text;
 using static Softela.PestManagement.Application.BuilderExtensions;
+using static Softela.PestManagement.Infrastructure.BuilderExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +17,38 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
+
+builder.Services.AddIdentityCore<User>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
+})
+    .AddRoles<Role>()
+    .AddUserStore<UserStore>()
+    .AddRoleStore<RoleStore>();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
 
 var app = builder.Build();
 

@@ -6,11 +6,9 @@ using Softela.PestManagement.Infrastructure.Database.Connections;
 using Softela.PestManagement.Infrastructure.Database.Dapper;
 using Softela.PestManagement.Infrastructure.Database.Migrator;
 using Softela.PestManagement.Infrastructure.Database.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Softela.PestManagement.Domain.Entities;
+using Softela.PestManagement.Infrastructure.Identity;
 
 namespace Softela.PestManagement.Infrastructure
 {
@@ -32,6 +30,10 @@ namespace Softela.PestManagement.Infrastructure
 
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ISiteRepository, SiteRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+
+            services.AddScoped<IUserStore<User>, UserStore>();
+            services.AddScoped<IRoleStore<Role>, RoleStore>();
 
             var serviceProviderFactory = new DefaultServiceProviderFactory();
             var serviceProvider = serviceProviderFactory.CreateServiceProvider(services);
