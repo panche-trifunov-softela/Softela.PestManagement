@@ -40,8 +40,8 @@ CREATE TABLE Invoices (
     CreatedBy UNIQUEIDENTIFIER NOT NULL,
     ModifiedBy UNIQUEIDENTIFIER NOT NULL,
 
-    CONSTRAINT FK_Invoices_Account FOREIGN KEY (AccountId) REFERENCES AccountEntities(Id),
-    CONSTRAINT FK_Invoices_Site FOREIGN KEY (SiteId) REFERENCES SiteEntities(Id),
+    CONSTRAINT FK_Invoices_Account FOREIGN KEY (AccountId) REFERENCES Accounts(Id),
+    CONSTRAINT FK_Invoices_Site FOREIGN KEY (SiteId) REFERENCES Sites(Id),
     CONSTRAINT FK_Invoices_TaxType FOREIGN KEY (TaxTypeId) REFERENCES TaxTypes(Id)
 );
 GO
@@ -116,7 +116,7 @@ CREATE TABLE Payments (
     CreatedBy UNIQUEIDENTIFIER NOT NULL,
     ModifiedBy UNIQUEIDENTIFIER NOT NULL,
 
-    CONSTRAINT FK_Payments_Account FOREIGN KEY (AccountId) REFERENCES AccountEntities(Id),
+    CONSTRAINT FK_Payments_Account FOREIGN KEY (AccountId) REFERENCES Accounts(Id),
     CONSTRAINT FK_Payments_Invoice FOREIGN KEY (InvoiceId) REFERENCES Invoices(Id),
     CONSTRAINT FK_Payments_PaymentMethod FOREIGN KEY (PaymentMethodId) REFERENCES PaymentMethods(Id)
 );

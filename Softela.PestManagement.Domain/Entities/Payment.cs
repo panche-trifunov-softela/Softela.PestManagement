@@ -30,7 +30,7 @@ namespace Softela.PestManagement.Domain.Entities
         public string Notes { get; set; }
 
         // Navigation properties
-        public AccountEntity Account { get; set; }
+        public Account Account { get; set; }
         public Invoice Invoice { get; set; }
     }
 }

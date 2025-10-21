@@ -24,7 +24,6 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
         {
             var parameters = new DynamicParameters();
             parameters.Add("@ReferenceNumber", site.ReferenceNumber, DbType.String, ParameterDirection.Input);
-            parameters.Add("@AccountId", site.AccountId, DbType.Int32, ParameterDirection.Input);
             parameters.Add("@Id", site.Id, DbType.Int32, ParameterDirection.Input);
             parameters.Add("@CreatedAt", site.CreatedAt, DbType.DateTime, ParameterDirection.Input);
             parameters.Add("@ModifiedAt", site.ModifiedAt, DbType.DateTime, ParameterDirection.Input);

@@ -26,9 +26,7 @@ namespace Softela.PestManagement.Application.Commands.Site.UpdateSite
                 Id = request.Id,
                 ModifiedAt = DateTime.UtcNow,
                 ModifiedBy = Guid.NewGuid(),
-                IsDeleted = request.IsDeleted,
-                 ReferenceNumber = request.ReferenceNumber,
-                    AccountId = request.AccountId
+                ReferenceNumber = request.ReferenceNumber
             };
 
             await _siteRepository.CreateUpdateSiteAsync(account);

@@ -13,21 +13,21 @@ CREATE INDEX IX_Contacts_Email ON Contacts(Email);
 CREATE INDEX IX_Contacts_IsActive ON Contacts(IsActive);
 GO
 
--- AccountEntities
-CREATE INDEX IX_AccountEntities_AccountNum ON AccountEntities(AccountNum);
-CREATE INDEX IX_AccountEntities_CompanyId ON AccountEntities(CompanyId);
-CREATE INDEX IX_AccountEntities_BillingAddressId ON AccountEntities(BillingAddressId);
-CREATE INDEX IX_AccountEntities_BillingContactId ON AccountEntities(BillingContactId);
-CREATE INDEX IX_AccountEntities_IsActive ON AccountEntities(IsActive);
-CREATE INDEX IX_AccountEntities_MasterAccountId ON AccountEntities(MasterAccountId);
+-- Accounts
+CREATE INDEX IX_Accounts_AccountNum ON Accounts(AccountNum);
+CREATE INDEX IX_Accounts_CompanyId ON Accounts(CompanyId);
+CREATE INDEX IX_Accounts_BillingAddressId ON Accounts(BillingAddressId);
+CREATE INDEX IX_Accounts_BillingContactId ON Accounts(BillingContactId);
+CREATE INDEX IX_Accounts_IsActive ON Accounts(IsActive);
+CREATE INDEX IX_Accounts_MasterAccountId ON Accounts(MasterAccountId);
 GO
 
--- SiteEntities
-CREATE INDEX IX_SiteEntities_AddressId ON SiteEntities(AddressId);
-CREATE INDEX IX_SiteEntities_PrimaryContactId ON SiteEntities(PrimaryContactId);
-CREATE INDEX IX_SiteEntities_SiteReferenceNumber ON SiteEntities(SiteReferenceNumber);
-CREATE INDEX IX_SiteEntities_TaxTypeId ON SiteEntities(TaxTypeId);
-CREATE INDEX IX_SiteEntities_SalespersonId ON SiteEntities(SalespersonId);
+-- Sites
+CREATE INDEX IX_Sites_AddressId ON Sites(AddressId);
+CREATE INDEX IX_Sites_PrimaryContactId ON Sites(PrimaryContactId);
+CREATE INDEX IX_Sites_SiteReferenceNumber ON Sites(SiteReferenceNumber);
+CREATE INDEX IX_Sites_TaxTypeId ON Sites(TaxTypeId);
+CREATE INDEX IX_Sites_SalespersonId ON Sites(SalespersonId);
 GO
 
 -- AccountSites

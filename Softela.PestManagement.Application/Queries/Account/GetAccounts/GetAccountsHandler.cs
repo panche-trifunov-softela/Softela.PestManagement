@@ -1,10 +1,5 @@
 ﻿using MediatR;
 using Softela.PestManagement.Application.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Softela.PestManagement.Application.Queries.Account.GetAccounts
 {
@@ -19,10 +14,24 @@ namespace Softela.PestManagement.Application.Queries.Account.GetAccounts
 
         public async Task<GetAccountsResponse> Handle(GetAccountsRequest request, CancellationToken cancellationToken)
         {
-            var accounts = await _accountRepository.GetAccountsAsync();
+            IEnumerable<Domain.Entities.Account> accounts;
+
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm) || request.IsActive.HasValue)
+            {
+                accounts = await _accountRepository.SearchAsync(
+                    request.CompanyId,
+                    request.SearchTerm,
+                    request.IsActive
+                );
+            }
+            else
+            {
+                accounts = await _accountRepository.GetAllAsync(request.CompanyId);
+            }
+
             return new GetAccountsResponse
             {
-                Data = accounts
+                Accounts = accounts
             };
         }
     }

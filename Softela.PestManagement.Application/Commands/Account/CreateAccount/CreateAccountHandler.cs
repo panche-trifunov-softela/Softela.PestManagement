@@ -1,15 +1,10 @@
 ﻿using MediatR;
 using Softela.PestManagement.Application.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AccountEntity = Softela.PestManagement.Domain.Entities.Account;
 
 namespace Softela.PestManagement.Application.Commands.Account.CreateAccount
 {
-    public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, bool>
+    public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, int>
     {
         private readonly IAccountRepository _accountRepository;
 
@@ -18,21 +13,58 @@ namespace Softela.PestManagement.Application.Commands.Account.CreateAccount
             _accountRepository = accountRepository;
         }
 
-        public async Task<bool> Handle(CreateAccountRequest request, CancellationToken cancellationToken)
+        public async Task<int> Handle(CreateAccountRequest request, CancellationToken cancellationToken)
         {
-            var account = new AccountEntity 
+            // Validate account number uniqueness
+            var accountNumExists = await _accountRepository.AccountNumExistsAsync(
+                request.AccountNum,
+                request.CompanyId
+            );
+
+            if (accountNumExists)
             {
-                Id = 0,
-                CreatedAt = DateTime.UtcNow,
-                ModifiedAt = DateTime.UtcNow,
-                CreatedBy = Guid.NewGuid(),
-                ModifiedBy = Guid.NewGuid(),
+                throw new InvalidOperationException($"Account number '{request.AccountNum}' already exists for this company.");
+            }
+
+            var now = DateTime.UtcNow;
+            var userId = Guid.NewGuid(); // TODO: Get from current user context
+
+            var account = new AccountEntity
+            {
+                CompanyId = request.CompanyId,
+                AccountNum = request.AccountNum,
+                AccountType = request.AccountType,
+                BillingAddressId = request.BillingAddressId,
+                BillingContactId = request.BillingContactId,
+                BillingCenterId = request.BillingCenterId,
+                LocaleId = request.LocaleId,
+                SendInvoice = request.SendInvoice,
+                EmailInvoice = request.EmailInvoice,
+                SendStatement = request.SendStatement,
+                EmailStatement = request.EmailStatement,
+                SendRenewal = request.SendRenewal,
+                EmailRenewal = request.EmailRenewal,
+                MarketingEmail = request.MarketingEmail,
+                NotificationsMail = request.NotificationsMail,
+                Instructions = request.Instructions ?? string.Empty,
+                PrimaryNote = request.PrimaryNote ?? string.Empty,
+                SecondaryNote = request.SecondaryNote ?? string.Empty,
+                Name = request.Name ?? string.Empty,
                 IsActive = request.IsActive,
-                Name = request.Name,
+                IsDeleted = request.IsDeleted,
+                MasterAccountId = request.MasterAccountId,
+                MasterAccountSubId = request.MasterAccountSubId,
+                RegistrationNum = request.RegistrationNum ?? string.Empty,
+                DiscountTypeId = request.DiscountTypeId,
+                AccountManagerId = request.AccountManagerId,
+                CreatedAt = now,
+                ModifiedAt = now,
+                CreatedBy = userId,
+                ModifiedBy = userId
             };
 
-            await _accountRepository.CreateUpdateAccountAsync(account);
-            return true;
+            var accountId = await _accountRepository.CreateAsync(account);
+            return accountId;
         }
     }
 }

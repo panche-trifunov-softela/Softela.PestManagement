@@ -67,8 +67,8 @@ CREATE TABLE Services (
     CreatedBy UNIQUEIDENTIFIER NOT NULL,
     ModifiedBy UNIQUEIDENTIFIER NOT NULL,
 
-    CONSTRAINT FK_Services_Account FOREIGN KEY (AccountId) REFERENCES AccountEntities(Id),
-    CONSTRAINT FK_Services_Site FOREIGN KEY (SiteId) REFERENCES SiteEntities(Id),
+    CONSTRAINT FK_Services_Account FOREIGN KEY (AccountId) REFERENCES Accounts(Id),
+    CONSTRAINT FK_Services_Site FOREIGN KEY (SiteId) REFERENCES Sites(Id),
     CONSTRAINT FK_Services_ServiceType FOREIGN KEY (ServiceTypeId) REFERENCES ServiceTypes(Id),
     CONSTRAINT FK_Services_FrequencyType FOREIGN KEY (FrequencyTypeId) REFERENCES FrequencyTypes(Id)
 );

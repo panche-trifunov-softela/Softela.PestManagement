@@ -38,8 +38,8 @@ namespace Softela.PestManagement.Domain.Entities
         public bool IsActive { get; set; }
 
         // Navigation properties
-        public AccountEntity Account { get; set; }
-        public SiteEntity Site { get; set; }
+        public Account Account { get; set; }
+        public Site Site { get; set; }
         public ServiceType ServiceType { get; set; }
     }
 }

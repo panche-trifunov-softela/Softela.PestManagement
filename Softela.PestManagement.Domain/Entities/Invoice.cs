@@ -34,8 +34,8 @@ namespace Softela.PestManagement.Domain.Entities
         public string Terms { get; set; }
 
         // Navigation properties
-        public AccountEntity Account { get; set; }
-        public SiteEntity Site { get; set; }
+        public Account Account { get; set; }
+        public Site Site { get; set; }
         public ICollection<InvoiceLineItem> LineItems { get; set; } = new List<InvoiceLineItem>();
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
         public ICollection<WorkOrder> WorkOrders { get; set; } = new List<WorkOrder>();

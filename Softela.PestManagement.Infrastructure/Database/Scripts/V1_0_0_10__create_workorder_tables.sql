@@ -44,8 +44,8 @@ CREATE TABLE WorkOrders (
     CreatedBy UNIQUEIDENTIFIER NOT NULL,
     ModifiedBy UNIQUEIDENTIFIER NOT NULL,
 
-    CONSTRAINT FK_WorkOrders_Account FOREIGN KEY (AccountId) REFERENCES AccountEntities(Id),
-    CONSTRAINT FK_WorkOrders_Site FOREIGN KEY (SiteId) REFERENCES SiteEntities(Id),
+    CONSTRAINT FK_WorkOrders_Account FOREIGN KEY (AccountId) REFERENCES Accounts(Id),
+    CONSTRAINT FK_WorkOrders_Site FOREIGN KEY (SiteId) REFERENCES Sites(Id),
     CONSTRAINT FK_WorkOrders_ServiceType FOREIGN KEY (ServiceTypeId) REFERENCES ServiceTypes(Id),
     CONSTRAINT FK_WorkOrders_Technician FOREIGN KEY (TechnicianId) REFERENCES Technicians(Id),
     CONSTRAINT FK_WorkOrders_Invoice FOREIGN KEY (InvoiceId) REFERENCES Invoices(Id)

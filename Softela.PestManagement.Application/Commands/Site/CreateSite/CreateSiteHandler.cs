@@ -27,7 +27,6 @@ namespace Softela.PestManagement.Application.Commands.Site.CreateSite
                 ModifiedAt = DateTime.UtcNow,
                 CreatedBy = Guid.NewGuid(),
                 ModifiedBy = Guid.NewGuid(),
-                AccountId = request.AccountId,
                 ReferenceNumber = request.ReferenceNumber,
             };
 
