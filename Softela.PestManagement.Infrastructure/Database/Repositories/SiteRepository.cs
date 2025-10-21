@@ -22,16 +22,10 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task CreateUpdateSiteAsync(Site site)
         {
-            var parameters = new DynamicParameters();
-            parameters.Add("@ReferenceNumber", site.ReferenceNumber, DbType.String, ParameterDirection.Input);
-            parameters.Add("@Id", site.Id, DbType.Int32, ParameterDirection.Input);
-            parameters.Add("@CreatedAt", site.CreatedAt, DbType.DateTime, ParameterDirection.Input);
-            parameters.Add("@ModifiedAt", site.ModifiedAt, DbType.DateTime, ParameterDirection.Input);
-
-            await _dapperDataContext.Connection!.QueryAsync
+            await _dapperDataContext.Connection!.ExecuteAsync
             (
                 sql: "UpsertSite",
-                param: parameters,
+                param: site,
                 commandType: CommandType.StoredProcedure,
                 transaction: _dapperDataContext.Transaction,
                 commandTimeout: _dapperDataContext.Connection!.ConnectionTimeout

@@ -17,32 +17,43 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task<int> CreateAsync(Account account)
         {
-            var sql = @"
-                INSERT INTO Accounts (
-                    CompanyId, AccountNum, AccountType, BillingAddressId, BillingContactId,
-                    BillingCenterId, LocaleId,
-                    SendInvoice, EmailInvoice, SendStatement, EmailStatement,
-                    SendRenewal, EmailRenewal, MarketingEmail, NotificationsMail,
-                    Instructions, PrimaryNote, SecondaryNote,
-                    Name, IsActive, IsDeleted, MasterAccountId, MasterAccountSubId, RegistrationNum,
-                    DiscountTypeId, AccountManagerId,
-                    CreatedAt, ModifiedAt, CreatedBy, ModifiedBy
-                ) VALUES (
-                    @CompanyId, @AccountNum, @AccountType, @BillingAddressId, @BillingContactId,
-                    @BillingCenterId, @LocaleId,
-                    @SendInvoice, @EmailInvoice, @SendStatement, @EmailStatement,
-                    @SendRenewal, @EmailRenewal, @MarketingEmail, @NotificationsMail,
-                    @Instructions, @PrimaryNote, @SecondaryNote,
-                    @Name, @IsActive, @IsDeleted, @MasterAccountId, @MasterAccountSubId, @RegistrationNum,
-                    @DiscountTypeId, @AccountManagerId,
-                    @CreatedAt, @ModifiedAt, @CreatedBy, @ModifiedBy
-                );
-                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+            var parameters = new DynamicParameters();
+            parameters.Add("@CompanyId", account.CompanyId);
+            parameters.Add("@AccountNum", account.AccountNum);
+            parameters.Add("@AccountType", account.AccountType);
+            parameters.Add("@BillingAddressId", account.BillingAddressId);
+            parameters.Add("@BillingContactId", account.BillingContactId);
+            parameters.Add("@BillingCenterId", account.BillingCenterId);
+            parameters.Add("@LocaleId", account.LocaleId);
+            parameters.Add("@SendInvoice", account.SendInvoice);
+            parameters.Add("@EmailInvoice", account.EmailInvoice);
+            parameters.Add("@SendStatement", account.SendStatement);
+            parameters.Add("@EmailStatement", account.EmailStatement);
+            parameters.Add("@SendRenewal", account.SendRenewal);
+            parameters.Add("@EmailRenewal", account.EmailRenewal);
+            parameters.Add("@MarketingEmail", account.MarketingEmail);
+            parameters.Add("@NotificationsMail", account.NotificationsMail);
+            parameters.Add("@Instructions", account.Instructions);
+            parameters.Add("@PrimaryNote", account.PrimaryNote);
+            parameters.Add("@SecondaryNote", account.SecondaryNote);
+            parameters.Add("@Name", account.Name);
+            parameters.Add("@IsActive", account.IsActive);
+            parameters.Add("@IsDeleted", account.IsDeleted);
+            parameters.Add("@MasterAccountId", account.MasterAccountId);
+            parameters.Add("@MasterAccountSubId", account.MasterAccountSubId);
+            parameters.Add("@RegistrationNum", account.RegistrationNum);
+            parameters.Add("@DiscountTypeId", account.DiscountTypeId);
+            parameters.Add("@AccountManagerId", account.AccountManagerId);
+            parameters.Add("@CreatedAt", account.CreatedAt);
+            parameters.Add("@ModifiedAt", account.ModifiedAt);
+            parameters.Add("@CreatedBy", account.CreatedBy);
+            parameters.Add("@ModifiedBy", account.ModifiedBy);
 
             var id = await _dapperDataContext.Connection!.ExecuteScalarAsync<int>(
-                sql: sql,
-                param: account,
+                sql: "CreateAccount",
+                param: parameters,
                 transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
                 commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
             ).ConfigureAwait(false);
 
@@ -51,13 +62,11 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task<Account?> GetByIdAsync(int id)
         {
-            var sql = @"
-                SELECT * FROM Accounts WHERE Id = @Id";
-
             var account = await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<Account>(
-                sql: sql,
+                sql: "GetAccountById",
                 param: new { Id = id },
                 transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
                 commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
             ).ConfigureAwait(false);
 
@@ -66,13 +75,11 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task<Account?> GetByAccountNumAsync(string accountNum)
         {
-            var sql = @"
-                SELECT * FROM Accounts WHERE AccountNum = @AccountNum";
-
             var account = await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<Account>(
-                sql: sql,
+                sql: "GetAccountByAccountNum",
                 param: new { AccountNum = accountNum },
                 transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
                 commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
             ).ConfigureAwait(false);
 
@@ -81,15 +88,11 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task<IEnumerable<Account>> GetAllAsync(int companyId)
         {
-            var sql = @"
-                SELECT * FROM Accounts
-                WHERE CompanyId = @CompanyId
-                ORDER BY AccountNum";
-
             var accounts = await _dapperDataContext.Connection!.QueryAsync<Account>(
-                sql: sql,
+                sql: "GetAllAccounts",
                 param: new { CompanyId = companyId },
                 transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
                 commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
             ).ConfigureAwait(false);
 
@@ -98,17 +101,11 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task<IEnumerable<Account>> SearchAsync(int companyId, string? searchTerm, short? isActive)
         {
-            var sql = @"
-                SELECT * FROM Accounts
-                WHERE CompanyId = @CompanyId
-                AND (@SearchTerm IS NULL OR AccountNum LIKE '%' + @SearchTerm + '%')
-                AND (@IsActive IS NULL OR IsActive = @IsActive)
-                ORDER BY AccountNum";
-
             var accounts = await _dapperDataContext.Connection!.QueryAsync<Account>(
-                sql: sql,
+                sql: "SearchAccounts",
                 param: new { CompanyId = companyId, SearchTerm = searchTerm, IsActive = isActive },
                 transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
                 commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
             ).ConfigureAwait(false);
 
@@ -117,68 +114,64 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task UpdateAsync(Account account)
         {
-            var sql = @"
-                UPDATE Accounts SET
-                    CompanyId = @CompanyId,
-                    AccountNum = @AccountNum,
-                    AccountType = @AccountType,
-                    BillingAddressId = @BillingAddressId,
-                    BillingContactId = @BillingContactId,
-                    BillingCenterId = @BillingCenterId,
-                    LocaleId = @LocaleId,
-                    SendInvoice = @SendInvoice,
-                    EmailInvoice = @EmailInvoice,
-                    SendStatement = @SendStatement,
-                    EmailStatement = @EmailStatement,
-                    SendRenewal = @SendRenewal,
-                    EmailRenewal = @EmailRenewal,
-                    MarketingEmail = @MarketingEmail,
-                    NotificationsMail = @NotificationsMail,
-                    Instructions = @Instructions,
-                    PrimaryNote = @PrimaryNote,
-                    SecondaryNote = @SecondaryNote,
-                    Name = @Name,
-                    IsActive = @IsActive,
-                    IsDeleted = @IsDeleted,
-                    MasterAccountId = @MasterAccountId,
-                    MasterAccountSubId = @MasterAccountSubId,
-                    RegistrationNum = @RegistrationNum,
-                    DiscountTypeId = @DiscountTypeId,
-                    AccountManagerId = @AccountManagerId,
-                    ModifiedAt = @ModifiedAt,
-                    ModifiedBy = @ModifiedBy
-                WHERE Id = @Id";
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", account.Id);
+            parameters.Add("@CompanyId", account.CompanyId);
+            parameters.Add("@AccountNum", account.AccountNum);
+            parameters.Add("@AccountType", account.AccountType);
+            parameters.Add("@BillingAddressId", account.BillingAddressId);
+            parameters.Add("@BillingContactId", account.BillingContactId);
+            parameters.Add("@BillingCenterId", account.BillingCenterId);
+            parameters.Add("@LocaleId", account.LocaleId);
+            parameters.Add("@SendInvoice", account.SendInvoice);
+            parameters.Add("@EmailInvoice", account.EmailInvoice);
+            parameters.Add("@SendStatement", account.SendStatement);
+            parameters.Add("@EmailStatement", account.EmailStatement);
+            parameters.Add("@SendRenewal", account.SendRenewal);
+            parameters.Add("@EmailRenewal", account.EmailRenewal);
+            parameters.Add("@MarketingEmail", account.MarketingEmail);
+            parameters.Add("@NotificationsMail", account.NotificationsMail);
+            parameters.Add("@Instructions", account.Instructions);
+            parameters.Add("@PrimaryNote", account.PrimaryNote);
+            parameters.Add("@SecondaryNote", account.SecondaryNote);
+            parameters.Add("@Name", account.Name);
+            parameters.Add("@IsActive", account.IsActive);
+            parameters.Add("@IsDeleted", account.IsDeleted);
+            parameters.Add("@MasterAccountId", account.MasterAccountId);
+            parameters.Add("@MasterAccountSubId", account.MasterAccountSubId);
+            parameters.Add("@RegistrationNum", account.RegistrationNum);
+            parameters.Add("@DiscountTypeId", account.DiscountTypeId);
+            parameters.Add("@AccountManagerId", account.AccountManagerId);
+            parameters.Add("@ModifiedAt", account.ModifiedAt);
+            parameters.Add("@ModifiedBy", account.ModifiedBy);
 
             await _dapperDataContext.Connection!.ExecuteAsync(
-                sql: sql,
-                param: account,
+                sql: "UpdateAccount",
+                param: parameters,
                 transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
                 commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
             ).ConfigureAwait(false);
         }
 
         public async Task DeleteAsync(int id)
         {
-            var sql = @"
-                DELETE FROM Accounts WHERE Id = @Id";
-
             await _dapperDataContext.Connection!.ExecuteAsync(
-                sql: sql,
+                sql: "DeleteAccount",
                 param: new { Id = id },
                 transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
                 commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
             ).ConfigureAwait(false);
         }
 
         public async Task<bool> ExistsAsync(int id)
         {
-            var sql = @"
-                SELECT CAST(CASE WHEN EXISTS(SELECT 1 FROM Accounts WHERE Id = @Id) THEN 1 ELSE 0 END AS BIT)";
-
             var exists = await _dapperDataContext.Connection!.ExecuteScalarAsync<bool>(
-                sql: sql,
+                sql: "CheckAccountExists",
                 param: new { Id = id },
                 transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
                 commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
             ).ConfigureAwait(false);
 
@@ -187,18 +180,11 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task<bool> AccountNumExistsAsync(string accountNum, int companyId, int? excludeId = null)
         {
-            var sql = @"
-                SELECT CAST(CASE WHEN EXISTS(
-                    SELECT 1 FROM Accounts
-                    WHERE AccountNum = @AccountNum
-                    AND CompanyId = @CompanyId
-                    AND (@ExcludeId IS NULL OR Id != @ExcludeId)
-                ) THEN 1 ELSE 0 END AS BIT)";
-
             var exists = await _dapperDataContext.Connection!.ExecuteScalarAsync<bool>(
-                sql: sql,
+                sql: "CheckAccountNumExists",
                 param: new { AccountNum = accountNum, CompanyId = companyId, ExcludeId = excludeId },
                 transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
                 commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
             ).ConfigureAwait(false);
 

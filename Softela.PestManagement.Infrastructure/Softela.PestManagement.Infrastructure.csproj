@@ -44,6 +44,12 @@
     <Content Include="Database\Scripts\V1_0_0_11__create_indexes.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Database\Scripts\V1_0_0_12__create_account_stored_procedures.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Scripts\V1_0_0_13__create_site_stored_procedures.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
