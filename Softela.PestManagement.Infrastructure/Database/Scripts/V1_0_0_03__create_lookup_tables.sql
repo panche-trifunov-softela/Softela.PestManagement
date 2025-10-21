@@ -1,0 +1,137 @@
+-- Lookup Tables Migration
+-- Creates reference/lookup tables for the pest management system
+
+-- Countries
+CREATE TABLE Countries (
+    Id INT NOT NULL PRIMARY KEY IDENTITY,
+    Name NVARCHAR(255) NOT NULL,
+    Code NVARCHAR(2) NOT NULL,
+    Code3 NVARCHAR(3),
+    NumericCode NVARCHAR(3),
+    PhoneCode NVARCHAR(10),
+    IsActive BIT NOT NULL DEFAULT 1,
+    SortOrder INT NOT NULL DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    ModifiedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    CreatedBy UNIQUEIDENTIFIER NOT NULL,
+    ModifiedBy UNIQUEIDENTIFIER NOT NULL
+);
+GO
+
+-- Property Types (Residential, Commercial, Industrial, etc.)
+CREATE TABLE PropertyTypes (
+    Id INT NOT NULL PRIMARY KEY IDENTITY,
+    Name NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500),
+    Code NVARCHAR(50),
+    IsActive BIT NOT NULL DEFAULT 1,
+    SortOrder INT NOT NULL DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    ModifiedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    CreatedBy UNIQUEIDENTIFIER NOT NULL,
+    ModifiedBy UNIQUEIDENTIFIER NOT NULL
+);
+GO
+
+-- Tax Types
+CREATE TABLE TaxTypes (
+    Id INT NOT NULL PRIMARY KEY IDENTITY,
+    Name NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500),
+    Code NVARCHAR(50),
+    FederalTaxRate DECIMAL(5,4),
+    StateTaxRate DECIMAL(5,4),
+    LocalTaxRate DECIMAL(5,4),
+    TotalTaxRate DECIMAL(5,4) NOT NULL,
+    State NVARCHAR(50),
+    County NVARCHAR(100),
+    City NVARCHAR(100),
+    ZipCode NVARCHAR(15),
+    IsActive BIT NOT NULL DEFAULT 1,
+    EffectiveDate DATETIME2,
+    ExpirationDate DATETIME2,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    ModifiedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    CreatedBy UNIQUEIDENTIFIER NOT NULL,
+    ModifiedBy UNIQUEIDENTIFIER NOT NULL
+);
+GO
+
+-- Service Categories
+CREATE TABLE ServiceCategories (
+    Id INT NOT NULL PRIMARY KEY IDENTITY,
+    Name NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500),
+    Code NVARCHAR(50),
+    IsActive BIT NOT NULL DEFAULT 1,
+    SortOrder INT NOT NULL DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    ModifiedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    CreatedBy UNIQUEIDENTIFIER NOT NULL,
+    ModifiedBy UNIQUEIDENTIFIER NOT NULL
+);
+GO
+
+-- Pest Categories (Insects, Rodents, Birds, Wildlife, etc.)
+CREATE TABLE PestCategories (
+    Id INT NOT NULL PRIMARY KEY IDENTITY,
+    Name NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500),
+    Code NVARCHAR(50),
+    IsActive BIT NOT NULL DEFAULT 1,
+    SortOrder INT NOT NULL DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    ModifiedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    CreatedBy UNIQUEIDENTIFIER NOT NULL,
+    ModifiedBy UNIQUEIDENTIFIER NOT NULL
+);
+GO
+
+-- Product Categories (hierarchical)
+CREATE TABLE ProductCategories (
+    Id INT NOT NULL PRIMARY KEY IDENTITY,
+    Name NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500),
+    Code NVARCHAR(50),
+    ParentCategoryId INT,
+    IsActive BIT NOT NULL DEFAULT 1,
+    SortOrder INT NOT NULL DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    ModifiedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    CreatedBy UNIQUEIDENTIFIER NOT NULL,
+    ModifiedBy UNIQUEIDENTIFIER NOT NULL,
+    CONSTRAINT FK_ProductCategories_ParentCategory FOREIGN KEY (ParentCategoryId) REFERENCES ProductCategories(Id)
+);
+GO
+
+-- Payment Methods (Cash, Check, Credit Card, ACH, etc.)
+CREATE TABLE PaymentMethods (
+    Id INT NOT NULL PRIMARY KEY IDENTITY,
+    Name NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500),
+    Code NVARCHAR(50),
+    IsActive BIT NOT NULL DEFAULT 1,
+    RequiresReference BIT NOT NULL DEFAULT 0,
+    SortOrder INT NOT NULL DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    ModifiedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    CreatedBy UNIQUEIDENTIFIER NOT NULL,
+    ModifiedBy UNIQUEIDENTIFIER NOT NULL
+);
+GO
+
+-- Frequency Types (Weekly, Monthly, Quarterly, Annual, etc.)
+CREATE TABLE FrequencyTypes (
+    Id INT NOT NULL PRIMARY KEY IDENTITY,
+    Name NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500),
+    Code NVARCHAR(50),
+    IntervalDays INT NOT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    SortOrder INT NOT NULL DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    ModifiedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    CreatedBy UNIQUEIDENTIFIER NOT NULL,
+    ModifiedBy UNIQUEIDENTIFIER NOT NULL
+);
+GO
