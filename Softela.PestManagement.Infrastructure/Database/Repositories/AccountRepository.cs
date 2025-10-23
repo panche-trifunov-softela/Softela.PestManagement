@@ -12,11 +12,14 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public AccountRepository(IDapperDataContext dapperDataContext)
         {
-            _dapperDataContext = dapperDataContext;
+            _dapperDataContext = dapperDataContext ?? throw new ArgumentNullException(nameof(dapperDataContext));
         }
 
         public async Task<int> UpsertAsync(Account account)
         {
+            if (account is null) throw new ArgumentNullException(nameof(account));
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
             var parameters = new DynamicParameters();
             parameters.Add("@Id", account.Id > 0 ? account.Id : (int?)null);
             parameters.Add("@CompanyId", account.CompanyId);
@@ -50,12 +53,12 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
             parameters.Add("@CreatedBy", account.CreatedBy);
             parameters.Add("@ModifiedBy", account.ModifiedBy);
 
-            var id = await _dapperDataContext.Connection!.ExecuteScalarAsync<int>(
+            var id = await conn.ExecuteScalarAsync<int>(
                 sql: "UpsertAccount",
                 param: parameters,
                 transaction: _dapperDataContext.Transaction,
                 commandType: CommandType.StoredProcedure,
-                commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
+                commandTimeout: conn.ConnectionTimeout
             ).ConfigureAwait(false);
 
             return id;
@@ -63,12 +66,14 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task<Account?> GetByIdAsync(int id)
         {
-            var account = await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<Account>(
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var account = await conn.QueryFirstOrDefaultAsync<Account>(
                 sql: "GetAccountById",
                 param: new { Id = id },
                 transaction: _dapperDataContext.Transaction,
                 commandType: CommandType.StoredProcedure,
-                commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
+                commandTimeout: conn.ConnectionTimeout
             ).ConfigureAwait(false);
 
             return account;
@@ -76,12 +81,14 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task<Account?> GetByAccountNumAsync(string accountNum)
         {
-            var account = await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<Account>(
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var account = await conn.QueryFirstOrDefaultAsync<Account>(
                 sql: "GetAccountByAccountNum",
                 param: new { AccountNum = accountNum },
                 transaction: _dapperDataContext.Transaction,
                 commandType: CommandType.StoredProcedure,
-                commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
+                commandTimeout: conn.ConnectionTimeout
             ).ConfigureAwait(false);
 
             return account;
@@ -89,12 +96,14 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task<IEnumerable<Account>> GetAllAsync(int companyId)
         {
-            var accounts = await _dapperDataContext.Connection!.QueryAsync<Account>(
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var accounts = await conn.QueryAsync<Account>(
                 sql: "GetAllAccounts",
                 param: new { CompanyId = companyId },
                 transaction: _dapperDataContext.Transaction,
                 commandType: CommandType.StoredProcedure,
-                commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
+                commandTimeout: conn.ConnectionTimeout
             ).ConfigureAwait(false);
 
             return accounts;
@@ -102,12 +111,14 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task<IEnumerable<Account>> SearchAsync(int companyId, string? searchTerm, short? isActive)
         {
-            var accounts = await _dapperDataContext.Connection!.QueryAsync<Account>(
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var accounts = await conn.QueryAsync<Account>(
                 sql: "SearchAccounts",
                 param: new { CompanyId = companyId, SearchTerm = searchTerm, IsActive = isActive },
                 transaction: _dapperDataContext.Transaction,
                 commandType: CommandType.StoredProcedure,
-                commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
+                commandTimeout: conn.ConnectionTimeout
             ).ConfigureAwait(false);
 
             return accounts;
@@ -115,23 +126,27 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            await _dapperDataContext.Connection!.ExecuteAsync(
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            await conn.ExecuteAsync(
                 sql: "DeleteAccount",
                 param: new { Id = id },
                 transaction: _dapperDataContext.Transaction,
                 commandType: CommandType.StoredProcedure,
-                commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
+                commandTimeout: conn.ConnectionTimeout
             ).ConfigureAwait(false);
         }
 
         public async Task<bool> ExistsAsync(int id)
         {
-            var exists = await _dapperDataContext.Connection!.ExecuteScalarAsync<bool>(
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var exists = await conn.ExecuteScalarAsync<bool>(
                 sql: "CheckAccountExists",
                 param: new { Id = id },
                 transaction: _dapperDataContext.Transaction,
                 commandType: CommandType.StoredProcedure,
-                commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
+                commandTimeout: conn.ConnectionTimeout
             ).ConfigureAwait(false);
 
             return exists;
@@ -139,12 +154,14 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public async Task<bool> AccountNumExistsAsync(string accountNum, int companyId, int? excludeId = null)
         {
-            var exists = await _dapperDataContext.Connection!.ExecuteScalarAsync<bool>(
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var exists = await conn.ExecuteScalarAsync<bool>(
                 sql: "CheckAccountNumExists",
                 param: new { AccountNum = accountNum, CompanyId = companyId, ExcludeId = excludeId },
                 transaction: _dapperDataContext.Transaction,
                 commandType: CommandType.StoredProcedure,
-                commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
+                commandTimeout: conn.ConnectionTimeout
             ).ConfigureAwait(false);
 
             return exists;

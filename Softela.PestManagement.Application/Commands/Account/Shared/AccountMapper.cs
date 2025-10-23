@@ -6,8 +6,16 @@ namespace Softela.PestManagement.Application.Commands.Account.Shared
 {
     public static class AccountMapper
     {
-        public static AccountEntity ToEntity(CreateAccountRequest request, Guid userId, DateTime now)
+        /// <summary>
+        /// Map CreateAccountRequest
+        /// </summary>
+        public static AccountEntity ToEntity(this CreateAccountRequest request, Guid? auditUser = null, DateTime? auditUtc = null)
         {
+            if (request is null) throw new ArgumentNullException(nameof(request));
+
+            var now = auditUtc ?? DateTime.UtcNow;
+            var user = auditUser ?? Guid.Empty;
+
             return new AccountEntity
             {
                 CompanyId = request.CompanyId,
@@ -38,13 +46,23 @@ namespace Softela.PestManagement.Application.Commands.Account.Shared
                 AccountManagerId = request.AccountManagerId,
                 CreatedAt = now,
                 ModifiedAt = now,
-                CreatedBy = userId,
-                ModifiedBy = userId
+                CreatedBy = user,
+                ModifiedBy = user
             };
         }
 
-        public static AccountEntity ToEntity(UpdateAccountRequest request, Guid userId, DateTime createdAt, Guid createdBy)
+        /// <summary>
+        /// Map UpdateAccountRequest
+        /// </summary>
+        public static AccountEntity ToEntity(this UpdateAccountRequest request, Guid? auditUser = null, DateTime? createdAt = null, Guid? createdBy = null)
         {
+            if (request is null) throw new ArgumentNullException(nameof(request));
+
+            var now = DateTime.UtcNow;
+            var user = auditUser ?? Guid.Empty;
+            var created = createdAt ?? now;
+            var creator = createdBy ?? user;
+
             return new AccountEntity
             {
                 Id = request.Id,
@@ -74,10 +92,10 @@ namespace Softela.PestManagement.Application.Commands.Account.Shared
                 RegistrationNum = request.RegistrationNum ?? string.Empty,
                 DiscountTypeId = request.DiscountTypeId,
                 AccountManagerId = request.AccountManagerId,
-                CreatedAt = createdAt,
-                CreatedBy = createdBy,
-                ModifiedAt = DateTime.UtcNow,
-                ModifiedBy = userId
+                CreatedAt = created,
+                CreatedBy = creator,
+                ModifiedAt = now,
+                ModifiedBy = user
             };
         }
     }
