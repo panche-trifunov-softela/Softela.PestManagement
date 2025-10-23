@@ -1,17 +1,16 @@
 ﻿using Softela.PestManagement.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Softela.PestManagement.Application.Repositories
 {
     public interface ISiteRepository
     {
-        Task CreateUpdateSiteAsync(Site site);
-        Site GetSiteAsync(int id);
-        Task<List<Site>> GetSitesAsync();
-        void DeleteSite(int id);
+        Task<int> UpsertAsync(Site site);
+        Task<Site?> GetByIdAsync(int id);
+        Task<Site?> GetByReferenceNumberAsync(string referenceNumber);
+        Task<IEnumerable<Site>> GetAllAsync();
+        Task<IEnumerable<Site>> GetByAccountIdAsync(int accountId);
+        Task DeleteAsync(int id);
+        Task<bool> ExistsAsync(int id);
+        Task<bool> ReferenceNumberExistsAsync(string referenceNumber, int? excludeId = null);
     }
 }
