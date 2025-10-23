@@ -15,9 +15,10 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
             _dapperDataContext = dapperDataContext;
         }
 
-        public async Task<int> CreateAsync(Account account)
+        public async Task<int> UpsertAsync(Account account)
         {
             var parameters = new DynamicParameters();
+            parameters.Add("@Id", account.Id > 0 ? account.Id : (int?)null);
             parameters.Add("@CompanyId", account.CompanyId);
             parameters.Add("@AccountNum", account.AccountNum);
             parameters.Add("@AccountType", account.AccountType);
@@ -50,7 +51,7 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
             parameters.Add("@ModifiedBy", account.ModifiedBy);
 
             var id = await _dapperDataContext.Connection!.ExecuteScalarAsync<int>(
-                sql: "CreateAccount",
+                sql: "UpsertAccount",
                 param: parameters,
                 transaction: _dapperDataContext.Transaction,
                 commandType: CommandType.StoredProcedure,
@@ -110,48 +111,6 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
             ).ConfigureAwait(false);
 
             return accounts;
-        }
-
-        public async Task UpdateAsync(Account account)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("@Id", account.Id);
-            parameters.Add("@CompanyId", account.CompanyId);
-            parameters.Add("@AccountNum", account.AccountNum);
-            parameters.Add("@AccountType", account.AccountType);
-            parameters.Add("@BillingAddressId", account.BillingAddressId);
-            parameters.Add("@BillingContactId", account.BillingContactId);
-            parameters.Add("@BillingCenterId", account.BillingCenterId);
-            parameters.Add("@LocaleId", account.LocaleId);
-            parameters.Add("@SendInvoice", account.SendInvoice);
-            parameters.Add("@EmailInvoice", account.EmailInvoice);
-            parameters.Add("@SendStatement", account.SendStatement);
-            parameters.Add("@EmailStatement", account.EmailStatement);
-            parameters.Add("@SendRenewal", account.SendRenewal);
-            parameters.Add("@EmailRenewal", account.EmailRenewal);
-            parameters.Add("@MarketingEmail", account.MarketingEmail);
-            parameters.Add("@NotificationsMail", account.NotificationsMail);
-            parameters.Add("@Instructions", account.Instructions);
-            parameters.Add("@PrimaryNote", account.PrimaryNote);
-            parameters.Add("@SecondaryNote", account.SecondaryNote);
-            parameters.Add("@Name", account.Name);
-            parameters.Add("@IsActive", account.IsActive);
-            parameters.Add("@IsDeleted", account.IsDeleted);
-            parameters.Add("@MasterAccountId", account.MasterAccountId);
-            parameters.Add("@MasterAccountSubId", account.MasterAccountSubId);
-            parameters.Add("@RegistrationNum", account.RegistrationNum);
-            parameters.Add("@DiscountTypeId", account.DiscountTypeId);
-            parameters.Add("@AccountManagerId", account.AccountManagerId);
-            parameters.Add("@ModifiedAt", account.ModifiedAt);
-            parameters.Add("@ModifiedBy", account.ModifiedBy);
-
-            await _dapperDataContext.Connection!.ExecuteAsync(
-                sql: "UpdateAccount",
-                param: parameters,
-                transaction: _dapperDataContext.Transaction,
-                commandType: CommandType.StoredProcedure,
-                commandTimeout: _dapperDataContext.Connection.ConnectionTimeout
-            ).ConfigureAwait(false);
         }
 
         public async Task DeleteAsync(int id)

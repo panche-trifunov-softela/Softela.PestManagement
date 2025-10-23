@@ -1,66 +1,6 @@
 -- Account Stored Procedures Migration
 -- Creates stored procedures for Account CRUD operations
 
--- Create Account
-CREATE OR ALTER PROCEDURE CreateAccount
-    @CompanyId INT,
-    @AccountNum NVARCHAR(50),
-    @AccountType INT,
-    @BillingAddressId INT = NULL,
-    @BillingContactId INT = NULL,
-    @BillingCenterId INT,
-    @LocaleId INT,
-    @SendInvoice BIT,
-    @EmailInvoice BIT,
-    @SendStatement BIT,
-    @EmailStatement BIT,
-    @SendRenewal BIT,
-    @EmailRenewal BIT,
-    @MarketingEmail BIT,
-    @NotificationsMail BIT,
-    @Instructions NVARCHAR(900) = NULL,
-    @PrimaryNote NVARCHAR(200) = NULL,
-    @SecondaryNote NVARCHAR(200) = NULL,
-    @Name NVARCHAR(100),
-    @IsActive SMALLINT,
-    @IsDeleted SMALLINT,
-    @MasterAccountId INT = NULL,
-    @MasterAccountSubId INT = NULL,
-    @RegistrationNum NVARCHAR(15) = NULL,
-    @DiscountTypeId INT = NULL,
-    @AccountManagerId INT = NULL,
-    @CreatedAt DATETIME2,
-    @ModifiedAt DATETIME2,
-    @CreatedBy UNIQUEIDENTIFIER,
-    @ModifiedBy UNIQUEIDENTIFIER
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    INSERT INTO Accounts (
-        CompanyId, AccountNum, AccountType, BillingAddressId, BillingContactId,
-        BillingCenterId, LocaleId,
-        SendInvoice, EmailInvoice, SendStatement, EmailStatement,
-        SendRenewal, EmailRenewal, MarketingEmail, NotificationsMail,
-        Instructions, PrimaryNote, SecondaryNote,
-        Name, IsActive, IsDeleted, MasterAccountId, MasterAccountSubId, RegistrationNum,
-        DiscountTypeId, AccountManagerId,
-        CreatedAt, ModifiedAt, CreatedBy, ModifiedBy
-    ) VALUES (
-        @CompanyId, @AccountNum, @AccountType, @BillingAddressId, @BillingContactId,
-        @BillingCenterId, @LocaleId,
-        @SendInvoice, @EmailInvoice, @SendStatement, @EmailStatement,
-        @SendRenewal, @EmailRenewal, @MarketingEmail, @NotificationsMail,
-        @Instructions, @PrimaryNote, @SecondaryNote,
-        @Name, @IsActive, @IsDeleted, @MasterAccountId, @MasterAccountSubId, @RegistrationNum,
-        @DiscountTypeId, @AccountManagerId,
-        @CreatedAt, @ModifiedAt, @CreatedBy, @ModifiedBy
-    );
-
-    SELECT CAST(SCOPE_IDENTITY() AS INT) AS Id;
-END
-GO
-
 -- Get Account by ID
 CREATE OR ALTER PROCEDURE GetAccountById
     @Id INT
@@ -113,74 +53,6 @@ BEGIN
 END
 GO
 
--- Update Account
-CREATE OR ALTER PROCEDURE UpdateAccount
-    @Id INT,
-    @CompanyId INT,
-    @AccountNum NVARCHAR(50),
-    @AccountType INT,
-    @BillingAddressId INT = NULL,
-    @BillingContactId INT = NULL,
-    @BillingCenterId INT,
-    @LocaleId INT,
-    @SendInvoice BIT,
-    @EmailInvoice BIT,
-    @SendStatement BIT,
-    @EmailStatement BIT,
-    @SendRenewal BIT,
-    @EmailRenewal BIT,
-    @MarketingEmail BIT,
-    @NotificationsMail BIT,
-    @Instructions NVARCHAR(900) = NULL,
-    @PrimaryNote NVARCHAR(200) = NULL,
-    @SecondaryNote NVARCHAR(200) = NULL,
-    @Name NVARCHAR(100),
-    @IsActive SMALLINT,
-    @IsDeleted SMALLINT,
-    @MasterAccountId INT = NULL,
-    @MasterAccountSubId INT = NULL,
-    @RegistrationNum NVARCHAR(15) = NULL,
-    @DiscountTypeId INT = NULL,
-    @AccountManagerId INT = NULL,
-    @ModifiedAt DATETIME2,
-    @ModifiedBy UNIQUEIDENTIFIER
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    UPDATE Accounts SET
-        CompanyId = @CompanyId,
-        AccountNum = @AccountNum,
-        AccountType = @AccountType,
-        BillingAddressId = @BillingAddressId,
-        BillingContactId = @BillingContactId,
-        BillingCenterId = @BillingCenterId,
-        LocaleId = @LocaleId,
-        SendInvoice = @SendInvoice,
-        EmailInvoice = @EmailInvoice,
-        SendStatement = @SendStatement,
-        EmailStatement = @EmailStatement,
-        SendRenewal = @SendRenewal,
-        EmailRenewal = @EmailRenewal,
-        MarketingEmail = @MarketingEmail,
-        NotificationsMail = @NotificationsMail,
-        Instructions = @Instructions,
-        PrimaryNote = @PrimaryNote,
-        SecondaryNote = @SecondaryNote,
-        Name = @Name,
-        IsActive = @IsActive,
-        IsDeleted = @IsDeleted,
-        MasterAccountId = @MasterAccountId,
-        MasterAccountSubId = @MasterAccountSubId,
-        RegistrationNum = @RegistrationNum,
-        DiscountTypeId = @DiscountTypeId,
-        AccountManagerId = @AccountManagerId,
-        ModifiedAt = @ModifiedAt,
-        ModifiedBy = @ModifiedBy
-    WHERE Id = @Id;
-END
-GO
-
 -- Delete Account
 CREATE OR ALTER PROCEDURE DeleteAccount
     @Id INT
@@ -218,5 +90,106 @@ BEGIN
         AND CompanyId = @CompanyId
         AND (@ExcludeId IS NULL OR Id != @ExcludeId)
     ) THEN 1 ELSE 0 END AS BIT) AS [Exists];
+END
+GO
+
+-- Upsert Account (Create or Update)
+CREATE OR ALTER PROCEDURE UpsertAccount
+    @Id INT = NULL,
+    @CompanyId INT,
+    @AccountNum NVARCHAR(50),
+    @AccountType INT,
+    @BillingAddressId INT = NULL,
+    @BillingContactId INT = NULL,
+    @BillingCenterId INT,
+    @LocaleId INT,
+    @SendInvoice BIT,
+    @EmailInvoice BIT,
+    @SendStatement BIT,
+    @EmailStatement BIT,
+    @SendRenewal BIT,
+    @EmailRenewal BIT,
+    @MarketingEmail BIT,
+    @NotificationsMail BIT,
+    @Instructions NVARCHAR(900) = NULL,
+    @PrimaryNote NVARCHAR(200) = NULL,
+    @SecondaryNote NVARCHAR(200) = NULL,
+    @Name NVARCHAR(100),
+    @IsActive SMALLINT,
+    @IsDeleted SMALLINT,
+    @MasterAccountId INT = NULL,
+    @MasterAccountSubId INT = NULL,
+    @RegistrationNum NVARCHAR(15) = NULL,
+    @DiscountTypeId INT = NULL,
+    @AccountManagerId INT = NULL,
+    @CreatedAt DATETIME2,
+    @ModifiedAt DATETIME2,
+    @CreatedBy UNIQUEIDENTIFIER,
+    @ModifiedBy UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF @Id IS NOT NULL AND EXISTS (SELECT 1 FROM Accounts WHERE Id = @Id)
+    BEGIN
+        -- Update existing account
+        UPDATE Accounts SET
+            CompanyId = @CompanyId,
+            AccountNum = @AccountNum,
+            AccountType = @AccountType,
+            BillingAddressId = @BillingAddressId,
+            BillingContactId = @BillingContactId,
+            BillingCenterId = @BillingCenterId,
+            LocaleId = @LocaleId,
+            SendInvoice = @SendInvoice,
+            EmailInvoice = @EmailInvoice,
+            SendStatement = @SendStatement,
+            EmailStatement = @EmailStatement,
+            SendRenewal = @SendRenewal,
+            EmailRenewal = @EmailRenewal,
+            MarketingEmail = @MarketingEmail,
+            NotificationsMail = @NotificationsMail,
+            Instructions = @Instructions,
+            PrimaryNote = @PrimaryNote,
+            SecondaryNote = @SecondaryNote,
+            Name = @Name,
+            IsActive = @IsActive,
+            IsDeleted = @IsDeleted,
+            MasterAccountId = @MasterAccountId,
+            MasterAccountSubId = @MasterAccountSubId,
+            RegistrationNum = @RegistrationNum,
+            DiscountTypeId = @DiscountTypeId,
+            AccountManagerId = @AccountManagerId,
+            ModifiedAt = @ModifiedAt,
+            ModifiedBy = @ModifiedBy
+        WHERE Id = @Id;
+
+        SELECT @Id AS Id;
+    END
+    ELSE
+    BEGIN
+        -- Insert new account
+        INSERT INTO Accounts (
+            CompanyId, AccountNum, AccountType, BillingAddressId, BillingContactId,
+            BillingCenterId, LocaleId,
+            SendInvoice, EmailInvoice, SendStatement, EmailStatement,
+            SendRenewal, EmailRenewal, MarketingEmail, NotificationsMail,
+            Instructions, PrimaryNote, SecondaryNote,
+            Name, IsActive, IsDeleted, MasterAccountId, MasterAccountSubId, RegistrationNum,
+            DiscountTypeId, AccountManagerId,
+            CreatedAt, ModifiedAt, CreatedBy, ModifiedBy
+        ) VALUES (
+            @CompanyId, @AccountNum, @AccountType, @BillingAddressId, @BillingContactId,
+            @BillingCenterId, @LocaleId,
+            @SendInvoice, @EmailInvoice, @SendStatement, @EmailStatement,
+            @SendRenewal, @EmailRenewal, @MarketingEmail, @NotificationsMail,
+            @Instructions, @PrimaryNote, @SecondaryNote,
+            @Name, @IsActive, @IsDeleted, @MasterAccountId, @MasterAccountSubId, @RegistrationNum,
+            @DiscountTypeId, @AccountManagerId,
+            @CreatedAt, @ModifiedAt, @CreatedBy, @ModifiedBy
+        );
+
+        SELECT CAST(SCOPE_IDENTITY() AS INT) AS Id;
+    END
 END
 GO

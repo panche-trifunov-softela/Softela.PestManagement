@@ -24,26 +24,16 @@ namespace Softela.PestManagement.API.Controllers
         /// Get all accounts for a company with optional search and filtering
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAccounts(
-            [FromQuery] int companyId,
-            [FromQuery] string? searchTerm = null,
-            [FromQuery] short? isActive = null)
+        public async Task<IActionResult> GetAccounts([FromQuery] GetAccountsRequest request)
         {
             try
             {
-                var request = new GetAccountsRequest
-                {
-                    CompanyId = companyId,
-                    SearchTerm = searchTerm,
-                    IsActive = isActive
-                };
-
                 var response = await _mediator.Send(request);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving accounts for company {CompanyId}", companyId);
+                _logger.LogError(ex, "Error retrieving accounts for company {CompanyId}", request.CompanyId);
                 return StatusCode(500, "An error occurred while retrieving accounts");
             }
         }
@@ -104,10 +94,7 @@ namespace Softela.PestManagement.API.Controllers
         {
             try
             {
-                if (id != request.Id)
-                {
-                    return BadRequest("ID in URL does not match ID in request body");
-                }
+                request.Id = id; // Set ID from route parameter
 
                 var success = await _mediator.Send(request);
                 if (success)
