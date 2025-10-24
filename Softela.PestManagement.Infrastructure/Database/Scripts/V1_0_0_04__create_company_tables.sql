@@ -4,6 +4,7 @@ CREATE TABLE Companies (
     CompanyName NVARCHAR(255) NOT NULL,
     LocaleId INT NOT NULL,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL,
     IsActive BIT NOT NULL DEFAULT 1,

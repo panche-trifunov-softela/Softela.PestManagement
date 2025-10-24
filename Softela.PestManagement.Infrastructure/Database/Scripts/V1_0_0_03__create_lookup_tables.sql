@@ -6,6 +6,7 @@ CREATE TABLE Locales (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -19,6 +20,7 @@ CREATE TABLE Countries (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -34,6 +36,7 @@ CREATE TABLE TaxTypes (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -46,6 +49,7 @@ CREATE TABLE Salutations (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -58,6 +62,7 @@ CREATE TABLE EstimateTypes (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -70,6 +75,7 @@ CREATE TABLE ProgramTypes (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -82,6 +88,7 @@ CREATE TABLE EventTypes (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -94,6 +101,7 @@ CREATE TABLE PropertyTypes (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -106,6 +114,7 @@ CREATE TABLE CancelReasons (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -119,6 +128,7 @@ CREATE TABLE Warranties (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -133,6 +143,7 @@ CREATE TABLE TimeRanges (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -145,6 +156,7 @@ CREATE TABLE TimeOptions (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -157,6 +169,7 @@ CREATE TABLE Sources (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -169,6 +182,7 @@ CREATE TABLE RejectedReasons (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -181,6 +195,7 @@ CREATE TABLE ServiceCenters (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -195,6 +210,7 @@ CREATE TABLE Employees (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -208,6 +224,7 @@ CREATE TABLE AccountPeriods (
     EndDate DATETIME,
     IsClosed BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL,
     IsDeleted BIT NOT NULL DEFAULT 0
@@ -222,6 +239,7 @@ CREATE TABLE Releases (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -234,6 +252,7 @@ CREATE TABLE TargetTypes (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -246,6 +265,7 @@ CREATE TABLE TargetCategories (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -258,6 +278,7 @@ CREATE TABLE Observations (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -270,6 +291,7 @@ CREATE TABLE Recommendations (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -283,6 +305,7 @@ CREATE TABLE InventoryItems (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -295,6 +318,7 @@ CREATE TABLE Equipments (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -307,6 +331,7 @@ CREATE TABLE Locations (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -319,6 +344,7 @@ CREATE TABLE ApplicationMethods (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -331,6 +357,7 @@ CREATE TABLE LocationTypes (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );
@@ -344,6 +371,7 @@ CREATE TABLE DiscountTypes (
     IsActive BIT NOT NULL DEFAULT 1,
     IsDeleted BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL
 );

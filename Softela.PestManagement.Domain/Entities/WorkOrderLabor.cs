@@ -1,9 +1,8 @@
 // Diagram: WorkOrderLabor
 namespace Softela.PestManagement.Domain.Entities
 {
-    public class WorkOrderLabor
+    public class WorkOrderLabor : BaseEntity
     {
-        public int Id { get; set; }
         public int WoEventId { get; set; }
         public int? BatchId { get; set; }
         public int EmployeeId { get; set; }
@@ -16,15 +15,11 @@ namespace Softela.PestManagement.Domain.Entities
         public decimal? FedTaxAmount { get; set; }
         public decimal? StateTaxAmount { get; set; }
         public decimal? LocalTaxAmount { get; set; }
-        public DateTime UtcTimestamp { get; set; }
-        public DateTime UtcLastChanged { get; set; }
-        public string LastChangedBy { get; set; }
         public string TaxTypeName { get; set; }
         public decimal? TaxFedPercent { get; set; }
         public decimal? TaxStatePercent { get; set; }
         public decimal? TaxLocalPercent { get; set; }
         public short? IsPrimary { get; set; }
         public int? TaxTypeId { get; set; }
-        public bool IsDeleted { get; set; }
     }
 }

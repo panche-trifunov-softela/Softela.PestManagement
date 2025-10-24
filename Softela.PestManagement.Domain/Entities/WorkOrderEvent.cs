@@ -1,9 +1,8 @@
 // Diagram: WorkOrderEvent
 namespace Softela.PestManagement.Domain.Entities
 {
-    public class WorkOrderEvent
+    public class WorkOrderEvent : BaseEntity
     {
-        public int Id { get; set; }
         public int BaseEventId { get; set; }
         public int HeaderId { get; set; }
         public string EventName { get; set; }
@@ -25,9 +24,6 @@ namespace Softela.PestManagement.Domain.Entities
         public string GeneratedBy { get; set; }
         public DateTime? PrintDate { get; set; }
         public Guid? GeneratedBatch { get; set; }
-        public DateTime UtcTimestamp { get; set; }
-        public DateTime UtcLastChanged { get; set; }
-        public string LastChangedBy { get; set; }
         public DateTime? SkippedDate { get; set; }
         public DateTime? DeletedDate { get; set; }
         public decimal? TaxFedPercent { get; set; }
@@ -44,6 +40,5 @@ namespace Softela.PestManagement.Domain.Entities
         public string PurchaseOrder { get; set; }
         public int? CancelReasonId { get; set; }
         public string CancelReasonDesc { get; set; }
-        public bool IsDeleted { get; set; }
     }
 }

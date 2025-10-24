@@ -1,15 +1,11 @@
 // Diagram: Event
 namespace Softela.PestManagement.Domain.Entities
 {
-    public class Event
+    public class Event : BaseEntity
     {
-        public int Id { get; set; }
         public int EventTypeId { get; set; }
         public int ProgramId { get; set; }
         public DateTime? ReleaseDate { get; set; }
-        public DateTime UtcTimestamp { get; set; }
-        public DateTime UtcLastChanged { get; set; }
-        public string LastChangedBy { get; set; }
         public short Status { get; set; }
         public short? PatternInterval { get; set; }
         public int? IntervalValue { get; set; }
@@ -19,7 +15,6 @@ namespace Softela.PestManagement.Domain.Entities
         public string OneTimeInstructions { get; set; }
         public DateTime? CancelDate { get; set; }
         public bool IsActive { get; set; }
-        public bool IsDeleted { get; set; }
         public short? SkipDays { get; set; }
         public int? TaxTypeId { get; set; }
         public DateTime? BaseDate { get; set; }

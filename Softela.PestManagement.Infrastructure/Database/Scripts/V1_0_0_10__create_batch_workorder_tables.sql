@@ -70,6 +70,7 @@ CREATE TABLE WorkOrderEvents (
     PrintDate DATETIME,
     GeneratedBatch UNIQUEIDENTIFIER,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL,
     SkippedDate DATETIME,

@@ -21,17 +21,17 @@ namespace Softela.PestManagement.Application.Commands.Site.UpdateSite
 
         public async Task<bool> Handle(UpdateSiteRequest request, CancellationToken cancellationToken)
         {
-            var account = new SiteEntity
+            var site = new SiteEntity
             {
                 Id = request.Id,
-                ModifiedAt = DateTime.UtcNow,
-                ModifiedBy = Guid.NewGuid(),
+                UtcLastChanged = DateTime.UtcNow,
+                LastChangedBy = Guid.NewGuid().ToString(),
                 IsDeleted = request.IsDeleted,
-                 ReferenceNumber = request.ReferenceNumber,
-                    AccountId = request.AccountId
+                SiteReferenceNumber = request.ReferenceNumber,
+                AccountId = request.AccountId
             };
 
-            await _siteRepository.CreateUpdateSiteAsync(account);
+            await _siteRepository.UpsertAsync(site);
             return true;
         }
     }

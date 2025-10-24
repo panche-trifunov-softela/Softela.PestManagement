@@ -1,9 +1,8 @@
 // Diagram: Batch
 namespace Softela.PestManagement.Domain.Entities
 {
-    public class Batch
+    public class Batch : BaseEntity
     {
-        public int Id { get; set; }
         public int OwnerId { get; set; }
         public int CompanyId { get; set; }
         public byte BatchType { get; set; }
@@ -13,7 +12,5 @@ namespace Softela.PestManagement.Domain.Entities
         public string ClosedBy { get; set; }
         public DateTime UtcLastUpdated { get; set; }
         public int? AcctPeriodId { get; set; }
-        public string CreatedBy { get; set; }
-        public bool IsDeleted { get; set; }
     }
 }

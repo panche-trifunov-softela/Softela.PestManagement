@@ -19,7 +19,7 @@ namespace Softela.PestManagement.Application.Queries.Site.GetSites
 
         public async Task<GetSitesResponse> Handle(GetSitesRequest request, CancellationToken cancellationToken)
         {
-            var sites = await _siteRepository.GetSitesAsync();
+            var sites = await _siteRepository.GetAllAsync();
             return new GetSitesResponse
             {
                 Data = sites

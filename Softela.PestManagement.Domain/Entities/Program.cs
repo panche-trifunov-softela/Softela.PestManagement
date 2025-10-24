@@ -1,9 +1,8 @@
 // Diagram: Program
 namespace Softela.PestManagement.Domain.Entities
 {
-    public class Program
+    public class Program : BaseEntity
     {
-        public int Id { get; set; }
         public int ProgramTypeId { get; set; }
         public string ProgramName { get; set; }
         public int? EstimateId { get; set; }
@@ -13,10 +12,6 @@ namespace Softela.PestManagement.Domain.Entities
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public DateTime? CancelDate { get; set; }
-        public DateTime UtcTimestamp { get; set; }
-        public DateTime UtcLastChanged { get; set; }
-        public string LastChangedBy { get; set; }
         public int? CancelReasonId { get; set; }
-        public bool IsDeleted { get; set; }
     }
 }

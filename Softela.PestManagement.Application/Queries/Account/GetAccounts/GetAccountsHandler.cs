@@ -19,7 +19,8 @@ namespace Softela.PestManagement.Application.Queries.Account.GetAccounts
 
         public async Task<GetAccountsResponse> Handle(GetAccountsRequest request, CancellationToken cancellationToken)
         {
-            var accounts = await _accountRepository.GetAccountsAsync();
+            // Using default companyId of 1 - this should be retrieved from user context in production
+            var accounts = await _accountRepository.GetAllAsync(1);
             return new GetAccountsResponse
             {
                 Data = accounts

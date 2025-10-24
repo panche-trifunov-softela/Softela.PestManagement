@@ -1,9 +1,8 @@
 // Diagram: Contact
 namespace Softela.PestManagement.Domain.Entities
 {
-    public class Contact
+    public class Contact : BaseEntity
     {
-        public int Id { get; set; }
         public int CompanyId { get; set; }
         public byte ContactType { get; set; }
         public string FirstName { get; set; }
@@ -12,12 +11,8 @@ namespace Softela.PestManagement.Domain.Entities
         public string EmailAddress { get; set; }
         public string WebAddress { get; set; }
         public int? PrimaryPhoneId { get; set; }
-        public DateTime UtcTimestamp { get; set; }
-        public DateTime UtcLastChanged { get; set; }
-        public string LastChangedBy { get; set; }
         public string BusinessName { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public int? SalutationId { get; set; }
-        public bool IsDeleted { get; set; }
     }
 }

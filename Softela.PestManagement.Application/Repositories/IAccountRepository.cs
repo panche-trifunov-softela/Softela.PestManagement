@@ -1,17 +1,16 @@
-﻿using Softela.PestManagement.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Softela.PestManagement.Domain.Entities;
 
 namespace Softela.PestManagement.Application.Repositories
 {
     public interface IAccountRepository
     {
-        Task CreateUpdateAccountAsync(Account account);
-        Account GetAccountAsync(int id);
-        Task<List<Account>> GetAccountsAsync();
-        void DeleteAccount(int id);
+        Task<Account?> GetByIdAsync(int id);
+        Task<Account?> GetByAccountNumAsync(string accountNum);
+        Task<List<Account>> GetAllAsync(int companyId);
+        Task<List<Account>> SearchAsync(int companyId, string? searchTerm, short? isActive);
+        Task<bool> ExistsAsync(int id);
+        Task<bool> AccountNumExistsAsync(string accountNum, int companyId, int? excludeId);
+        Task<int> UpsertAsync(Account account);
+        Task DeleteAsync(int id);
     }
 }

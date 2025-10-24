@@ -10,6 +10,7 @@ CREATE TABLE Branches (
     IsBillingCenter BIT NOT NULL DEFAULT 0,
     IsServiceCenter BIT NOT NULL DEFAULT 0,
     UtcTimestamp DATETIME NOT NULL,
+    CreatedBy NVARCHAR(50) NOT NULL,
     UtcLastChanged DATETIME NOT NULL,
     LastChangedBy NVARCHAR(50) NOT NULL,
     LicenseNumber NVARCHAR(50),

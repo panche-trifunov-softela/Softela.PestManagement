@@ -20,18 +20,18 @@ namespace Softela.PestManagement.Application.Commands.Account.CreateAccount
 
         public async Task<bool> Handle(CreateAccountRequest request, CancellationToken cancellationToken)
         {
-            var account = new AccountEntity 
+            var account = new AccountEntity
             {
                 Id = 0,
-                CreatedAt = DateTime.UtcNow,
-                ModifiedAt = DateTime.UtcNow,
-                CreatedBy = Guid.NewGuid(),
-                ModifiedBy = Guid.NewGuid(),
-                IsActive = request.IsActive,
+                UtcTimestamp = DateTime.UtcNow,
+                CreatedBy = Guid.NewGuid().ToString(),
+                UtcLastChanged = DateTime.UtcNow,
+                LastChangedBy = Guid.NewGuid().ToString(),
+                IsActive = (short)(request.IsActive ? 1 : 0),
                 Name = request.Name,
             };
 
-            await _accountRepository.CreateUpdateAccountAsync(account);
+            await _accountRepository.UpsertAsync(account);
             return true;
         }
     }

@@ -23,14 +23,14 @@ namespace Softela.PestManagement.Application.Commands.Account.UpdateAccount
             var account = new AccountEntity
             {
                 Id = request.Id,
-                ModifiedAt = DateTime.UtcNow,
-                ModifiedBy = Guid.NewGuid(),
-                IsActive = request.IsActive,
+                UtcLastChanged = DateTime.UtcNow,
+                LastChangedBy = Guid.NewGuid().ToString(),
+                IsActive = (short)(request.IsActive ? 1 : 0),
                 IsDeleted = request.IsDeleted,
                 Name = request.Name,
             };
 
-            await _accountRepository.CreateUpdateAccountAsync(account);
+            await _accountRepository.UpsertAsync(account);
             return true;
         }
     }

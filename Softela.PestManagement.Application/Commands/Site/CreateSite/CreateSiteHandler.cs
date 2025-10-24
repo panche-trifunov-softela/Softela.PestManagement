@@ -23,15 +23,15 @@ namespace Softela.PestManagement.Application.Commands.Site.CreateSite
             var site = new SiteEntity
             {
                 Id = 0,
-                CreatedAt = DateTime.UtcNow,
-                ModifiedAt = DateTime.UtcNow,
-                CreatedBy = Guid.NewGuid(),
-                ModifiedBy = Guid.NewGuid(),
+                UtcTimestamp = DateTime.UtcNow,
+                CreatedBy = Guid.NewGuid().ToString(),
+                UtcLastChanged = DateTime.UtcNow,
+                LastChangedBy = Guid.NewGuid().ToString(),
                 AccountId = request.AccountId,
-                ReferenceNumber = request.ReferenceNumber,
+                SiteReferenceNumber = request.ReferenceNumber,
             };
 
-            await _siteRepository.CreateUpdateSiteAsync(site);
+            await _siteRepository.UpsertAsync(site);
             return true;
         }
     }
