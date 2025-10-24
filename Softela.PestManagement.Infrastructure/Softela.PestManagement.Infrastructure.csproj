@@ -7,14 +7,40 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Database\Scripts\V1_0_0_01__initial_create_tables.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Content Include="Database\Scripts\V1_0_0_01__initial_create_tables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Database\Scripts\V1_0_0_02__add_identity_tables.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Database\Scripts\V1_0_0_01__initial_create_tables.sql">
+    <Content Include="Database\Scripts\V1_0_0_03__create_lookup_tables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Scripts\V1_0_0_04__create_company_tables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Scripts\V1_0_0_05__create_contact_address_tables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Scripts\V1_0_0_06__create_branch_tables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Scripts\V1_0_0_07__create_account_site_tables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Scripts\V1_0_0_08__create_estimate_program_tables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Scripts\V1_0_0_09__create_event_tables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Scripts\V1_0_0_10__create_batch_workorder_tables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Scripts\V1_0_0_11__create_workorder_detail_tables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Scripts\V1_0_0_12__create_facility_zone_inspection_tables.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
