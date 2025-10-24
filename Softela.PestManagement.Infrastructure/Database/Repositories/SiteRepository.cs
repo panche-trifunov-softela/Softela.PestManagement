@@ -12,112 +12,117 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public SiteRepository(IDapperDataContext dapperDataContext)
         {
-            _dapperDataContext = dapperDataContext;
+            _dapperDataContext = dapperDataContext ?? throw new ArgumentNullException(nameof(dapperDataContext));
+        }
+
+        public async Task<int> UpsertAsync(Site site)
+        {
+            if (site is null) throw new ArgumentNullException(nameof(site));
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", site.Id > 0 ? site.Id : (int?)null);
+            parameters.Add("@AccountId", site.AccountId);
+            parameters.Add("@AddressId", site.AddressId);
+            parameters.Add("@PrimaryContactId", site.PrimaryContactId);
+            parameters.Add("@PropertyType", site.PropertyType);
+            parameters.Add("@Notes", site.Notes);
+            parameters.Add("@Latitude", site.Latitude);
+            parameters.Add("@Longitude", site.Longitude);
+            parameters.Add("@Instructions", site.Instructions);
+            parameters.Add("@TaxTypeId", site.TaxTypeId);
+            parameters.Add("@SalesPersonId", site.SalesPersonId);
+            parameters.Add("@SiteReferenceNumber", site.SiteReferenceNumber);
+            parameters.Add("@SendCompletedWoMethod", site.SendCompletedWoMethod);
+            parameters.Add("@SendCompletedWoTo", site.SendCompletedWoTo);
+            parameters.Add("@Facility", site.Facility);
+            parameters.Add("@FacilityType", site.FacilityType);
+            parameters.Add("@SiteManagerId", site.SiteManagerId);
+            parameters.Add("@IsDeleted", site.IsDeleted);
+            parameters.Add("@CreatedBy", site.CreatedBy);
+            parameters.Add("@LastChangedBy", site.LastChangedBy);
+
+            var id = await conn.ExecuteScalarAsync<int>(
+                sql: "UpsertSite",
+                param: parameters,
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
+
+            return id;
         }
 
         public async Task<Site?> GetByIdAsync(int id)
         {
-            var sql = "SELECT * FROM Sites WHERE Id = @Id AND IsDeleted = 0";
-            return await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<Site>(
-                sql: sql,
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var site = await conn.QueryFirstOrDefaultAsync<Site>(
+                sql: "GetSiteById",
                 param: new { Id = id },
-                transaction: _dapperDataContext.Transaction
-            );
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
+
+            return site;
         }
 
         public async Task<List<Site>> GetByAccountIdAsync(int accountId)
         {
-            var sql = "SELECT * FROM Sites WHERE AccountId = @AccountId AND IsDeleted = 0";
-            var sites = await _dapperDataContext.Connection!.QueryAsync<Site>(
-                sql: sql,
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var sites = await conn.QueryAsync<Site>(
+                sql: "GetSitesByAccountId",
                 param: new { AccountId = accountId },
-                transaction: _dapperDataContext.Transaction
-            );
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
+
             return sites.ToList();
         }
 
         public async Task<List<Site>> GetAllAsync()
         {
-            var sql = "SELECT * FROM Sites WHERE IsDeleted = 0";
-            var sites = await _dapperDataContext.Connection!.QueryAsync<Site>(
-                sql: sql,
-                transaction: _dapperDataContext.Transaction
-            );
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var sites = await conn.QueryAsync<Site>(
+                sql: "GetAllSites",
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
+
             return sites.ToList();
         }
 
         public async Task<bool> ExistsAsync(int id)
         {
-            var sql = "SELECT COUNT(1) FROM Sites WHERE Id = @Id AND IsDeleted = 0";
-            var count = await _dapperDataContext.Connection!.ExecuteScalarAsync<int>(
-                sql: sql,
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var exists = await conn.ExecuteScalarAsync<bool>(
+                sql: "CheckSiteExists",
                 param: new { Id = id },
-                transaction: _dapperDataContext.Transaction
-            );
-            return count > 0;
-        }
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
 
-        public async Task<int> UpsertAsync(Site site)
-        {
-            if (site.Id == 0)
-            {
-                // Insert
-                var sql = @"INSERT INTO Sites (AccountId, AddressId, PrimaryContactId, PropertyType, Notes, Latitude, Longitude,
-                            Instructions, TaxTypeId, UtcTimestamp, CreatedBy, UtcLastChanged, LastChangedBy, SalesPersonId, SiteReferenceNumber,
-                            SendCompletedWoMethod, SendCompletedWoTo, Facility, FacilityType, SiteManagerId, IsDeleted)
-                            VALUES (@AccountId, @AddressId, @PrimaryContactId, @PropertyType, @Notes, @Latitude, @Longitude,
-                            @Instructions, @TaxTypeId, GETUTCDATE(), @CreatedBy, GETUTCDATE(), @LastChangedBy, @SalesPersonId, @SiteReferenceNumber,
-                            @SendCompletedWoMethod, @SendCompletedWoTo, @Facility, @FacilityType, @SiteManagerId, @IsDeleted);
-                            SELECT CAST(SCOPE_IDENTITY() AS INT);";
-
-                var id = await _dapperDataContext.Connection!.ExecuteScalarAsync<int>(
-                    sql: sql,
-                    param: site,
-                    transaction: _dapperDataContext.Transaction
-                );
-                return id;
-            }
-            else
-            {
-                // Update
-                var sql = @"UPDATE Sites SET
-                            AccountId = @AccountId,
-                            AddressId = @AddressId,
-                            PrimaryContactId = @PrimaryContactId,
-                            PropertyType = @PropertyType,
-                            Notes = @Notes,
-                            Latitude = @Latitude,
-                            Longitude = @Longitude,
-                            Instructions = @Instructions,
-                            TaxTypeId = @TaxTypeId,
-                            UtcLastChanged = GETUTCDATE(),
-                            LastChangedBy = @LastChangedBy,
-                            SalesPersonId = @SalesPersonId,
-                            SiteReferenceNumber = @SiteReferenceNumber,
-                            SendCompletedWoMethod = @SendCompletedWoMethod,
-                            SendCompletedWoTo = @SendCompletedWoTo,
-                            Facility = @Facility,
-                            FacilityType = @FacilityType,
-                            SiteManagerId = @SiteManagerId
-                            WHERE Id = @Id AND IsDeleted = 0";
-
-                await _dapperDataContext.Connection!.ExecuteAsync(
-                    sql: sql,
-                    param: site,
-                    transaction: _dapperDataContext.Transaction
-                );
-                return site.Id;
-            }
+            return exists;
         }
 
         public async Task DeleteAsync(int id)
         {
-            var sql = "UPDATE Sites SET IsDeleted = 1, UtcLastChanged = GETUTCDATE() WHERE Id = @Id";
-            await _dapperDataContext.Connection!.ExecuteAsync(
-                sql: sql,
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            await conn.ExecuteAsync(
+                sql: "DeleteSite",
                 param: new { Id = id },
-                transaction: _dapperDataContext.Transaction
-            );
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
         }
     }
 }

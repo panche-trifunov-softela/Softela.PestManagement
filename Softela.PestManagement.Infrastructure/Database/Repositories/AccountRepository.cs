@@ -12,158 +12,157 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories
 
         public AccountRepository(IDapperDataContext dapperDataContext)
         {
-            _dapperDataContext = dapperDataContext;
+            _dapperDataContext = dapperDataContext ?? throw new ArgumentNullException(nameof(dapperDataContext));
+        }
+
+        public async Task<int> UpsertAsync(Account account)
+        {
+            if (account is null) throw new ArgumentNullException(nameof(account));
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", account.Id > 0 ? account.Id : (int?)null);
+            parameters.Add("@CompanyId", account.CompanyId);
+            parameters.Add("@AccountNum", account.AccountNum);
+            parameters.Add("@AccountType", account.AccountType);
+            parameters.Add("@BillingAddressId", account.BillingAddressId);
+            parameters.Add("@BillingContactId", account.BillingContactId);
+            parameters.Add("@BillingCenterId", account.BillingCenterId);
+            parameters.Add("@LocaleId", account.LocaleId);
+            parameters.Add("@SendInvoice", account.SendInvoice);
+            parameters.Add("@EmailInvoice", account.EmailInvoice);
+            parameters.Add("@SendStatement", account.SendStatement);
+            parameters.Add("@EmailStatement", account.EmailStatement);
+            parameters.Add("@SendRenewal", account.SendRenewal);
+            parameters.Add("@EmailRenewal", account.EmailRenewal);
+            parameters.Add("@MarketingEmail", account.MarketingEmail);
+            parameters.Add("@NotificationsMail", account.NotificationsMail);
+            parameters.Add("@Instructions", account.Instructions);
+            parameters.Add("@PrimaryNote", account.PrimaryNote);
+            parameters.Add("@SecondaryNote", account.SecondaryNote);
+            parameters.Add("@Name", account.Name);
+            parameters.Add("@IsActive", account.IsActive);
+            parameters.Add("@IsDeleted", account.IsDeleted);
+            parameters.Add("@MasterAccountId", account.MasterAccountId);
+            parameters.Add("@MasterAccountSubId", account.MasterAccountSubId);
+            parameters.Add("@RegistrationNum", account.RegistrationNum);
+            parameters.Add("@DiscountTypeId", account.DiscountTypeId);
+            parameters.Add("@AccountManagerId", account.AccountManagerId);
+            parameters.Add("@CreatedBy", account.CreatedBy);
+            parameters.Add("@LastChangedBy", account.LastChangedBy);
+
+            var id = await conn.ExecuteScalarAsync<int>(
+                sql: "UpsertAccount",
+                param: parameters,
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
+
+            return id;
         }
 
         public async Task<Account?> GetByIdAsync(int id)
         {
-            var sql = "SELECT * FROM Accounts WHERE Id = @Id AND IsDeleted = 0";
-            return await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<Account>(
-                sql: sql,
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var account = await conn.QueryFirstOrDefaultAsync<Account>(
+                sql: "GetAccountById",
                 param: new { Id = id },
-                transaction: _dapperDataContext.Transaction
-            );
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
+
+            return account;
         }
 
         public async Task<Account?> GetByAccountNumAsync(string accountNum)
         {
-            var sql = "SELECT * FROM Accounts WHERE AccountNum = @AccountNum AND IsDeleted = 0";
-            return await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<Account>(
-                sql: sql,
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var account = await conn.QueryFirstOrDefaultAsync<Account>(
+                sql: "GetAccountByAccountNum",
                 param: new { AccountNum = accountNum },
-                transaction: _dapperDataContext.Transaction
-            );
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
+
+            return account;
         }
 
         public async Task<List<Account>> GetAllAsync(int companyId)
         {
-            var sql = "SELECT * FROM Accounts WHERE CompanyId = @CompanyId AND IsDeleted = 0 ORDER BY Name";
-            var accounts = await _dapperDataContext.Connection!.QueryAsync<Account>(
-                sql: sql,
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var accounts = await conn.QueryAsync<Account>(
+                sql: "GetAllAccounts",
                 param: new { CompanyId = companyId },
-                transaction: _dapperDataContext.Transaction
-            );
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
+
             return accounts.ToList();
         }
 
         public async Task<List<Account>> SearchAsync(int companyId, string? searchTerm, short? isActive)
         {
-            var sql = @"SELECT * FROM Accounts
-                        WHERE CompanyId = @CompanyId
-                        AND IsDeleted = 0
-                        AND (@SearchTerm IS NULL OR Name LIKE '%' + @SearchTerm + '%' OR AccountNum LIKE '%' + @SearchTerm + '%')
-                        AND (@IsActive IS NULL OR IsActive = @IsActive)
-                        ORDER BY Name";
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
 
-            var accounts = await _dapperDataContext.Connection!.QueryAsync<Account>(
-                sql: sql,
+            var accounts = await conn.QueryAsync<Account>(
+                sql: "SearchAccounts",
                 param: new { CompanyId = companyId, SearchTerm = searchTerm, IsActive = isActive },
-                transaction: _dapperDataContext.Transaction
-            );
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
+
             return accounts.ToList();
-        }
-
-        public async Task<bool> ExistsAsync(int id)
-        {
-            var sql = "SELECT COUNT(1) FROM Accounts WHERE Id = @Id AND IsDeleted = 0";
-            var count = await _dapperDataContext.Connection!.ExecuteScalarAsync<int>(
-                sql: sql,
-                param: new { Id = id },
-                transaction: _dapperDataContext.Transaction
-            );
-            return count > 0;
-        }
-
-        public async Task<bool> AccountNumExistsAsync(string accountNum, int companyId, int? excludeId)
-        {
-            var sql = @"SELECT COUNT(1) FROM Accounts
-                        WHERE AccountNum = @AccountNum
-                        AND CompanyId = @CompanyId
-                        AND IsDeleted = 0
-                        AND (@ExcludeId IS NULL OR Id != @ExcludeId)";
-
-            var count = await _dapperDataContext.Connection!.ExecuteScalarAsync<int>(
-                sql: sql,
-                param: new { AccountNum = accountNum, CompanyId = companyId, ExcludeId = excludeId },
-                transaction: _dapperDataContext.Transaction
-            );
-            return count > 0;
-        }
-
-        public async Task<int> UpsertAsync(Account account)
-        {
-            if (account.Id == 0)
-            {
-                // Insert
-                var sql = @"INSERT INTO Accounts (Name, CompanyId, AccountNum, AccountType, BillingAddressId, BillingContactId,
-                            BillingCenterId, LocaleId, SendInvoice, EmailInvoice, SendStatement, EmailStatement, SendRenewal,
-                            EmailRenewal, MarketingEmail, NotificationsMail, Instructions, PrimaryNote, SecondaryNote, IsActive,
-                            IsDeleted, MasterAccountId, MasterAccountSubId, RegistrationNum, DiscountTypeId, AccountManagerId,
-                            UtcTimestamp, CreatedBy, UtcLastChanged, LastChangedBy)
-                            VALUES (@Name, @CompanyId, @AccountNum, @AccountType, @BillingAddressId, @BillingContactId,
-                            @BillingCenterId, @LocaleId, @SendInvoice, @EmailInvoice, @SendStatement, @EmailStatement, @SendRenewal,
-                            @EmailRenewal, @MarketingEmail, @NotificationsMail, @Instructions, @PrimaryNote, @SecondaryNote, @IsActive,
-                            @IsDeleted, @MasterAccountId, @MasterAccountSubId, @RegistrationNum, @DiscountTypeId, @AccountManagerId,
-                            GETUTCDATE(), @CreatedBy, GETUTCDATE(), @LastChangedBy);
-                            SELECT CAST(SCOPE_IDENTITY() AS INT);";
-
-                var id = await _dapperDataContext.Connection!.ExecuteScalarAsync<int>(
-                    sql: sql,
-                    param: account,
-                    transaction: _dapperDataContext.Transaction
-                );
-                return id;
-            }
-            else
-            {
-                // Update
-                var sql = @"UPDATE Accounts SET
-                            Name = @Name,
-                            CompanyId = @CompanyId,
-                            AccountNum = @AccountNum,
-                            AccountType = @AccountType,
-                            BillingAddressId = @BillingAddressId,
-                            BillingContactId = @BillingContactId,
-                            BillingCenterId = @BillingCenterId,
-                            LocaleId = @LocaleId,
-                            SendInvoice = @SendInvoice,
-                            EmailInvoice = @EmailInvoice,
-                            SendStatement = @SendStatement,
-                            EmailStatement = @EmailStatement,
-                            SendRenewal = @SendRenewal,
-                            EmailRenewal = @EmailRenewal,
-                            MarketingEmail = @MarketingEmail,
-                            NotificationsMail = @NotificationsMail,
-                            Instructions = @Instructions,
-                            PrimaryNote = @PrimaryNote,
-                            SecondaryNote = @SecondaryNote,
-                            IsActive = @IsActive,
-                            MasterAccountId = @MasterAccountId,
-                            MasterAccountSubId = @MasterAccountSubId,
-                            RegistrationNum = @RegistrationNum,
-                            DiscountTypeId = @DiscountTypeId,
-                            AccountManagerId = @AccountManagerId,
-                            UtcLastChanged = GETUTCDATE(),
-                            LastChangedBy = @LastChangedBy
-                            WHERE Id = @Id AND IsDeleted = 0";
-
-                await _dapperDataContext.Connection!.ExecuteAsync(
-                    sql: sql,
-                    param: account,
-                    transaction: _dapperDataContext.Transaction
-                );
-                return account.Id;
-            }
         }
 
         public async Task DeleteAsync(int id)
         {
-            var sql = "UPDATE Accounts SET IsDeleted = 1, UtcLastChanged = GETUTCDATE() WHERE Id = @Id";
-            await _dapperDataContext.Connection!.ExecuteAsync(
-                sql: sql,
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            await conn.ExecuteAsync(
+                sql: "DeleteAccount",
                 param: new { Id = id },
-                transaction: _dapperDataContext.Transaction
-            );
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
+        }
+
+        public async Task<bool> ExistsAsync(int id)
+        {
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var exists = await conn.ExecuteScalarAsync<bool>(
+                sql: "CheckAccountExists",
+                param: new { Id = id },
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
+
+            return exists;
+        }
+
+        public async Task<bool> AccountNumExistsAsync(string accountNum, int companyId, int? excludeId)
+        {
+            var conn = _dapperDataContext.Connection ?? throw new InvalidOperationException("Database connection is not available.");
+
+            var exists = await conn.ExecuteScalarAsync<bool>(
+                sql: "CheckAccountNumExists",
+                param: new { AccountNum = accountNum, CompanyId = companyId, ExcludeId = excludeId },
+                transaction: _dapperDataContext.Transaction,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: conn.ConnectionTimeout
+            ).ConfigureAwait(false);
+
+            return exists;
         }
     }
 }

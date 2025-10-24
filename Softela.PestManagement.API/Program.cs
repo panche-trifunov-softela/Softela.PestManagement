@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Softela.PestManagement.Domain.Entities;
+using Softela.PestManagement.Infrastructure.Database.Migrator;
 using Softela.PestManagement.Infrastructure.Identity;
 using System.Text;
 using static Softela.PestManagement.Application.BuilderExtensions;
@@ -51,6 +52,13 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+
+// Run database migrations
+using (var scope = app.Services.CreateScope())
+{
+    var dbMigrator = scope.ServiceProvider.GetRequiredService<IDbMigrator>();
+    dbMigrator.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

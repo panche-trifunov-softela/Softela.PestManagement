@@ -1,11 +1,6 @@
 ﻿using MediatR;
+using Softela.PestManagement.Application.Commands.Account.Shared;
 using Softela.PestManagement.Application.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AccountEntity = Softela.PestManagement.Domain.Entities.Account;
 
 namespace Softela.PestManagement.Application.Commands.Account.UpdateAccount
 {
@@ -15,23 +10,27 @@ namespace Softela.PestManagement.Application.Commands.Account.UpdateAccount
 
         public UpdateAccountHandler(IAccountRepository accountRepository)
         {
-            _accountRepository = accountRepository;
+            _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
         }
 
         public async Task<bool> Handle(UpdateAccountRequest request, CancellationToken cancellationToken)
         {
-            var account = new AccountEntity
-            {
-                Id = request.Id,
-                UtcLastChanged = DateTime.UtcNow,
-                LastChangedBy = Guid.NewGuid().ToString(),
-                IsActive = (short)(request.IsActive ? 1 : 0),
-                IsDeleted = request.IsDeleted,
-                Name = request.Name,
-            };
+            if (request is null) throw new ArgumentNullException(nameof(request));
 
-            await _accountRepository.UpsertAsync(account);
-            return true;
+            var exists = await _accountRepository.ExistsAsync(request.Id);
+            if (!exists)
+            {
+                return false;
+            }
+
+            // TODO: Get audit user from current user context
+            var auditUser = "SYSTEM";
+
+            var account = request.ToEntity(auditUser);
+
+            var id = await _accountRepository.UpsertAsync(account);
+
+            return id > 0;
         }
     }
 }

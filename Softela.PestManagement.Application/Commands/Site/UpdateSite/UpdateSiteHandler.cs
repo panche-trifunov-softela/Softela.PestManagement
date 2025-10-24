@@ -1,12 +1,6 @@
 ﻿using MediatR;
-using Softela.PestManagement.Application.Commands.Account.UpdateAccount;
+using Softela.PestManagement.Application.Commands.Site.Shared;
 using Softela.PestManagement.Application.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SiteEntity = Softela.PestManagement.Domain.Entities.Site;
 
 namespace Softela.PestManagement.Application.Commands.Site.UpdateSite
 {
@@ -16,23 +10,28 @@ namespace Softela.PestManagement.Application.Commands.Site.UpdateSite
 
         public UpdateSiteHandler(ISiteRepository siteRepository)
         {
-            _siteRepository = siteRepository;
+            _siteRepository = siteRepository ?? throw new ArgumentNullException(nameof(siteRepository));
         }
 
         public async Task<bool> Handle(UpdateSiteRequest request, CancellationToken cancellationToken)
         {
-            var site = new SiteEntity
-            {
-                Id = request.Id,
-                UtcLastChanged = DateTime.UtcNow,
-                LastChangedBy = Guid.NewGuid().ToString(),
-                IsDeleted = request.IsDeleted,
-                SiteReferenceNumber = request.ReferenceNumber,
-                AccountId = request.AccountId
-            };
+            if (request is null) throw new ArgumentNullException(nameof(request));
 
-            await _siteRepository.UpsertAsync(site);
-            return true;
+            // Check if site exists
+            var exists = await _siteRepository.ExistsAsync(request.Id);
+            if (!exists)
+            {
+                return false;
+            }
+
+            // TODO: Get audit user from current user context
+            var auditUser = "SYSTEM";
+
+            var site = request.ToEntity(auditUser);
+
+            var id = await _siteRepository.UpsertAsync(site);
+
+            return id > 0;
         }
     }
 }

@@ -10,10 +10,8 @@ namespace Softela.PestManagement.Application.Queries.Account.GetAccounts
 {
     public class GetAccountsRequest : IRequest<GetAccountsResponse>
     {
-        public string Search { get; set; }
-
-        public bool IncludeActive { get; set; }
-
-        public bool IncludeInactive { get; set; }
+        public int CompanyId { get; set; }
+        public string? SearchTerm { get; set; }
+        public short? IsActive { get; set; }
     }
 }
