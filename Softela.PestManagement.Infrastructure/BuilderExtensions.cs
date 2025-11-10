@@ -31,6 +31,7 @@ namespace Softela.PestManagement.Infrastructure
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ISiteRepository, SiteRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddScoped<IUserStore<User>, UserStore>();
             services.AddScoped<IRoleStore<Role>, RoleStore>();

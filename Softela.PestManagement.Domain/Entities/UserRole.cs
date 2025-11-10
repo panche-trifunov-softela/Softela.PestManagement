@@ -1,6 +1,6 @@
 namespace Softela.PestManagement.Domain.Entities
 {
-    public class UserRole
+    public class UserRole : BaseEntity
     {
         public int UserId { get; set; }
         public int RoleId { get; set; }

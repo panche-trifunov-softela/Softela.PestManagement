@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Softela.PestManagement.Domain.Entities
 {
-    public class User
+    public class User : BaseEntity
     {
-        public int Id { get; set; }
+        public Guid UserId { get; set; }
         public string UserName { get; set; }
         public string NormalizedUserName { get; set; }
         public string Email { get; set; }

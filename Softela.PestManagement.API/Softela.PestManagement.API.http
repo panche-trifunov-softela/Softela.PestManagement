@@ -1,6 +1,26 @@
 @Softela.PestManagement.API_HostAddress = http://localhost:5250
 
-GET {{Softela.PestManagement.API_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{Softela.PestManagement.API_HostAddress}}/api/Auth/create-user
+Content-Type: application/json
+
+{
+  "UserName": "trifunov",
+  "Email": "trifunov@example.com",
+  "Password": "123456"
+}
 
 ###
+
+POST {{Softela.PestManagement.API_HostAddress}}/api/Auth/token
+Content-Type: application/json
+
+{
+  "UserName": "trifunov",
+  "Password": "123456"
+}
+
+###
+
+GET {{Softela.PestManagement.API_HostAddress}}/weatherforecast/
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidW5pcXVlX25hbWUiOiJ0cmlmdW5vdiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOSVNUUkFUT1IiLCJleHAiOjE3NjI3MzU3MjksImlzcyI6IlNvZnRlbGFQZXN0TWFuYWdlbWVudCIsImF1ZCI6IlNvZnRlbGFQZXN0In0.yK626qLrBBJ_SRVrf-ix9-_K-OUUhKkmnE3Nx3RnZyA

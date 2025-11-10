@@ -1,13 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Softela.PestManagement.Application.Queries.Account.GetAccounts;
 using Softela.PestManagement.Application.Repositories;
 using Softela.PestManagement.Application.Services.AuthToken;
 using Softela.PestManagement.Domain.Entities;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Softela.PestManagement.Application.Queries.Auth.GetToken
@@ -17,12 +14,18 @@ namespace Softela.PestManagement.Application.Queries.Auth.GetToken
         private readonly IAuthToken _authToken;
         private readonly IUserStore<User> _userStore;
         private readonly IRoleRepository _roleRepository;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public GetTokenHandler(IAuthToken authToken, IUserStore<User> userStore, IRoleRepository roleRepository)
+        public GetTokenHandler(
+            IAuthToken authToken,
+            IUserStore<User> userStore,
+            IRoleRepository roleRepository,
+            IPasswordHasher<User> passwordHasher)
         {
             _authToken = authToken;
             _userStore = userStore;
             _roleRepository = roleRepository;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<GetTokenResponse> Handle(GetTokenRequest request, CancellationToken cancellationToken)
@@ -35,12 +38,12 @@ namespace Softela.PestManagement.Application.Queries.Auth.GetToken
             if (user == null || user.IsDeleted || !user.IsActive)
                 return new GetTokenResponse { Success = false };
 
-            var passwordHasher = new PasswordHasher<User>();
-            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+            // Verify password using IPasswordHasher
+            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
             if (result == PasswordVerificationResult.Failed)
                 return new GetTokenResponse { Success = false };
 
-            // Get roles (assuming you have a way to resolve role names from UserRole)
+            // Get roles for the user
             var roles = await _roleRepository.GetRolesByUserIdAsync(user.Id);
 
             // Generate JWT
