@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Softela.PestManagement.Application\Softela.PestManagement.Application.csproj" />
     <ProjectReference Include="..\Softela.PestManagement.Infrastructure\Softela.PestManagement.Infrastructure.csproj" />
+    <ProjectReference Include="..\Softela.PestManagement.ServiceDefaults\Softela.PestManagement.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>
