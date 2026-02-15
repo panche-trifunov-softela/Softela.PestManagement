@@ -1,0 +1,46 @@
+{
+  "realm": "pestmanagement",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "admin",
+        "description": "Administrator role"
+      },
+      {
+        "name": "user",
+        "description": "Standard user role"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "pestmanagement-api",
+      "enabled": true,
+      "bearerOnly": true,
+      "publicClient": false,
+      "protocol": "openid-connect"
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "admin@pestmanagement.local",
+      "firstName": "Dev",
+      "lastName": "Admin",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin",
+        "user"
+      ]
+    }
+  ]
+}

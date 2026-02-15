@@ -1,6 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Softela.PestManagement.Application.Options;
 using Softela.PestManagement.Application.Repositories;
 using Softela.PestManagement.Infrastructure.Database.Connections;
 using Softela.PestManagement.Infrastructure.Database.Dapper;
@@ -16,11 +15,9 @@ namespace Softela.PestManagement.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            var dbOptions = configuration.GetSection(DatabaseOptions.SectionName).Get<DatabaseOptions>();
+            var connectionString = new DatabaseConnectionStringProvider(configuration).GetConnectionString();
 
-            var connectionString = new DatabaseConnectionStringProvider(dbOptions, configuration).GetConnectionString();
-
-            services.AddSingleton(dbOptions)
+            services
                 .AddScoped<IDapperDataContext, DapperDataContext>()
                 .AddScoped<IDatabaseConnection, DatabaseConnection>()
                 .AddScoped<IDbMigrator, DbMigrator>();
