@@ -23,6 +23,9 @@ builder.AddNpmApp("react-app", @"C:\Users\trajk\source\repos\Bugworx\react-app",
     .WithHttpEndpoint(port: 5173, isProxied: false)
     .WithExternalHttpEndpoints()
     .WithReference(api)
-    .WithReference(keycloak);
+    .WithReference(keycloak)
+    .WithEnvironment("VITE_KEYCLOAK_URL", keycloak.GetEndpoint("http"))
+    .WithEnvironment("VITE_KEYCLOAK_REALM", "pestmanagement")
+    .WithEnvironment("VITE_KEYCLOAK_CLIENT_ID", "pestmanagement-webapp");
 
 builder.Build().Run();
