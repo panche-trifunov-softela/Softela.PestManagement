@@ -17,9 +17,29 @@
     {
       "clientId": "pestmanagement-api",
       "enabled": true,
-      "bearerOnly": true,
+      "bearerOnly": false,
       "publicClient": false,
-      "protocol": "openid-connect"
+      "secret": "pestmanagement-api-secret",
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["*"],
+      "webOrigins": ["*"],
+      "protocolMappers": [
+        {
+          "name": "audience-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "pestmanagement-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
     }
   ],
   "users": [
