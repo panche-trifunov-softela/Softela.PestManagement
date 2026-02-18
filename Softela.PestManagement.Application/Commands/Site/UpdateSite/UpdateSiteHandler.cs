@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Softela.PestManagement.Application.Commands.Account.UpdateAccount;
 using Softela.PestManagement.Application.Repositories;
 using System;
 using System.Collections.Generic;
