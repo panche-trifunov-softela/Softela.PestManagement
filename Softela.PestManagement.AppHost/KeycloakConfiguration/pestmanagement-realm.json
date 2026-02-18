@@ -1,6 +1,7 @@
 {
   "realm": "pestmanagement",
   "enabled": true,
+  "loginTheme": "bugworx",
   "roles": {
     "realm": [
       {

@@ -5,7 +5,8 @@ var sql = builder.AddSqlServer("sql");
 var db = sql.AddDatabase("pestmanagement");
 
 var keycloak = builder.AddKeycloak("keycloak", 8080)
-    .WithRealmImport("./KeycloakConfiguration");
+    .WithRealmImport("./KeycloakConfiguration")
+    .WithBindMount("./keycloak/themes/bugworx", "/opt/keycloak/themes/bugworx");
 
 var api = builder.AddProject<Projects.Softela_PestManagement_API>("api")
     .WithEndpoint("http", e =>
