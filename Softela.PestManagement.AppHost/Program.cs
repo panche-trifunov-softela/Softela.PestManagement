@@ -19,7 +19,7 @@ var api = builder.AddProject<Projects.Softela_PestManagement_API>("api")
     .WaitFor(db)
     .WaitFor(keycloak);
 
-builder.AddJavaScriptApp("react-app", @"C:\Users\trajk\source\repos\Bugworx\react-app", "dev:aspire")
+builder.AddJavaScriptApp("react-app", @"..\..\Bugworx\react-app", "dev:aspire")
     .WithHttpEndpoint(port: 5173, isProxied: false)
     .WithExternalHttpEndpoints()
     .WithReference(api)
