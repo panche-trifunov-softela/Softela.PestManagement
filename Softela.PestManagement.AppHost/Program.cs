@@ -25,6 +25,7 @@ builder.AddJavaScriptApp("react-app", @"..\..\Bugworx\react-app", "dev:aspire")
     .WithExternalHttpEndpoints()
     .WithReference(api)
     .WithReference(keycloak)
+    .WithEnvironment("VITE_API_URL", api.GetEndpoint("http"))
     .WithEnvironment("VITE_KEYCLOAK_URL", keycloak.GetEndpoint("http"))
     .WithEnvironment("VITE_KEYCLOAK_REALM", "pestmanagement")
     .WithEnvironment("VITE_KEYCLOAK_CLIENT_ID", "pestmanagement-webapp");

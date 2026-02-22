@@ -1,0 +1,24 @@
+CREATE TABLE Tenants (
+    Id INT NOT NULL PRIMARY KEY IDENTITY,
+    Name NVARCHAR(255) NOT NULL,
+    Slug NVARCHAR(100) NOT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedAt DATETIME2 NOT NULL,
+    ModifiedAt DATETIME2 NOT NULL,
+    CreatedBy UNIQUEIDENTIFIER NOT NULL,
+    ModifiedBy UNIQUEIDENTIFIER NOT NULL,
+    CONSTRAINT UQ_Tenants_Slug UNIQUE (Slug)
+);
+GO
+
+CREATE TABLE TenantFeatures (
+    Id INT NOT NULL PRIMARY KEY IDENTITY,
+    TenantId INT NOT NULL,
+    FeatureKey NVARCHAR(100) NOT NULL,
+    IsEnabled BIT NOT NULL DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL,
+    ModifiedAt DATETIME2 NOT NULL,
+    CONSTRAINT FK_TenantFeatures_Tenants FOREIGN KEY (TenantId) REFERENCES Tenants(Id),
+    CONSTRAINT UQ_TenantFeatures_TenantId_FeatureKey UNIQUE (TenantId, FeatureKey)
+);
+GO
