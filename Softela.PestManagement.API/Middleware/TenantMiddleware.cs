@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Softela.PestManagement.Application.Core.Tenant;
 
 namespace Softela.PestManagement.API.Middleware;
 
@@ -11,7 +12,7 @@ public class TenantMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context, TenantContext tenantContext)
+    public async Task InvokeAsync(HttpContext context, ITenantContext tenantContext)
     {
         if (context.User.Identity?.IsAuthenticated == true)
         {
