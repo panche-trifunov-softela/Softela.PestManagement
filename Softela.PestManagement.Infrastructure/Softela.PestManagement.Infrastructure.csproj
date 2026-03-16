@@ -7,11 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Database\Scripts\V1_0_0_01__initial_create_tables.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Database\Scripts\V1_0_0_01__initial_create_tables.sql">
+    <Content Include="Database\Scripts\**\*.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

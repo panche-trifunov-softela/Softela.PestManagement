@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Softela.PestManagement.Application.Core.FeatureFlags;
 using Softela.PestManagement.Application.Repositories;
+using Softela.PestManagement.Infrastructure.Core.FeatureFlags;
 using Softela.PestManagement.Infrastructure.Database.Connections;
 using Softela.PestManagement.Infrastructure.Database.Dapper;
 using Softela.PestManagement.Infrastructure.Database.Migrator;
@@ -22,7 +24,12 @@ namespace Softela.PestManagement.Infrastructure
             services.AddHealthChecks()
                 .AddSqlServer(connectionString, name: "sqlserver");
 
-            services.AddScoped<ISiteRepository, SiteRepository>();
+            services.AddScoped<ITenantRepository, TenantRepository>();
+            services.AddScoped<ITenantFeatureRepository, TenantFeatureRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ICustomerContactRepository, CustomerContactRepository>();
+            services.AddScoped<IServiceAddressRepository, ServiceAddressRepository>();
+            services.AddScoped<IFeatureFlagService, FeatureFlagService>();
 
             var serviceProviderFactory = new DefaultServiceProviderFactory();
             var serviceProvider = serviceProviderFactory.CreateServiceProvider(services);
