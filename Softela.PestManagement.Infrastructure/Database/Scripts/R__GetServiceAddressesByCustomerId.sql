@@ -1,14 +1,31 @@
-CREATE OR ALTER PROCEDURE [dbo].[GetServiceAddressesByCustomerId]
-    @CustomerId INT,
-    @TenantId INT
-AS
+CREATE OR REPLACE FUNCTION get_service_addresses_by_customer_id(p_customer_id INT, p_tenant_id INT)
+RETURNS TABLE (
+    Id INT,
+    TenantId INT,
+    CustomerId INT,
+    ServiceAddressName VARCHAR,
+    ServiceAddressType VARCHAR,
+    Address VARCHAR,
+    City VARCHAR,
+    State VARCHAR,
+    Zip VARCHAR,
+    ContactName VARCHAR,
+    ContactPhone VARCHAR,
+    ContactEmail VARCHAR,
+    IsActive BOOLEAN,
+    IsDeleted BOOLEAN,
+    CreatedAt TIMESTAMP,
+    ModifiedAt TIMESTAMP,
+    CreatedBy UUID,
+    ModifiedBy UUID
+) AS $$
 BEGIN
-    SET NOCOUNT ON;
-
+    RETURN QUERY
     SELECT Id, TenantId, CustomerId, ServiceAddressName, ServiceAddressType,
         Address, City, State, Zip, ContactName, ContactPhone, ContactEmail,
         IsActive, IsDeleted, CreatedAt, ModifiedAt, CreatedBy, ModifiedBy
     FROM ServiceAddresses
-    WHERE CustomerId = @CustomerId AND TenantId = @TenantId AND IsDeleted = 0
+    WHERE CustomerId = p_customer_id AND TenantId = p_tenant_id AND IsDeleted = FALSE
     ORDER BY ServiceAddressName;
-END
+END;
+$$ LANGUAGE plpgsql;

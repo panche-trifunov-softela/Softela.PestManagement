@@ -18,54 +18,55 @@ public class ServiceAddressRepository : IServiceAddressRepository
     public async Task<int> CreateAsync(ServiceAddress serviceAddress)
     {
         var parameters = new DynamicParameters();
-        parameters.Add("@Id", 0, DbType.Int32);
-        parameters.Add("@TenantId", serviceAddress.TenantId, DbType.Int32);
-        parameters.Add("@CustomerId", serviceAddress.CustomerId, DbType.Int32);
-        parameters.Add("@ServiceAddressName", serviceAddress.ServiceAddressName, DbType.String);
-        parameters.Add("@ServiceAddressType", serviceAddress.ServiceAddressType, DbType.String);
-        parameters.Add("@Address", serviceAddress.Address, DbType.String);
-        parameters.Add("@City", serviceAddress.City, DbType.String);
-        parameters.Add("@State", serviceAddress.State, DbType.String);
-        parameters.Add("@Zip", serviceAddress.Zip, DbType.String);
-        parameters.Add("@ContactName", serviceAddress.ContactName, DbType.String);
-        parameters.Add("@ContactPhone", serviceAddress.ContactPhone, DbType.String);
-        parameters.Add("@ContactEmail", serviceAddress.ContactEmail, DbType.String);
-        parameters.Add("@IsActive", serviceAddress.IsActive, DbType.Boolean);
-        parameters.Add("@CreatedAt", serviceAddress.CreatedAt, DbType.DateTime2);
-        parameters.Add("@ModifiedAt", serviceAddress.ModifiedAt, DbType.DateTime2);
-        parameters.Add("@CreatedBy", serviceAddress.CreatedBy, DbType.Guid);
-        parameters.Add("@ModifiedBy", serviceAddress.ModifiedBy, DbType.Guid);
+        parameters.Add("p_id", 0, DbType.Int32);
+        parameters.Add("p_tenant_id", serviceAddress.TenantId, DbType.Int32);
+        parameters.Add("p_customer_id", serviceAddress.CustomerId, DbType.Int32);
+        parameters.Add("p_service_address_name", serviceAddress.ServiceAddressName, DbType.String);
+        parameters.Add("p_service_address_type", serviceAddress.ServiceAddressType, DbType.String);
+        parameters.Add("p_address", serviceAddress.Address, DbType.String);
+        parameters.Add("p_city", serviceAddress.City, DbType.String);
+        parameters.Add("p_state", serviceAddress.State, DbType.String);
+        parameters.Add("p_zip", serviceAddress.Zip, DbType.String);
+        parameters.Add("p_contact_name", serviceAddress.ContactName, DbType.String);
+        parameters.Add("p_contact_phone", serviceAddress.ContactPhone, DbType.String);
+        parameters.Add("p_contact_email", serviceAddress.ContactEmail, DbType.String);
+        parameters.Add("p_is_active", serviceAddress.IsActive, DbType.Boolean);
+        parameters.Add("p_created_at", serviceAddress.CreatedAt, DbType.DateTime2);
+        parameters.Add("p_modified_at", serviceAddress.ModifiedAt, DbType.DateTime2);
+        parameters.Add("p_created_by", serviceAddress.CreatedBy, DbType.Guid);
+        parameters.Add("p_modified_by", serviceAddress.ModifiedBy, DbType.Guid);
+        parameters.Add("result_id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-        var newId = await _dapperDataContext.Connection!.QuerySingleAsync<int>(
+        await _dapperDataContext.Connection!.ExecuteAsync(
             sql: "UpsertServiceAddress",
             param: parameters,
             commandType: CommandType.StoredProcedure,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
 
-        return newId;
+        return parameters.Get<int>("result_id");
     }
 
     public async Task UpdateAsync(ServiceAddress serviceAddress)
     {
         var parameters = new DynamicParameters();
-        parameters.Add("@Id", serviceAddress.Id, DbType.Int32);
-        parameters.Add("@TenantId", serviceAddress.TenantId, DbType.Int32);
-        parameters.Add("@CustomerId", serviceAddress.CustomerId, DbType.Int32);
-        parameters.Add("@ServiceAddressName", serviceAddress.ServiceAddressName, DbType.String);
-        parameters.Add("@ServiceAddressType", serviceAddress.ServiceAddressType, DbType.String);
-        parameters.Add("@Address", serviceAddress.Address, DbType.String);
-        parameters.Add("@City", serviceAddress.City, DbType.String);
-        parameters.Add("@State", serviceAddress.State, DbType.String);
-        parameters.Add("@Zip", serviceAddress.Zip, DbType.String);
-        parameters.Add("@ContactName", serviceAddress.ContactName, DbType.String);
-        parameters.Add("@ContactPhone", serviceAddress.ContactPhone, DbType.String);
-        parameters.Add("@ContactEmail", serviceAddress.ContactEmail, DbType.String);
-        parameters.Add("@IsActive", serviceAddress.IsActive, DbType.Boolean);
-        parameters.Add("@CreatedAt", serviceAddress.CreatedAt, DbType.DateTime2);
-        parameters.Add("@ModifiedAt", serviceAddress.ModifiedAt, DbType.DateTime2);
-        parameters.Add("@CreatedBy", serviceAddress.CreatedBy, DbType.Guid);
-        parameters.Add("@ModifiedBy", serviceAddress.ModifiedBy, DbType.Guid);
+        parameters.Add("p_id", serviceAddress.Id, DbType.Int32);
+        parameters.Add("p_tenant_id", serviceAddress.TenantId, DbType.Int32);
+        parameters.Add("p_customer_id", serviceAddress.CustomerId, DbType.Int32);
+        parameters.Add("p_service_address_name", serviceAddress.ServiceAddressName, DbType.String);
+        parameters.Add("p_service_address_type", serviceAddress.ServiceAddressType, DbType.String);
+        parameters.Add("p_address", serviceAddress.Address, DbType.String);
+        parameters.Add("p_city", serviceAddress.City, DbType.String);
+        parameters.Add("p_state", serviceAddress.State, DbType.String);
+        parameters.Add("p_zip", serviceAddress.Zip, DbType.String);
+        parameters.Add("p_contact_name", serviceAddress.ContactName, DbType.String);
+        parameters.Add("p_contact_phone", serviceAddress.ContactPhone, DbType.String);
+        parameters.Add("p_contact_email", serviceAddress.ContactEmail, DbType.String);
+        parameters.Add("p_is_active", serviceAddress.IsActive, DbType.Boolean);
+        parameters.Add("p_created_at", serviceAddress.CreatedAt, DbType.DateTime2);
+        parameters.Add("p_modified_at", serviceAddress.ModifiedAt, DbType.DateTime2);
+        parameters.Add("p_created_by", serviceAddress.CreatedBy, DbType.Guid);
+        parameters.Add("p_modified_by", serviceAddress.ModifiedBy, DbType.Guid);
 
         await _dapperDataContext.Connection!.ExecuteAsync(
             sql: "UpsertServiceAddress",
@@ -82,9 +83,9 @@ public class ServiceAddressRepository : IServiceAddressRepository
         parameters.Add("@TenantId", tenantId, DbType.Int32);
 
         await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "DeleteServiceAddress",
+            sql: "SELECT delete_service_address(@Id, @TenantId)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }
@@ -96,9 +97,9 @@ public class ServiceAddressRepository : IServiceAddressRepository
         parameters.Add("@TenantId", tenantId, DbType.Int32);
 
         return await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<ServiceAddress>(
-            sql: "GetServiceAddressById",
+            sql: "SELECT * FROM get_service_address_by_id(@Id, @TenantId)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }
@@ -110,9 +111,9 @@ public class ServiceAddressRepository : IServiceAddressRepository
         parameters.Add("@TenantId", tenantId, DbType.Int32);
 
         var serviceAddresses = await _dapperDataContext.Connection!.QueryAsync<ServiceAddress>(
-            sql: "GetServiceAddressesByCustomerId",
+            sql: "SELECT * FROM get_service_addresses_by_customer_id(@CustomerId, @TenantId)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
 

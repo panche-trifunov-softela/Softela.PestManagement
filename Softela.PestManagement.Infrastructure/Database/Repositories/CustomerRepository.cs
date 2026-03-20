@@ -18,65 +18,68 @@ public class CustomerRepository : ICustomerRepository
     public async Task<int> CreateAsync(Customer customer)
     {
         var parameters = new DynamicParameters();
-        parameters.Add("@Id", 0, DbType.Int32);
-        parameters.Add("@TenantId", customer.TenantId, DbType.Int32);
-        parameters.Add("@CustomerNum", customer.CustomerNum, DbType.String);
-        parameters.Add("@Name", customer.Name, DbType.String);
-        parameters.Add("@CustomerType", (int)customer.CustomerType, DbType.Int32);
-        parameters.Add("@IsActive", customer.IsActive, DbType.Boolean);
-        parameters.Add("@SendInvoice", customer.SendInvoice, DbType.Boolean);
-        parameters.Add("@EmailInvoice", customer.EmailInvoice, DbType.Boolean);
-        parameters.Add("@Instructions", customer.Instructions, DbType.String);
-        parameters.Add("@PrimaryNote", customer.PrimaryNote, DbType.String);
-        parameters.Add("@RegistrationNum", customer.RegistrationNum, DbType.String);
-        parameters.Add("@PreferredContactMethod", customer.PreferredContactMethod, DbType.String);
-        parameters.Add("@BillingAddressStreet", customer.BillingAddressStreet, DbType.String);
-        parameters.Add("@BillingAddressCity", customer.BillingAddressCity, DbType.String);
-        parameters.Add("@BillingAddressState", customer.BillingAddressState, DbType.String);
-        parameters.Add("@BillingAddressZip", customer.BillingAddressZip, DbType.String);
-        parameters.Add("@CreatedAt", customer.CreatedAt, DbType.DateTime2);
-        parameters.Add("@ModifiedAt", customer.ModifiedAt, DbType.DateTime2);
-        parameters.Add("@CreatedBy", customer.CreatedBy, DbType.Guid);
-        parameters.Add("@ModifiedBy", customer.ModifiedBy, DbType.Guid);
+        parameters.Add("p_id", 0, DbType.Int32);
+        parameters.Add("p_tenant_id", customer.TenantId, DbType.Int32);
+        parameters.Add("p_customer_num", customer.CustomerNum, DbType.String);
+        parameters.Add("p_name", customer.Name, DbType.String);
+        parameters.Add("p_customer_type", (int)customer.CustomerType, DbType.Int32);
+        parameters.Add("p_is_active", customer.IsActive, DbType.Boolean);
+        parameters.Add("p_send_invoice", customer.SendInvoice, DbType.Boolean);
+        parameters.Add("p_email_invoice", customer.EmailInvoice, DbType.Boolean);
+        parameters.Add("p_instructions", customer.Instructions, DbType.String);
+        parameters.Add("p_primary_note", customer.PrimaryNote, DbType.String);
+        parameters.Add("p_registration_num", customer.RegistrationNum, DbType.String);
+        parameters.Add("p_preferred_contact_method", customer.PreferredContactMethod, DbType.String);
+        parameters.Add("p_billing_address_street", customer.BillingAddressStreet, DbType.String);
+        parameters.Add("p_billing_address_city", customer.BillingAddressCity, DbType.String);
+        parameters.Add("p_billing_address_state", customer.BillingAddressState, DbType.String);
+        parameters.Add("p_billing_address_zip", customer.BillingAddressZip, DbType.String);
+        parameters.Add("p_created_at", customer.CreatedAt, DbType.DateTime2);
+        parameters.Add("p_modified_at", customer.ModifiedAt, DbType.DateTime2);
+        parameters.Add("p_created_by", customer.CreatedBy, DbType.Guid);
+        parameters.Add("p_modified_by", customer.ModifiedBy, DbType.Guid);
+        // output parameter defined in the procedure
+        parameters.Add("result_id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-        var newId = await _dapperDataContext.Connection!.QuerySingleAsync<int>(
-            sql: "UpsertCustomer",
+        await _dapperDataContext.Connection!.ExecuteAsync(
+            sql: "CALL UpsertCustomer(@p_id, @p_tenant_id, @p_customer_num, @p_name, @p_customer_type, @p_is_active, @p_send_invoice, @p_email_invoice, @p_instructions, @p_primary_note, @p_registration_num, @p_preferred_contact_method, @p_billing_address_street, @p_billing_address_city, @p_billing_address_state, @p_billing_address_zip, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by, @result_id)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
 
+        var newId = parameters.Get<int>("result_id");
         return newId;
     }
 
     public async Task UpdateAsync(Customer customer)
     {
         var parameters = new DynamicParameters();
-        parameters.Add("@Id", customer.Id, DbType.Int32);
-        parameters.Add("@TenantId", customer.TenantId, DbType.Int32);
-        parameters.Add("@CustomerNum", customer.CustomerNum, DbType.String);
-        parameters.Add("@Name", customer.Name, DbType.String);
-        parameters.Add("@CustomerType", (int)customer.CustomerType, DbType.Int32);
-        parameters.Add("@IsActive", customer.IsActive, DbType.Boolean);
-        parameters.Add("@SendInvoice", customer.SendInvoice, DbType.Boolean);
-        parameters.Add("@EmailInvoice", customer.EmailInvoice, DbType.Boolean);
-        parameters.Add("@Instructions", customer.Instructions, DbType.String);
-        parameters.Add("@PrimaryNote", customer.PrimaryNote, DbType.String);
-        parameters.Add("@RegistrationNum", customer.RegistrationNum, DbType.String);
-        parameters.Add("@PreferredContactMethod", customer.PreferredContactMethod, DbType.String);
-        parameters.Add("@BillingAddressStreet", customer.BillingAddressStreet, DbType.String);
-        parameters.Add("@BillingAddressCity", customer.BillingAddressCity, DbType.String);
-        parameters.Add("@BillingAddressState", customer.BillingAddressState, DbType.String);
-        parameters.Add("@BillingAddressZip", customer.BillingAddressZip, DbType.String);
-        parameters.Add("@CreatedAt", customer.CreatedAt, DbType.DateTime2);
-        parameters.Add("@ModifiedAt", customer.ModifiedAt, DbType.DateTime2);
-        parameters.Add("@CreatedBy", customer.CreatedBy, DbType.Guid);
-        parameters.Add("@ModifiedBy", customer.ModifiedBy, DbType.Guid);
+        parameters.Add("p_id", customer.Id, DbType.Int32);
+        parameters.Add("p_tenant_id", customer.TenantId, DbType.Int32);
+        parameters.Add("p_customer_num", customer.CustomerNum, DbType.String);
+        parameters.Add("p_name", customer.Name, DbType.String);
+        parameters.Add("p_customer_type", (int)customer.CustomerType, DbType.Int32);
+        parameters.Add("p_is_active", customer.IsActive, DbType.Boolean);
+        parameters.Add("p_send_invoice", customer.SendInvoice, DbType.Boolean);
+        parameters.Add("p_email_invoice", customer.EmailInvoice, DbType.Boolean);
+        parameters.Add("p_instructions", customer.Instructions, DbType.String);
+        parameters.Add("p_primary_note", customer.PrimaryNote, DbType.String);
+        parameters.Add("p_registration_num", customer.RegistrationNum, DbType.String);
+        parameters.Add("p_preferred_contact_method", customer.PreferredContactMethod, DbType.String);
+        parameters.Add("p_billing_address_street", customer.BillingAddressStreet, DbType.String);
+        parameters.Add("p_billing_address_city", customer.BillingAddressCity, DbType.String);
+        parameters.Add("p_billing_address_state", customer.BillingAddressState, DbType.String);
+        parameters.Add("p_billing_address_zip", customer.BillingAddressZip, DbType.String);
+        parameters.Add("p_created_at", customer.CreatedAt, DbType.DateTime2);
+        parameters.Add("p_modified_at", customer.ModifiedAt, DbType.DateTime2);
+        parameters.Add("p_created_by", customer.CreatedBy, DbType.Guid);
+        parameters.Add("p_modified_by", customer.ModifiedBy, DbType.Guid);
 
         await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "UpsertCustomer",
+            sql: "CALL UpsertCustomer(@p_id, @p_tenant_id, @p_customer_num, @p_name, @p_customer_type, @p_is_active, @p_send_invoice, @p_email_invoice, @p_instructions, @p_primary_note, @p_registration_num, @p_preferred_contact_method, @p_billing_address_street, @p_billing_address_city, @p_billing_address_state, @p_billing_address_zip, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by, @result_id)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }
@@ -87,10 +90,11 @@ public class CustomerRepository : ICustomerRepository
         parameters.Add("@Id", id, DbType.Int32);
         parameters.Add("@TenantId", tenantId, DbType.Int32);
 
+        // delete_customer is a PostgreSQL function
         await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "DeleteCustomer",
+            sql: "SELECT delete_customer(@Id, @TenantId)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }
@@ -102,9 +106,9 @@ public class CustomerRepository : ICustomerRepository
         parameters.Add("@TenantId", tenantId, DbType.Int32);
 
         return await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<Customer>(
-            sql: "GetCustomerById",
+            sql: "SELECT * FROM get_customer_by_id(@Id, @TenantId)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }
@@ -115,9 +119,9 @@ public class CustomerRepository : ICustomerRepository
         parameters.Add("@TenantId", tenantId, DbType.Int32);
 
         var customers = await _dapperDataContext.Connection!.QueryAsync<Customer>(
-            sql: "GetCustomersByTenantId",
+            sql: "SELECT * FROM get_customers_by_tenant_id(@TenantId)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
 

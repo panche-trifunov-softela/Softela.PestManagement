@@ -18,16 +18,16 @@ public class TenantFeatureRepository : ITenantFeatureRepository
     public async Task UpsertAsync(TenantFeature feature)
     {
         var parameters = new DynamicParameters();
-        parameters.Add("@TenantId", feature.TenantId, DbType.Int32);
-        parameters.Add("@FeatureKey", feature.FeatureKey, DbType.String);
-        parameters.Add("@IsEnabled", feature.IsEnabled, DbType.Boolean);
-        parameters.Add("@CreatedAt", feature.CreatedAt, DbType.DateTime2);
-        parameters.Add("@ModifiedAt", feature.ModifiedAt, DbType.DateTime2);
+        parameters.Add("p_tenant_id", feature.TenantId, DbType.Int32);
+        parameters.Add("p_feature_key", feature.FeatureKey, DbType.String);
+        parameters.Add("p_is_enabled", feature.IsEnabled, DbType.Boolean);
+        parameters.Add("p_created_at", feature.CreatedAt, DbType.DateTime2);
+        parameters.Add("p_modified_at", feature.ModifiedAt, DbType.DateTime2);
 
         await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "UpsertTenantFeature",
+            sql: "CALL UpsertTenantFeature(@p_tenant_id, @p_feature_key, @p_is_enabled, @p_created_at, @p_modified_at)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }
@@ -38,9 +38,9 @@ public class TenantFeatureRepository : ITenantFeatureRepository
         parameters.Add("@TenantId", tenantId, DbType.Int32);
 
         var features = await _dapperDataContext.Connection!.QueryAsync<TenantFeature>(
-            sql: "GetTenantFeatures",
+            sql: "SELECT * FROM get_tenant_features(@TenantId)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
 

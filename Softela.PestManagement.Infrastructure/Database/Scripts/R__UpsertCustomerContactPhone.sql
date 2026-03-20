@@ -1,29 +1,27 @@
-CREATE OR ALTER PROCEDURE [dbo].[UpsertCustomerContactPhone]
-    @Id INT,
-    @TenantId INT,
-    @CustomerContactId INT,
-    @PhoneType NVARCHAR(50),
-    @PhoneNumber NVARCHAR(50),
-    @CreatedAt DATETIME2,
-    @ModifiedAt DATETIME2
-AS
+-- Converted to PostgreSQL PL/pgSQL procedure to preserve CALL behavior
+CREATE OR REPLACE PROCEDURE UpsertCustomerContactPhone(
+    IN p_id INT,
+    IN p_tenant_id INT,
+    IN p_customer_contact_id INT,
+    IN p_phone_type VARCHAR,
+    IN p_phone_number VARCHAR,
+    IN p_created_at TIMESTAMP,
+    IN p_modified_at TIMESTAMP,
+    OUT result_id INT
+) LANGUAGE plpgsql AS $$
 BEGIN
-    SET NOCOUNT ON;
-
-    IF @Id = 0
-    BEGIN
+    IF p_id = 0 OR p_id IS NULL THEN
         INSERT INTO CustomerContactPhones (TenantId, CustomerContactId, PhoneType, PhoneNumber, IsDeleted, CreatedAt, ModifiedAt)
-        OUTPUT INSERTED.Id
-        VALUES (@TenantId, @CustomerContactId, @PhoneType, @PhoneNumber, 0, @CreatedAt, @ModifiedAt);
-    END
+        VALUES (p_tenant_id, p_customer_contact_id, p_phone_type, p_phone_number, FALSE, p_created_at, p_modified_at)
+        RETURNING Id INTO result_id;
     ELSE
-    BEGIN
         UPDATE CustomerContactPhones
-        SET PhoneType = @PhoneType,
-            PhoneNumber = @PhoneNumber,
-            ModifiedAt = @ModifiedAt
-        WHERE Id = @Id AND TenantId = @TenantId;
+        SET PhoneType = p_phone_type,
+            PhoneNumber = p_phone_number,
+            ModifiedAt = p_modified_at
+        WHERE Id = p_id AND TenantId = p_tenant_id;
 
-        SELECT @Id;
-    END
-END
+        result_id := p_id;
+    END IF;
+END;
+$$;
