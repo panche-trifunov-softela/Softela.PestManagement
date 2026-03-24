@@ -16,8 +16,8 @@ CREATE OR REPLACE PROCEDURE UpsertCustomer(
     IN p_billing_address_city VARCHAR,
     IN p_billing_address_state VARCHAR,
     IN p_billing_address_zip VARCHAR,
-    IN p_created_at TIMESTAMP,
-    IN p_modified_at TIMESTAMP,
+    IN p_created_at TIMESTAMPTZ,
+    IN p_modified_at TIMESTAMPTZ,
     IN p_created_by UUID,
     IN p_modified_by UUID,
     OUT result_id INT

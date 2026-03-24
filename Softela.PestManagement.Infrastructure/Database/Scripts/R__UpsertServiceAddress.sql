@@ -13,8 +13,8 @@ CREATE OR REPLACE PROCEDURE UpsertServiceAddress(
     IN p_contact_phone VARCHAR,
     IN p_contact_email VARCHAR,
     IN p_is_active BOOLEAN,
-    IN p_created_at TIMESTAMP,
-    IN p_modified_at TIMESTAMP,
+    IN p_created_at TIMESTAMPTZ,
+    IN p_modified_at TIMESTAMPTZ,
     IN p_created_by UUID,
     IN p_modified_by UUID,
     OUT result_id INT

@@ -9,8 +9,8 @@ CREATE OR REPLACE PROCEDURE UpsertCustomerContact(
     IN p_last_name VARCHAR,
     IN p_email VARCHAR,
     IN p_alternate_emails TEXT,
-    IN p_created_at TIMESTAMP,
-    IN p_modified_at TIMESTAMP,
+    IN p_created_at TIMESTAMPTZ,
+    IN p_modified_at TIMESTAMPTZ,
     IN p_created_by UUID,
     IN p_modified_by UUID,
     OUT result_id INT

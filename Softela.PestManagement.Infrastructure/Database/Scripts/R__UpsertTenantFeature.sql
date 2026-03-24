@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE UpsertTenantFeature(
     IN p_tenant_id INT,
     IN p_feature_key VARCHAR,
     IN p_is_enabled BOOLEAN,
-    IN p_created_at TIMESTAMP,
-    IN p_modified_at TIMESTAMP
+    IN p_created_at TIMESTAMPTZ,
+    IN p_modified_at TIMESTAMPTZ
 ) LANGUAGE plpgsql AS $$
 BEGIN
     IF EXISTS (SELECT 1 FROM TenantFeatures WHERE TenantId = p_tenant_id AND FeatureKey = p_feature_key) THEN

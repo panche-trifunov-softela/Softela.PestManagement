@@ -38,18 +38,13 @@ public class CustomerRepository : ICustomerRepository
         parameters.Add("p_modified_at", customer.ModifiedAt, DbType.DateTime2);
         parameters.Add("p_created_by", customer.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", customer.ModifiedBy, DbType.Guid);
-        // output parameter defined in the procedure
-        parameters.Add("result_id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-        await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "CALL UpsertCustomer(@p_id, @p_tenant_id, @p_customer_num, @p_name, @p_customer_type, @p_is_active, @p_send_invoice, @p_email_invoice, @p_instructions, @p_primary_note, @p_registration_num, @p_preferred_contact_method, @p_billing_address_street, @p_billing_address_city, @p_billing_address_state, @p_billing_address_zip, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by, @result_id)",
+        return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
+            sql: "CALL UpsertCustomer(@p_id, @p_tenant_id, @p_customer_num, @p_name, @p_customer_type, @p_is_active, @p_send_invoice, @p_email_invoice, @p_instructions, @p_primary_note, @p_registration_num, @p_preferred_contact_method, @p_billing_address_street, @p_billing_address_city, @p_billing_address_state, @p_billing_address_zip, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
-
-        var newId = parameters.Get<int>("result_id");
-        return newId;
     }
 
     public async Task UpdateAsync(Customer customer)
@@ -76,8 +71,8 @@ public class CustomerRepository : ICustomerRepository
         parameters.Add("p_created_by", customer.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", customer.ModifiedBy, DbType.Guid);
 
-        await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "CALL UpsertCustomer(@p_id, @p_tenant_id, @p_customer_num, @p_name, @p_customer_type, @p_is_active, @p_send_invoice, @p_email_invoice, @p_instructions, @p_primary_note, @p_registration_num, @p_preferred_contact_method, @p_billing_address_street, @p_billing_address_city, @p_billing_address_state, @p_billing_address_zip, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by, @result_id)",
+        _ = await _dapperDataContext.Connection!.QuerySingleAsync<int>(
+            sql: "CALL UpsertCustomer(@p_id, @p_tenant_id, @p_customer_num, @p_name, @p_customer_type, @p_is_active, @p_send_invoice, @p_email_invoice, @p_instructions, @p_primary_note, @p_registration_num, @p_preferred_contact_method, @p_billing_address_street, @p_billing_address_city, @p_billing_address_state, @p_billing_address_zip, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction

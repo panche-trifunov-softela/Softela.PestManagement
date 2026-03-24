@@ -4,8 +4,8 @@ RETURNS TABLE (
     TenantId INT,
     FeatureKey VARCHAR,
     IsEnabled BOOLEAN,
-    CreatedAt TIMESTAMP,
-    ModifiedAt TIMESTAMP
+    CreatedAt TIMESTAMPTZ,
+    ModifiedAt TIMESTAMPTZ
 ) AS $$
 BEGIN
     RETURN QUERY

@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE UpsertCustomerContactPhone(
     IN p_customer_contact_id INT,
     IN p_phone_type VARCHAR,
     IN p_phone_number VARCHAR,
-    IN p_created_at TIMESTAMP,
-    IN p_modified_at TIMESTAMP,
+    IN p_created_at TIMESTAMPTZ,
+    IN p_modified_at TIMESTAMPTZ,
     OUT result_id INT
 ) LANGUAGE plpgsql AS $$
 BEGIN

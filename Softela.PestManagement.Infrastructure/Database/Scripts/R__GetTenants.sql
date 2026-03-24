@@ -4,8 +4,8 @@ RETURNS TABLE (
     Name VARCHAR,
     Slug VARCHAR,
     IsActive BOOLEAN,
-    CreatedAt TIMESTAMP,
-    ModifiedAt TIMESTAMP,
+    CreatedAt TIMESTAMPTZ,
+    ModifiedAt TIMESTAMPTZ,
     CreatedBy UUID,
     ModifiedBy UUID
 ) AS $$

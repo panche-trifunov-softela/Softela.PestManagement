@@ -31,16 +31,13 @@ public class CustomerContactRepository : ICustomerContactRepository
         parameters.Add("p_modified_at", contact.ModifiedAt, DbType.DateTime2);
         parameters.Add("p_created_by", contact.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", contact.ModifiedBy, DbType.Guid);
-        parameters.Add("result_id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-        await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "CALL UpsertCustomerContact(@p_id, @p_tenant_id, @p_customer_id, @p_contact_type, @p_first_name, @p_middle_name, @p_last_name, @p_email, @p_alternate_emails, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by, @result_id)",
+        return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
+            sql: "CALL UpsertCustomerContact(@p_id, @p_tenant_id, @p_customer_id, @p_contact_type, @p_first_name, @p_middle_name, @p_last_name, @p_email, @p_alternate_emails, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
-
-        return parameters.Get<int>("result_id");
     }
 
     public async Task<List<CustomerContact>> GetByCustomerIdAsync(int customerId, int tenantId)
@@ -82,16 +79,13 @@ public class CustomerContactRepository : ICustomerContactRepository
         parameters.Add("p_phone_number", phone.PhoneNumber, DbType.String);
         parameters.Add("p_created_at", phone.CreatedAt, DbType.DateTime2);
         parameters.Add("p_modified_at", phone.ModifiedAt, DbType.DateTime2);
-        parameters.Add("result_id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-        await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "CALL UpsertCustomerContactPhone(@p_id, @p_tenant_id, @p_customer_contact_id, @p_phone_type, @p_phone_number, @p_created_at, @p_modified_at, @result_id)",
+        return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
+            sql: "CALL UpsertCustomerContactPhone(@p_id, @p_tenant_id, @p_customer_contact_id, @p_phone_type, @p_phone_number, @p_created_at, @p_modified_at)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
-
-        return parameters.Get<int>("result_id");
     }
 
     public async Task DeletePhonesByContactIdAsync(int contactId, int tenantId)

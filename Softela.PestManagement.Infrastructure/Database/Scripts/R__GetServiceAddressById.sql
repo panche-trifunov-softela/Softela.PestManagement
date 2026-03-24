@@ -14,8 +14,8 @@ RETURNS TABLE (
     ContactEmail VARCHAR,
     IsActive BOOLEAN,
     IsDeleted BOOLEAN,
-    CreatedAt TIMESTAMP,
-    ModifiedAt TIMESTAMP,
+    CreatedAt TIMESTAMPTZ,
+    ModifiedAt TIMESTAMPTZ,
     CreatedBy UUID,
     ModifiedBy UUID
 ) AS $$

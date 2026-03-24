@@ -4,8 +4,8 @@ CREATE OR REPLACE FUNCTION upsert_tenant(
     p_name VARCHAR,
     p_slug VARCHAR,
     p_is_active BOOLEAN,
-    p_created_at TIMESTAMP,
-    p_modified_at TIMESTAMP,
+    p_created_at TIMESTAMPTZ,
+    p_modified_at TIMESTAMPTZ,
     p_created_by UUID,
     p_modified_by UUID
 ) RETURNS VOID AS $$
