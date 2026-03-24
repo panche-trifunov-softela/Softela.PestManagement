@@ -16,8 +16,8 @@ CREATE TABLE Customers (
     BillingAddressState VARCHAR(255),
     BillingAddressZip VARCHAR(50),
     IsDeleted BOOLEAN NOT NULL DEFAULT FALSE,
-    CreatedAt TIMESTAMPTZ NOT NULL,
-    ModifiedAt TIMESTAMPTZ NOT NULL,
+    CreatedAt TIMESTAMP NOT NULL,
+    ModifiedAt TIMESTAMP NOT NULL,
     CreatedBy UUID NOT NULL,
     ModifiedBy UUID NOT NULL,
     CONSTRAINT FK_Customers_Tenants FOREIGN KEY (TenantId) REFERENCES Tenants(Id)
@@ -34,8 +34,8 @@ CREATE TABLE CustomerContacts (
     Email VARCHAR(255),
     AlternateEmails TEXT,
     IsDeleted BOOLEAN NOT NULL DEFAULT FALSE,
-    CreatedAt TIMESTAMPTZ NOT NULL,
-    ModifiedAt TIMESTAMPTZ NOT NULL,
+    CreatedAt TIMESTAMP NOT NULL,
+    ModifiedAt TIMESTAMP NOT NULL,
     CreatedBy UUID NOT NULL,
     ModifiedBy UUID NOT NULL,
     CONSTRAINT FK_CustomerContacts_Tenants FOREIGN KEY (TenantId) REFERENCES Tenants(Id),
@@ -49,8 +49,8 @@ CREATE TABLE CustomerContactPhones (
     PhoneType VARCHAR(50),
     PhoneNumber VARCHAR(50),
     IsDeleted BOOLEAN NOT NULL DEFAULT FALSE,
-    CreatedAt TIMESTAMPTZ NOT NULL,
-    ModifiedAt TIMESTAMPTZ NOT NULL,
+    CreatedAt TIMESTAMP NOT NULL,
+    ModifiedAt TIMESTAMP NOT NULL,
     CONSTRAINT FK_CustomerContactPhones_Tenants FOREIGN KEY (TenantId) REFERENCES Tenants(Id),
     CONSTRAINT FK_CustomerContactPhones_CustomerContacts FOREIGN KEY (CustomerContactId) REFERENCES CustomerContacts(Id)
 );

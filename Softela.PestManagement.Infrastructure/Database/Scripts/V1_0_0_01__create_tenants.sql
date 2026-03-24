@@ -3,8 +3,8 @@ CREATE TABLE Tenants (
     Name VARCHAR(255) NOT NULL,
     Slug VARCHAR(100) NOT NULL,
     IsActive BOOLEAN NOT NULL DEFAULT TRUE,
-    CreatedAt TIMESTAMPTZ NOT NULL,
-    ModifiedAt TIMESTAMPTZ NOT NULL,
+    CreatedAt TIMESTAMP NOT NULL,
+    ModifiedAt TIMESTAMP NOT NULL,
     CreatedBy UUID NOT NULL,
     ModifiedBy UUID NOT NULL,
     CONSTRAINT UQ_Tenants_Slug UNIQUE (Slug)
@@ -15,8 +15,8 @@ CREATE TABLE TenantFeatures (
     TenantId INT NOT NULL,
     FeatureKey VARCHAR(100) NOT NULL,
     IsEnabled BOOLEAN NOT NULL DEFAULT FALSE,
-    CreatedAt TIMESTAMPTZ NOT NULL,
-    ModifiedAt TIMESTAMPTZ NOT NULL,
+    CreatedAt TIMESTAMP NOT NULL,
+    ModifiedAt TIMESTAMP NOT NULL,
     CONSTRAINT FK_TenantFeatures_Tenants FOREIGN KEY (TenantId) REFERENCES Tenants(Id),
     CONSTRAINT UQ_TenantFeatures_TenantId_FeatureKey UNIQUE (TenantId, FeatureKey)
 );
