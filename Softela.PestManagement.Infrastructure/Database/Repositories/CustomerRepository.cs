@@ -34,8 +34,8 @@ public class CustomerRepository : ICustomerRepository
         parameters.Add("p_billing_address_city", customer.BillingAddressCity, DbType.String);
         parameters.Add("p_billing_address_state", customer.BillingAddressState, DbType.String);
         parameters.Add("p_billing_address_zip", customer.BillingAddressZip, DbType.String);
-        parameters.Add("p_created_at", customer.CreatedAt, DbType.DateTime2);
-        parameters.Add("p_modified_at", customer.ModifiedAt, DbType.DateTime2);
+        parameters.Add("p_created_at", customer.CreatedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_at", customer.ModifiedAt, DbType.DateTimeOffset);
         parameters.Add("p_created_by", customer.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", customer.ModifiedBy, DbType.Guid);
 
@@ -66,8 +66,8 @@ public class CustomerRepository : ICustomerRepository
         parameters.Add("p_billing_address_city", customer.BillingAddressCity, DbType.String);
         parameters.Add("p_billing_address_state", customer.BillingAddressState, DbType.String);
         parameters.Add("p_billing_address_zip", customer.BillingAddressZip, DbType.String);
-        parameters.Add("p_created_at", customer.CreatedAt, DbType.DateTime2);
-        parameters.Add("p_modified_at", customer.ModifiedAt, DbType.DateTime2);
+        parameters.Add("p_created_at", customer.CreatedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_at", customer.ModifiedAt, DbType.DateTimeOffset);
         parameters.Add("p_created_by", customer.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", customer.ModifiedBy, DbType.Guid);
 
@@ -123,3 +123,4 @@ public class CustomerRepository : ICustomerRepository
         return customers.ToList();
     }
 }
+

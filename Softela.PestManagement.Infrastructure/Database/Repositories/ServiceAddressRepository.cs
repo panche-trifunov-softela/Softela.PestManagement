@@ -31,8 +31,8 @@ public class ServiceAddressRepository : IServiceAddressRepository
         parameters.Add("p_contact_phone", serviceAddress.ContactPhone, DbType.String);
         parameters.Add("p_contact_email", serviceAddress.ContactEmail, DbType.String);
         parameters.Add("p_is_active", serviceAddress.IsActive, DbType.Boolean);
-        parameters.Add("p_created_at", serviceAddress.CreatedAt, DbType.DateTime2);
-        parameters.Add("p_modified_at", serviceAddress.ModifiedAt, DbType.DateTime2);
+        parameters.Add("p_created_at", serviceAddress.CreatedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_at", serviceAddress.ModifiedAt, DbType.DateTimeOffset);
         parameters.Add("p_created_by", serviceAddress.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", serviceAddress.ModifiedBy, DbType.Guid);
         parameters.Add("result_id", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -63,8 +63,8 @@ public class ServiceAddressRepository : IServiceAddressRepository
         parameters.Add("p_contact_phone", serviceAddress.ContactPhone, DbType.String);
         parameters.Add("p_contact_email", serviceAddress.ContactEmail, DbType.String);
         parameters.Add("p_is_active", serviceAddress.IsActive, DbType.Boolean);
-        parameters.Add("p_created_at", serviceAddress.CreatedAt, DbType.DateTime2);
-        parameters.Add("p_modified_at", serviceAddress.ModifiedAt, DbType.DateTime2);
+        parameters.Add("p_created_at", serviceAddress.CreatedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_at", serviceAddress.ModifiedAt, DbType.DateTimeOffset);
         parameters.Add("p_created_by", serviceAddress.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", serviceAddress.ModifiedBy, DbType.Guid);
 
@@ -120,3 +120,4 @@ public class ServiceAddressRepository : IServiceAddressRepository
         return serviceAddresses.ToList();
     }
 }
+

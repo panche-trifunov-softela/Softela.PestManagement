@@ -27,8 +27,8 @@ public class CustomerContactRepository : ICustomerContactRepository
         parameters.Add("p_last_name", contact.LastName, DbType.String);
         parameters.Add("p_email", contact.Email, DbType.String);
         parameters.Add("p_alternate_emails", contact.AlternateEmails, DbType.String);
-        parameters.Add("p_created_at", contact.CreatedAt, DbType.DateTime2);
-        parameters.Add("p_modified_at", contact.ModifiedAt, DbType.DateTime2);
+        parameters.Add("p_created_at", contact.CreatedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_at", contact.ModifiedAt, DbType.DateTimeOffset);
         parameters.Add("p_created_by", contact.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", contact.ModifiedBy, DbType.Guid);
 
@@ -77,8 +77,8 @@ public class CustomerContactRepository : ICustomerContactRepository
         parameters.Add("p_customer_contact_id", phone.CustomerContactId, DbType.Int32);
         parameters.Add("p_phone_type", phone.PhoneType, DbType.String);
         parameters.Add("p_phone_number", phone.PhoneNumber, DbType.String);
-        parameters.Add("p_created_at", phone.CreatedAt, DbType.DateTime2);
-        parameters.Add("p_modified_at", phone.ModifiedAt, DbType.DateTime2);
+        parameters.Add("p_created_at", phone.CreatedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_at", phone.ModifiedAt, DbType.DateTimeOffset);
 
         return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
             sql: "CALL UpsertCustomerContactPhone(@p_id, @p_tenant_id, @p_customer_contact_id, @p_phone_type, @p_phone_number, @p_created_at, @p_modified_at)",
@@ -101,3 +101,4 @@ public class CustomerContactRepository : ICustomerContactRepository
         ).ConfigureAwait(false);
     }
 }
+

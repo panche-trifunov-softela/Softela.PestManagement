@@ -22,8 +22,8 @@ public class TenantRepository : ITenantRepository
         parameters.Add("p_name", tenant.Name, DbType.String);
         parameters.Add("p_slug", tenant.Slug, DbType.String);
         parameters.Add("p_is_active", tenant.IsActive, DbType.Boolean);
-        parameters.Add("p_created_at", tenant.CreatedAt, DbType.DateTime2);
-        parameters.Add("p_modified_at", tenant.ModifiedAt, DbType.DateTime2);
+        parameters.Add("p_created_at", tenant.CreatedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_at", tenant.ModifiedAt, DbType.DateTimeOffset);
         parameters.Add("p_created_by", tenant.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", tenant.ModifiedBy, DbType.Guid);
 
