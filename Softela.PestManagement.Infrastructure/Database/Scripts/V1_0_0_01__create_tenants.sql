@@ -3,8 +3,8 @@ CREATE TABLE Tenants (
     Name VARCHAR(255) NOT NULL,
     Slug VARCHAR(100) NOT NULL,
     IsActive BOOLEAN NOT NULL DEFAULT TRUE,
-    CreatedAt TIMESTAMP NOT NULL,
-    ModifiedAt TIMESTAMP NOT NULL,
+    CreatedAt TIMESTAMPZ NOT NULL,
+    ModifiedAt TIMESTAMPZ NOT NULL,
     CreatedBy UUID NOT NULL,
     ModifiedBy UUID NOT NULL,
     CONSTRAINT UQ_Tenants_Slug UNIQUE (Slug)

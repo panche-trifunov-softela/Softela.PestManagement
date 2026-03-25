@@ -88,13 +88,15 @@ public class CustomerContactRepository : ICustomerContactRepository
         ).ConfigureAwait(false);
     }
 
-    public async Task DeletePhonesByContactIdAsync(int contactId, int tenantId)
+    public async Task DeletePhonesByContactIdAsync(int contactId, int tenantId, DateTimeOffset modifiedAt, Guid modifiedBy)
     {
         var parameters = new DynamicParameters();
         parameters.Add("@CustomerContactId", contactId, DbType.Int32);
         parameters.Add("@TenantId", tenantId, DbType.Int32);
+        parameters.Add("@ModifiedAt", modifiedAt, DbType.DateTimeOffset);
+        parameters.Add("@ModifiedBy", modifiedBy, DbType.Guid);
         await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "SELECT delete_customer_contact_phones(@CustomerContactId, @TenantId)",
+            sql: "SELECT delete_customer_contact_phones(@CustomerContactId, @TenantId, @ModifiedAt, @ModifiedBy)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction

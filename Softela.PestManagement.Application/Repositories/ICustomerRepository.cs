@@ -6,7 +6,7 @@ public interface ICustomerRepository
 {
     Task<int> CreateAsync(Customer customer);
     Task UpdateAsync(Customer customer);
-    Task DeleteAsync(int id, int tenantId);
+    Task DeleteAsync(int id, int tenantId, DateTimeOffset modifiedAt, Guid modifiedBy);
     Task<Customer> GetByIdAsync(int id, int tenantId);
     Task<List<Customer>> GetByTenantIdAsync(int tenantId);
 }

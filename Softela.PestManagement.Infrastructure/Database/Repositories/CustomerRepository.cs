@@ -79,15 +79,17 @@ public class CustomerRepository : ICustomerRepository
         ).ConfigureAwait(false);
     }
 
-    public async Task DeleteAsync(int id, int tenantId)
+    public async Task DeleteAsync(int id, int tenantId, DateTimeOffset modifiedAt, Guid modifiedBy)
     {
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id, DbType.Int32);
         parameters.Add("@TenantId", tenantId, DbType.Int32);
+        parameters.Add("@ModifiedAt", modifiedAt, DbType.DateTimeOffset);
+        parameters.Add("@ModifiedBy", modifiedBy, DbType.Guid);
 
         // delete_customer is a PostgreSQL function
         await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "SELECT delete_customer(@Id, @TenantId)",
+            sql: "SELECT delete_customer(@Id, @TenantId, @ModifiedAt, @ModifiedBy)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
