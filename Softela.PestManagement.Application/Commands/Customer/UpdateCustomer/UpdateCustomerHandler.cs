@@ -80,7 +80,7 @@ public class UpdateCustomerHandler : IRequestHandler<UpdateCustomerRequest, bool
             var contactId = await _contactRepository.UpsertAsync(contact);
 
             // Replace phones: delete existing, then insert new
-            await _contactRepository.DeletePhonesByContactIdAsync(contactId, _tenantContext.TenantId);
+            await _contactRepository.DeletePhonesByContactIdAsync(contactId, _tenantContext.TenantId, now, userId);
 
             if (request.BillingContact.Phones != null)
             {

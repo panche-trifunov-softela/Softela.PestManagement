@@ -1,9 +1,18 @@
-CREATE OR ALTER PROCEDURE [dbo].[GetTenants]
-AS
+CREATE OR REPLACE FUNCTION get_tenants()
+RETURNS TABLE (
+    Id INT,
+    Name VARCHAR,
+    Slug VARCHAR,
+    IsActive BOOLEAN,
+    CreatedAt TIMESTAMPTZ,
+    ModifiedAt TIMESTAMPTZ,
+    CreatedBy UUID,
+    ModifiedBy UUID
+) AS $$
 BEGIN
-    SET NOCOUNT ON;
-
+    RETURN QUERY
     SELECT Id, Name, Slug, IsActive, CreatedAt, ModifiedAt, CreatedBy, ModifiedBy
     FROM Tenants
     ORDER BY Name;
-END
+END;
+$$ LANGUAGE plpgsql;

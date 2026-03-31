@@ -1,0 +1,5 @@
+ALTER TABLE CustomerContactPhones
+ADD COLUMN IF NOT EXISTS ModifiedBy UUID;
+
+ALTER TABLE CustomerContactPhones
+ADD COLUMN IF NOT EXISTS CreatedBy UUID;

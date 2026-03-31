@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Npgsql;
 using Softela.PestManagement.Infrastructure.Database.Connections;
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace Softela.PestManagement.Infrastructure.Database.Dapper
             {
                 if (_connection is null || _connection.State != ConnectionState.Open)
                 {
-                    _connection = new SqlConnection(_connectionString);
+                    _connection = new NpgsqlConnection(_connectionString);
                 }
 
                 return _connection;

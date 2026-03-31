@@ -22,6 +22,6 @@ public sealed record CustomerDto
     public string PreferredContactMethod { get; init; }
     public BillingAddressDto BillingAddress { get; init; }
     public BillingContactDto BillingContact { get; init; }
-    public DateTime CreatedAt { get; init; }
-    public DateTime ModifiedAt { get; init; }
+    public DateTimeOffset CreatedAt { get; init; }
+    public DateTimeOffset ModifiedAt { get; init; }
 }

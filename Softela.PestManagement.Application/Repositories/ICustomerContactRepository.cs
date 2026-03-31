@@ -8,5 +8,5 @@ public interface ICustomerContactRepository
     Task<List<CustomerContact>> GetByCustomerIdAsync(int customerId, int tenantId);
     Task<int> UpsertPhoneAsync(CustomerContactPhone phone);
     Task<List<CustomerContactPhone>> GetPhonesByContactIdAsync(int contactId, int tenantId);
-    Task DeletePhonesByContactIdAsync(int contactId, int tenantId);
+    Task DeletePhonesByContactIdAsync(int contactId, int tenantId, DateTimeOffset modifiedAt, Guid modifiedBy);
 }
