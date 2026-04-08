@@ -22,7 +22,7 @@ namespace Softela.PestManagement.Infrastructure
                 .AddScoped<IDbMigrator, DbMigrator>();
 
             services.AddHealthChecks()
-                .AddSqlServer(connectionString, name: "sqlserver");
+                .AddNpgSql(connectionString, name: "postgresql");
 
             services.AddScoped<ITenantRepository, TenantRepository>();
             services.AddScoped<ITenantFeatureRepository, TenantFeatureRepository>();

@@ -17,7 +17,7 @@ public class DeleteCustomerHandler : IRequestHandler<DeleteCustomerRequest, bool
 
     public async Task<bool> Handle(DeleteCustomerRequest request, CancellationToken cancellationToken)
     {
-        await _customerRepository.DeleteAsync(request.Id, _tenantContext.TenantId);
+        await _customerRepository.DeleteAsync(request.Id, _tenantContext.TenantId, DateTime.UtcNow, _tenantContext.UserId);
         return true;
     }
 }

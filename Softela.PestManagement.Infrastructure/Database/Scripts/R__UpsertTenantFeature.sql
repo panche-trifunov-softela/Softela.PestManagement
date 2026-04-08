@@ -1,23 +1,20 @@
-CREATE OR ALTER PROCEDURE [dbo].[UpsertTenantFeature]
-    @TenantId INT,
-    @FeatureKey NVARCHAR(100),
-    @IsEnabled BIT,
-    @CreatedAt DATETIME2,
-    @ModifiedAt DATETIME2
-AS
+-- Converted to PostgreSQL PL/pgSQL procedure to preserve CALL behavior
+CREATE OR REPLACE PROCEDURE UpsertTenantFeature(
+    IN p_tenant_id INT,
+    IN p_feature_key VARCHAR,
+    IN p_is_enabled BOOLEAN,
+    IN p_created_at TIMESTAMPTZ,
+    IN p_modified_at TIMESTAMPTZ
+) LANGUAGE plpgsql AS $$
 BEGIN
-    SET NOCOUNT ON;
-
-    IF EXISTS (SELECT 1 FROM TenantFeatures WHERE TenantId = @TenantId AND FeatureKey = @FeatureKey)
-    BEGIN
+    IF EXISTS (SELECT 1 FROM TenantFeatures WHERE TenantId = p_tenant_id AND FeatureKey = p_feature_key) THEN
         UPDATE TenantFeatures
-        SET IsEnabled = @IsEnabled,
-            ModifiedAt = @ModifiedAt
-        WHERE TenantId = @TenantId AND FeatureKey = @FeatureKey;
-    END
+        SET IsEnabled = p_is_enabled,
+            ModifiedAt = p_modified_at
+        WHERE TenantId = p_tenant_id AND FeatureKey = p_feature_key;
     ELSE
-    BEGIN
         INSERT INTO TenantFeatures (TenantId, FeatureKey, IsEnabled, CreatedAt, ModifiedAt)
-        VALUES (@TenantId, @FeatureKey, @IsEnabled, @CreatedAt, @ModifiedAt);
-    END
-END
+        VALUES (p_tenant_id, p_feature_key, p_is_enabled, p_created_at, p_modified_at);
+    END IF;
+END;
+$$;

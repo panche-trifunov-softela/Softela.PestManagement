@@ -1,21 +1,18 @@
-CREATE OR ALTER PROCEDURE [dbo].[DeleteCustomer]
-    @Id INT,
-    @TenantId INT
-AS
+CREATE OR REPLACE FUNCTION delete_customer(p_id INT, p_tenant_id INT, p_modified_at TIMESTAMPTZ, p_modified_by UUID)
+RETURNS VOID AS $$
 BEGIN
-    SET NOCOUNT ON;
-
     UPDATE Customers
-    SET IsDeleted = 1, ModifiedAt = GETUTCDATE()
-    WHERE Id = @Id AND TenantId = @TenantId;
+    SET IsDeleted = TRUE, ModifiedAt = p_modified_at, ModifiedBy = p_modified_by
+    WHERE Id = p_id AND TenantId = p_tenant_id;
 
     UPDATE CustomerContacts
-    SET IsDeleted = 1, ModifiedAt = GETUTCDATE()
-    WHERE CustomerId = @Id AND TenantId = @TenantId;
+    SET IsDeleted = TRUE, ModifiedAt = p_modified_at, ModifiedBy = p_modified_by
+    WHERE CustomerId = p_id AND TenantId = p_tenant_id;
 
     UPDATE CustomerContactPhones
-    SET IsDeleted = 1, ModifiedAt = GETUTCDATE()
+    SET IsDeleted = TRUE, ModifiedAt = p_modified_at, ModifiedBy = p_modified_by
     WHERE CustomerContactId IN (
-        SELECT Id FROM CustomerContacts WHERE CustomerId = @Id AND TenantId = @TenantId
+        SELECT Id FROM CustomerContacts WHERE CustomerId = p_id AND TenantId = p_tenant_id
     );
-END
+END;
+$$ LANGUAGE plpgsql;

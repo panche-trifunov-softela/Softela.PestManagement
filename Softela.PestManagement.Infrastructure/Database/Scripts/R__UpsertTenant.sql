@@ -1,29 +1,26 @@
-CREATE OR ALTER PROCEDURE [dbo].[UpsertTenant]
-    @Id INT,
-    @Name NVARCHAR(255),
-    @Slug NVARCHAR(100),
-    @IsActive BIT,
-    @CreatedAt DATETIME2,
-    @ModifiedAt DATETIME2,
-    @CreatedBy UNIQUEIDENTIFIER,
-    @ModifiedBy UNIQUEIDENTIFIER
-AS
+-- Converted to PostgreSQL PL/pgSQL function
+CREATE OR REPLACE FUNCTION upsert_tenant(
+    p_id INT,
+    p_name VARCHAR,
+    p_slug VARCHAR,
+    p_is_active BOOLEAN,
+    p_created_at TIMESTAMPTZ,
+    p_modified_at TIMESTAMPTZ,
+    p_created_by UUID,
+    p_modified_by UUID
+) RETURNS VOID AS $$
 BEGIN
-    SET NOCOUNT ON;
-
-    IF @Id = 0
-    BEGIN
+    IF p_id = 0 OR p_id IS NULL THEN
         INSERT INTO Tenants (Name, Slug, IsActive, CreatedAt, ModifiedAt, CreatedBy, ModifiedBy)
-        VALUES (@Name, @Slug, @IsActive, @CreatedAt, @ModifiedAt, @CreatedBy, @ModifiedBy);
-    END
+        VALUES (p_name, p_slug, p_is_active, p_created_at, p_modified_at, p_created_by, p_modified_by);
     ELSE
-    BEGIN
         UPDATE Tenants
-        SET Name = @Name,
-            Slug = @Slug,
-            IsActive = @IsActive,
-            ModifiedAt = @ModifiedAt,
-            ModifiedBy = @ModifiedBy
-        WHERE Id = @Id;
-    END
-END
+        SET Name = p_name,
+            Slug = p_slug,
+            IsActive = p_is_active,
+            ModifiedAt = p_modified_at,
+            ModifiedBy = p_modified_by
+        WHERE Id = p_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;

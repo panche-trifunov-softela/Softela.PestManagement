@@ -18,19 +18,19 @@ public class TenantRepository : ITenantRepository
     public async Task UpsertAsync(Tenant tenant)
     {
         var parameters = new DynamicParameters();
-        parameters.Add("@Id", tenant.Id, DbType.Int32);
-        parameters.Add("@Name", tenant.Name, DbType.String);
-        parameters.Add("@Slug", tenant.Slug, DbType.String);
-        parameters.Add("@IsActive", tenant.IsActive, DbType.Boolean);
-        parameters.Add("@CreatedAt", tenant.CreatedAt, DbType.DateTime2);
-        parameters.Add("@ModifiedAt", tenant.ModifiedAt, DbType.DateTime2);
-        parameters.Add("@CreatedBy", tenant.CreatedBy, DbType.Guid);
-        parameters.Add("@ModifiedBy", tenant.ModifiedBy, DbType.Guid);
+        parameters.Add("p_id", tenant.Id, DbType.Int32);
+        parameters.Add("p_name", tenant.Name, DbType.String);
+        parameters.Add("p_slug", tenant.Slug, DbType.String);
+        parameters.Add("p_is_active", tenant.IsActive, DbType.Boolean);
+        parameters.Add("p_created_at", tenant.CreatedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_at", tenant.ModifiedAt, DbType.DateTimeOffset);
+        parameters.Add("p_created_by", tenant.CreatedBy, DbType.Guid);
+        parameters.Add("p_modified_by", tenant.ModifiedBy, DbType.Guid);
 
         await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "UpsertTenant",
+            sql: "SELECT upsert_tenant(@p_id, @p_name, @p_slug, @p_is_active, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }
@@ -38,9 +38,9 @@ public class TenantRepository : ITenantRepository
     public async Task<List<Tenant>> GetAllAsync()
     {
         var tenants = await _dapperDataContext.Connection!.QueryAsync<Tenant>(
-            sql: "GetTenants",
+            sql: "SELECT * FROM get_tenants()",
             param: null,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
 
@@ -53,9 +53,9 @@ public class TenantRepository : ITenantRepository
         parameters.Add("@Id", id, DbType.Int32);
 
         return await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<Tenant>(
-            sql: "GetTenantById",
+            sql: "SELECT * FROM get_tenant_by_id(@Id)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }

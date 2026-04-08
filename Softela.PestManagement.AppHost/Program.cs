@@ -1,8 +1,8 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var sql = builder.AddSqlServer("sql");
+var pg = builder.AddPostgres("postgres");
 
-var db = sql.AddDatabase("pestmanagement");
+var db = pg.AddDatabase("pestmanagement");
 
 var keycloak = builder.AddKeycloak("keycloak", 8080)
     .WithRealmImport("./KeycloakConfiguration")

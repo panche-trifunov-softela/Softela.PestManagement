@@ -1,5 +1,5 @@
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 using System.Data;
 
 namespace Softela.PestManagement.Infrastructure.Database.Connections
@@ -9,6 +9,6 @@ namespace Softela.PestManagement.Infrastructure.Database.Connections
         public DatabaseConnection(IConfiguration configuration) : base(configuration)
         { }
 
-        public IDbConnection GetConnection() => new SqlConnection(GetConnectionString());
+        public IDbConnection GetConnection() => new NpgsqlConnection(GetConnectionString());
     }
 }
