@@ -1,12 +1,8 @@
 ﻿using EvolveDb;
+using Npgsql;
 using Softela.PestManagement.Infrastructure.Database.Connections;
-using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Softela.PestManagement.Infrastructure.Database.Migrator
 {
@@ -21,6 +17,8 @@ namespace Softela.PestManagement.Infrastructure.Database.Migrator
 
         public void Migrate()
         {
+            EnsureDatabaseExists();
+
             var paths = new string[] { "Database", "Scripts" };
             var executingAssemblyLocation = Assembly.GetExecutingAssembly().Location;
             var executingAssemblyLocationPath = Path.GetDirectoryName(executingAssemblyLocation);
@@ -38,6 +36,31 @@ namespace Softela.PestManagement.Infrastructure.Database.Migrator
                 Locations = new[] { scriptsLocation }
             };
             evolve.Migrate();
+        }
+
+        private void EnsureDatabaseExists()
+        {
+            var connectionString = _databaseConnection.GetConnectionString();
+            var builder = new NpgsqlConnectionStringBuilder(connectionString);
+            var databaseName = builder.Database
+                ?? throw new InvalidOperationException("Database name not found in connection string.");
+
+            builder.Database = "postgres";
+
+            using var adminConnection = new NpgsqlConnection(builder.ConnectionString);
+            adminConnection.Open();
+
+            using var checkCmd = adminConnection.CreateCommand();
+            checkCmd.CommandText = "SELECT 1 FROM pg_database WHERE datname = @dbname";
+            checkCmd.Parameters.AddWithValue("dbname", databaseName);
+
+            var exists = checkCmd.ExecuteScalar() is not null;
+            if (!exists)
+            {
+                using var createCmd = adminConnection.CreateCommand();
+                createCmd.CommandText = $"CREATE DATABASE \"{databaseName}\"";
+                createCmd.ExecuteNonQuery();
+            }
         }
     }
 }
