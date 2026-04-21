@@ -30,33 +30,57 @@ public class OutboxRepository : IOutboxRepository
         ).ConfigureAwait(false);
     }
 
-    public async Task<List<OutboxMessage>> GetUnprocessedAsync(int batchSize, CancellationToken cancellationToken = default)
+    public async Task<List<OutboxMessage>> GetUnprocessedAsync(int batchSize, DateTimeOffset now, CancellationToken cancellationToken = default)
     {
+        var staleThreshold = now.AddMinutes(-5);
+
         var parameters = new DynamicParameters();
         parameters.Add("batch_size", batchSize, DbType.Int32);
+        parameters.Add("claimed_at", now, DbType.DateTimeOffset);
+        parameters.Add("stale_threshold", staleThreshold, DbType.DateTimeOffset);
 
-        var messages = await _dapperDataContext.Connection!.QueryAsync<OutboxMessage>(
-            sql: "SELECT Id, EventType, Payload, OccurredAt, ProcessedAt, Error FROM OutboxMessages WHERE ProcessedAt IS NULL AND Error IS NULL ORDER BY OccurredAt LIMIT @batch_size",
-            param: parameters,
+        const string sql = """
+            UPDATE OutboxMessages
+            SET ClaimedAt = @claimed_at
+            WHERE Id IN (
+                SELECT Id FROM OutboxMessages
+                WHERE ProcessedAt IS NULL
+                  AND Error IS NULL
+                  AND (ClaimedAt IS NULL OR ClaimedAt < @stale_threshold)
+                ORDER BY OccurredAt
+                LIMIT @batch_size
+                FOR UPDATE SKIP LOCKED
+            )
+            RETURNING Id, EventType, Payload, OccurredAt, ClaimedAt, ProcessedAt, Error
+            """;
+
+        var command = new CommandDefinition(
+            commandText: sql,
+            parameters: parameters,
+            transaction: _dapperDataContext.Transaction,
             commandType: CommandType.Text,
-            transaction: _dapperDataContext.Transaction
-        ).ConfigureAwait(false);
+            cancellationToken: cancellationToken
+        );
 
+        var messages = await _dapperDataContext.Connection!.QueryAsync<OutboxMessage>(command).ConfigureAwait(false);
         return messages.ToList();
     }
 
-    public async Task MarkAsProcessedAsync(long id, CancellationToken cancellationToken = default)
+    public async Task MarkAsProcessedAsync(long id, DateTimeOffset processedAt, CancellationToken cancellationToken = default)
     {
         var parameters = new DynamicParameters();
         parameters.Add("p_id", id, DbType.Int64);
-        parameters.Add("p_processed_at", DateTimeOffset.UtcNow, DbType.DateTimeOffset);
+        parameters.Add("p_processed_at", processedAt, DbType.DateTimeOffset);
 
-        await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "UPDATE OutboxMessages SET ProcessedAt = @p_processed_at WHERE Id = @p_id",
-            param: parameters,
+        var command = new CommandDefinition(
+            commandText: "UPDATE OutboxMessages SET ProcessedAt = @p_processed_at WHERE Id = @p_id",
+            parameters: parameters,
+            transaction: _dapperDataContext.Transaction,
             commandType: CommandType.Text,
-            transaction: _dapperDataContext.Transaction
-        ).ConfigureAwait(false);
+            cancellationToken: cancellationToken
+        );
+
+        await _dapperDataContext.Connection!.ExecuteAsync(command).ConfigureAwait(false);
     }
 
     public async Task MarkAsFailedAsync(long id, string error, CancellationToken cancellationToken = default)
@@ -65,11 +89,14 @@ public class OutboxRepository : IOutboxRepository
         parameters.Add("p_id", id, DbType.Int64);
         parameters.Add("p_error", error, DbType.String);
 
-        await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "UPDATE OutboxMessages SET Error = @p_error WHERE Id = @p_id",
-            param: parameters,
+        var command = new CommandDefinition(
+            commandText: "UPDATE OutboxMessages SET Error = @p_error WHERE Id = @p_id",
+            parameters: parameters,
+            transaction: _dapperDataContext.Transaction,
             commandType: CommandType.Text,
-            transaction: _dapperDataContext.Transaction
-        ).ConfigureAwait(false);
+            cancellationToken: cancellationToken
+        );
+
+        await _dapperDataContext.Connection!.ExecuteAsync(command).ConfigureAwait(false);
     }
 }

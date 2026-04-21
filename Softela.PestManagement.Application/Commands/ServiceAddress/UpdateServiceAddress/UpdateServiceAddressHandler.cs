@@ -1,5 +1,7 @@
 using MediatR;
 using Softela.PestManagement.Application.Core.Tenant;
+using Softela.PestManagement.Application.Events;
+using Softela.PestManagement.Application.Outbox;
 using Softela.PestManagement.Application.Repositories;
 
 namespace Softela.PestManagement.Application.Commands.ServiceAddress.UpdateServiceAddress;
@@ -7,19 +9,26 @@ namespace Softela.PestManagement.Application.Commands.ServiceAddress.UpdateServi
 public class UpdateServiceAddressHandler : IRequestHandler<UpdateServiceAddressRequest, bool>
 {
     private readonly IServiceAddressRepository _serviceAddressRepository;
+    private readonly IOutboxRepository _outboxRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantContext _tenantContext;
 
     public UpdateServiceAddressHandler(
         IServiceAddressRepository serviceAddressRepository,
+        IOutboxRepository outboxRepository,
+        IUnitOfWork unitOfWork,
         ITenantContext tenantContext)
     {
         _serviceAddressRepository = serviceAddressRepository;
+        _outboxRepository = outboxRepository;
+        _unitOfWork = unitOfWork;
         _tenantContext = tenantContext;
     }
 
     public async Task<bool> Handle(UpdateServiceAddressRequest request, CancellationToken cancellationToken)
     {
         var now = DateTime.UtcNow;
+        var nowOffset = DateTimeOffset.UtcNow;
         var userId = _tenantContext.UserId;
 
         var serviceAddress = new Domain.Entities.ServiceAddress
@@ -41,7 +50,19 @@ public class UpdateServiceAddressHandler : IRequestHandler<UpdateServiceAddressR
             ModifiedBy = userId
         };
 
-        await _serviceAddressRepository.UpdateAsync(serviceAddress);
-        return true;
+        await _unitOfWork.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            await _serviceAddressRepository.UpdateAsync(serviceAddress);
+            await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
+                new ServiceAddressUpdatedEvent(serviceAddress.Id, serviceAddress.CustomerId, serviceAddress.TenantId), nowOffset));
+            await _unitOfWork.CommitAsync(cancellationToken);
+            return true;
+        }
+        catch
+        {
+            await _unitOfWork.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 }

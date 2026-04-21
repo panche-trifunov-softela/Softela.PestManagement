@@ -1,5 +1,7 @@
 using MediatR;
 using Softela.PestManagement.Application.Core.Tenant;
+using Softela.PestManagement.Application.Events;
+using Softela.PestManagement.Application.Outbox;
 using Softela.PestManagement.Application.Repositories;
 
 namespace Softela.PestManagement.Application.Commands.Tenant.CreateTenant;
@@ -7,11 +9,19 @@ namespace Softela.PestManagement.Application.Commands.Tenant.CreateTenant;
 public class CreateTenantHandler : IRequestHandler<CreateTenantRequest, int>
 {
     private readonly ITenantRepository _tenantRepository;
+    private readonly IOutboxRepository _outboxRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantContext _tenantContext;
 
-    public CreateTenantHandler(ITenantRepository tenantRepository, ITenantContext tenantContext)
+    public CreateTenantHandler(
+        ITenantRepository tenantRepository,
+        IOutboxRepository outboxRepository,
+        IUnitOfWork unitOfWork,
+        ITenantContext tenantContext)
     {
         _tenantRepository = tenantRepository;
+        _outboxRepository = outboxRepository;
+        _unitOfWork = unitOfWork;
         _tenantContext = tenantContext;
     }
 
@@ -30,11 +40,25 @@ public class CreateTenantHandler : IRequestHandler<CreateTenantRequest, int>
             ModifiedBy = _tenantContext.UserId
         };
 
-        await _tenantRepository.UpsertAsync(tenant);
+        await _unitOfWork.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            await _tenantRepository.UpsertAsync(tenant);
 
-        // After upsert, get the newly created tenant by slug to return the id
-        var all = await _tenantRepository.GetAllAsync();
-        var created = all.FirstOrDefault(t => t.Slug == request.Slug);
-        return created?.Id ?? 0;
+            var all = await _tenantRepository.GetAllAsync();
+            var created = all.FirstOrDefault(t => t.Slug == request.Slug);
+            var tenantId = created?.Id ?? 0;
+
+            await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
+                new TenantUpsertedEvent(tenantId, request.Name, request.Slug), DateTimeOffset.UtcNow));
+
+            await _unitOfWork.CommitAsync(cancellationToken);
+            return tenantId;
+        }
+        catch
+        {
+            await _unitOfWork.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 }

@@ -48,7 +48,8 @@ public sealed class OutboxProcessorJob : BackgroundService
         var outboxRepository = scope.ServiceProvider.GetRequiredService<IOutboxRepository>();
         var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
 
-        var messages = await outboxRepository.GetUnprocessedAsync(_options.Value.BatchSize, cancellationToken);
+        var now = DateTimeOffset.UtcNow;
+        var messages = await outboxRepository.GetUnprocessedAsync(_options.Value.BatchSize, now, cancellationToken);
 
         foreach (var message in messages)
         {
@@ -70,7 +71,7 @@ public sealed class OutboxProcessorJob : BackgroundService
                 }
 
                 await publisher.Publish(notification, cancellationToken);
-                await outboxRepository.MarkAsProcessedAsync(message.Id, cancellationToken);
+                await outboxRepository.MarkAsProcessedAsync(message.Id, now, cancellationToken);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {

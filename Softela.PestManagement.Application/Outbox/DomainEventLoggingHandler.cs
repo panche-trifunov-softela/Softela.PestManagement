@@ -1,11 +1,11 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Softela.PestManagement.Application.Events;
-using System.Text.Json;
 
 namespace Softela.PestManagement.Application.Outbox;
 
 // TODO: Temporary handler — replace with real per-event handlers and remove this file.
+// Not registered in production (see BuilderExtensions).
 internal sealed class DomainEventLoggingHandler<TEvent> : INotificationHandler<TEvent>
     where TEvent : class, IDomainEvent
 {
@@ -18,11 +18,7 @@ internal sealed class DomainEventLoggingHandler<TEvent> : INotificationHandler<T
 
     public Task Handle(TEvent notification, CancellationToken cancellationToken)
     {
-        _logger.LogInformation(
-            "[Outbox] Event consumed: {EventType} | {Payload}",
-            typeof(TEvent).Name,
-            JsonSerializer.Serialize(notification));
-
+        _logger.LogDebug("[Outbox] Event consumed: {EventType}", typeof(TEvent).Name);
         return Task.CompletedTask;
     }
 }

@@ -1,9 +1,7 @@
 using System.Data;
 using Dapper;
-using Softela.PestManagement.Application.Events;
 using Softela.PestManagement.Application.Repositories;
 using Softela.PestManagement.Domain.Entities;
-using Softela.PestManagement.Infrastructure.Core.Outbox;
 using Softela.PestManagement.Infrastructure.Database.Dapper;
 
 namespace Softela.PestManagement.Infrastructure.Database.Repositories;
@@ -11,35 +9,27 @@ namespace Softela.PestManagement.Infrastructure.Database.Repositories;
 public class TenantFeatureRepository : ITenantFeatureRepository
 {
     private readonly IDapperDataContext _dapperDataContext;
-    private readonly IOutboxRepository _outboxRepository;
 
-    public TenantFeatureRepository(IDapperDataContext dapperDataContext, IOutboxRepository outboxRepository)
+    public TenantFeatureRepository(IDapperDataContext dapperDataContext)
     {
         _dapperDataContext = dapperDataContext;
-        _outboxRepository = outboxRepository;
     }
 
     public async Task UpsertAsync(TenantFeature feature)
     {
-        await _dapperDataContext.ExecuteInTransactionAsync(async () =>
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("p_tenant_id", feature.TenantId, DbType.Int32);
-            parameters.Add("p_feature_key", feature.FeatureKey, DbType.String);
-            parameters.Add("p_is_enabled", feature.IsEnabled, DbType.Boolean);
-            parameters.Add("p_created_at", feature.CreatedAt, DbType.DateTimeOffset);
-            parameters.Add("p_modified_at", feature.ModifiedAt, DbType.DateTimeOffset);
+        var parameters = new DynamicParameters();
+        parameters.Add("p_tenant_id", feature.TenantId, DbType.Int32);
+        parameters.Add("p_feature_key", feature.FeatureKey, DbType.String);
+        parameters.Add("p_is_enabled", feature.IsEnabled, DbType.Boolean);
+        parameters.Add("p_created_at", feature.CreatedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_at", feature.ModifiedAt, DbType.DateTimeOffset);
 
-            await _dapperDataContext.Connection!.ExecuteAsync(
-                sql: "CALL UpsertTenantFeature(@p_tenant_id, @p_feature_key, @p_is_enabled, @p_created_at, @p_modified_at)",
-                param: parameters,
-                commandType: CommandType.Text,
-                transaction: _dapperDataContext.Transaction
-            ).ConfigureAwait(false);
-
-            await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
-                new TenantFeatureUpsertedEvent(feature.TenantId, feature.FeatureKey, feature.IsEnabled)));
-        });
+        await _dapperDataContext.Connection!.ExecuteAsync(
+            sql: "CALL UpsertTenantFeature(@p_tenant_id, @p_feature_key, @p_is_enabled, @p_created_at, @p_modified_at)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
     }
 
     public async Task<List<TenantFeature>> GetByTenantIdAsync(int tenantId)

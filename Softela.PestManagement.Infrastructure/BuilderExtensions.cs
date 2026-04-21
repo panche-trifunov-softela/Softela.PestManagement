@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Softela.PestManagement.Application.Core.FeatureFlags;
 using Softela.PestManagement.Application.Repositories;
 using Softela.PestManagement.Infrastructure.Core.FeatureFlags;
+using Softela.PestManagement.Infrastructure.Database;
 using Softela.PestManagement.Infrastructure.Database.Connections;
 using Softela.PestManagement.Infrastructure.Database.Dapper;
 using Softela.PestManagement.Infrastructure.Database.Migrator;
@@ -19,6 +20,7 @@ namespace Softela.PestManagement.Infrastructure
             services
                 .AddScoped<IDapperDataContext, DapperDataContext>()
                 .AddScoped<IDatabaseConnection, DatabaseConnection>()
+                .AddScoped<IUnitOfWork, UnitOfWork>()
                 .AddScoped<IDbMigrator, DbMigrator>();
 
             services.AddHealthChecks()
