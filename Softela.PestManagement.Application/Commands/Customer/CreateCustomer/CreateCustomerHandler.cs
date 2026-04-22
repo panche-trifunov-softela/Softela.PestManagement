@@ -75,7 +75,7 @@ public class CreateCustomerHandler : IRequestHandler<CreateCustomerRequest, int>
                 {
                     TenantId = _tenantContext.TenantId,
                     CustomerId = customerId,
-                    ContactType = "Billing",
+                    ContactType = ContactType.Billing.ToString(),
                     FirstName = request.BillingContact.FirstName,
                     MiddleName = request.BillingContact.MiddleName,
                     LastName = request.BillingContact.LastName,

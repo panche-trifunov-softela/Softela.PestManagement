@@ -69,14 +69,14 @@ public class UpdateCustomerHandler : IRequestHandler<UpdateCustomerRequest, bool
             if (request.BillingContact != null)
             {
                 var existingContacts = await _contactRepository.GetByCustomerIdAsync(request.Id, _tenantContext.TenantId);
-                var existingBilling = existingContacts.FirstOrDefault(c => c.ContactType == "Billing");
+                var existingBilling = existingContacts.FirstOrDefault(c => c.ContactType == ContactType.Billing.ToString());
 
                 var contact = new CustomerContact
                 {
                     Id = existingBilling?.Id ?? 0,
                     TenantId = _tenantContext.TenantId,
                     CustomerId = request.Id,
-                    ContactType = "Billing",
+                    ContactType = ContactType.Billing.ToString(),
                     FirstName = request.BillingContact.FirstName,
                     MiddleName = request.BillingContact.MiddleName,
                     LastName = request.BillingContact.LastName,
