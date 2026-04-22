@@ -94,6 +94,7 @@ public class CreateCustomerHandler : IRequestHandler<CreateCustomerRequest, int>
                 await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
                     new CustomerContactUpsertedEvent(contactId, customerId, customer.TenantId), nowOffset));
 
+                // TODO: create stored procedure for UpsertPhones in batch and Inserting in Outbox table in batch
                 if (request.BillingContact.Phones != null)
                 {
                     foreach (var phone in request.BillingContact.Phones)
