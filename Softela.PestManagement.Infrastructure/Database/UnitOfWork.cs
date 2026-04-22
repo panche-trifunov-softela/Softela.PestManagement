@@ -15,9 +15,13 @@ internal sealed class UnitOfWork : IUnitOfWork
 
     public Task BeginTransactionAsync(CancellationToken cancellationToken = default)
     {
-        if (_context.Connection!.State != ConnectionState.Open)
-            _context.Connection!.Open();
-        _context.Transaction = _context.Connection!.BeginTransaction();
+        if (_context.Transaction is not null)
+            throw new InvalidOperationException("A transaction is already active. Commit or roll back the current transaction before starting a new one.");
+
+        var connection = _context.Connection!;
+        if (connection.State != ConnectionState.Open)
+            connection.Open();
+        _context.Transaction = connection.BeginTransaction();
         return Task.CompletedTask;
     }
 
