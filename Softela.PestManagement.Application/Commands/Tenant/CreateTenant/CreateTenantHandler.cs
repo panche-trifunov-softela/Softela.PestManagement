@@ -43,11 +43,7 @@ public class CreateTenantHandler : IRequestHandler<CreateTenantRequest, int>
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            await _tenantRepository.UpsertAsync(tenant);
-
-            var all = await _tenantRepository.GetAllAsync();
-            var created = all.FirstOrDefault(t => t.Slug == request.Slug);
-            var tenantId = created?.Id ?? 0;
+            var tenantId = await _tenantRepository.UpsertAsync(tenant);
 
             await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
                 new TenantUpsertedEvent(tenantId, request.Name, request.Slug), DateTimeOffset.UtcNow));
