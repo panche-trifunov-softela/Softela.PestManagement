@@ -1,5 +1,4 @@
 ﻿using EvolveDb;
-using Npgsql;
 using Softela.PestManagement.Infrastructure.Database.Connections;
 using System.Data.Common;
 using System.Reflection;
