@@ -30,18 +30,20 @@ public class OutboxRepository : IOutboxRepository
         ).ConfigureAwait(false);
     }
 
-    public async Task<List<OutboxMessage>> GetUnprocessedAsync(int batchSize, DateTimeOffset now, CancellationToken cancellationToken = default)
+    public async Task<List<OutboxMessage>> GetUnprocessedAsync(int batchSize, DateTimeOffset now, TimeSpan stalenessWindow, CancellationToken cancellationToken = default)
     {
-        var staleThreshold = now.AddMinutes(-5);
+        var staleThreshold = now - stalenessWindow;
+        var claimToken = Guid.NewGuid();
 
         var parameters = new DynamicParameters();
         parameters.Add("batch_size", batchSize, DbType.Int32);
         parameters.Add("claimed_at", now, DbType.DateTimeOffset);
+        parameters.Add("claim_token", claimToken, DbType.Guid);
         parameters.Add("stale_threshold", staleThreshold, DbType.DateTimeOffset);
 
         const string sql = """
             UPDATE OutboxMessages
-            SET ClaimedAt = @claimed_at
+            SET ClaimedAt = @claimed_at, ClaimToken = @claim_token
             WHERE Id IN (
                 SELECT Id FROM OutboxMessages
                 WHERE ProcessedAt IS NULL
@@ -51,7 +53,7 @@ public class OutboxRepository : IOutboxRepository
                 LIMIT @batch_size
                 FOR UPDATE SKIP LOCKED
             )
-            RETURNING Id, EventType, Payload, OccurredAt, ClaimedAt, ProcessedAt, Error
+            RETURNING Id, EventType, Payload, OccurredAt, ClaimedAt, ClaimToken, ProcessedAt, Error
             """;
 
         var command = new CommandDefinition(
@@ -66,14 +68,15 @@ public class OutboxRepository : IOutboxRepository
         return messages.ToList();
     }
 
-    public async Task MarkAsProcessedAsync(long id, DateTimeOffset processedAt, CancellationToken cancellationToken = default)
+    public async Task MarkAsProcessedAsync(long id, Guid claimToken, DateTimeOffset processedAt, CancellationToken cancellationToken = default)
     {
         var parameters = new DynamicParameters();
         parameters.Add("p_id", id, DbType.Int64);
+        parameters.Add("p_claim_token", claimToken, DbType.Guid);
         parameters.Add("p_processed_at", processedAt, DbType.DateTimeOffset);
 
         var command = new CommandDefinition(
-            commandText: "UPDATE OutboxMessages SET ProcessedAt = @p_processed_at WHERE Id = @p_id",
+            commandText: "UPDATE OutboxMessages SET ProcessedAt = @p_processed_at WHERE Id = @p_id AND ClaimToken = @p_claim_token",
             parameters: parameters,
             transaction: _dapperDataContext.Transaction,
             commandType: CommandType.Text,
@@ -83,14 +86,15 @@ public class OutboxRepository : IOutboxRepository
         await _dapperDataContext.Connection!.ExecuteAsync(command).ConfigureAwait(false);
     }
 
-    public async Task MarkAsFailedAsync(long id, string error, CancellationToken cancellationToken = default)
+    public async Task MarkAsFailedAsync(long id, Guid claimToken, string error, CancellationToken cancellationToken = default)
     {
         var parameters = new DynamicParameters();
         parameters.Add("p_id", id, DbType.Int64);
+        parameters.Add("p_claim_token", claimToken, DbType.Guid);
         parameters.Add("p_error", error, DbType.String);
 
         var command = new CommandDefinition(
-            commandText: "UPDATE OutboxMessages SET Error = @p_error WHERE Id = @p_id",
+            commandText: "UPDATE OutboxMessages SET Error = @p_error WHERE Id = @p_id AND ClaimToken = @p_claim_token",
             parameters: parameters,
             transaction: _dapperDataContext.Transaction,
             commandType: CommandType.Text,

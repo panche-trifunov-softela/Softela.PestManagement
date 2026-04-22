@@ -49,7 +49,8 @@ public sealed class OutboxProcessorJob : BackgroundService
         var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
 
         var now = DateTimeOffset.UtcNow;
-        var messages = await outboxRepository.GetUnprocessedAsync(_options.Value.BatchSize, now, cancellationToken);
+        var stalenessWindow = TimeSpan.FromMinutes(_options.Value.StalenessWindowMinutes);
+        var messages = await outboxRepository.GetUnprocessedAsync(_options.Value.BatchSize, now, stalenessWindow, cancellationToken);
 
         foreach (var message in messages)
         {
@@ -59,24 +60,24 @@ public sealed class OutboxProcessorJob : BackgroundService
                 if (type is null)
                 {
                     _logger.LogWarning("Cannot resolve event type '{EventType}' for outbox message {Id}.", message.EventType, message.Id);
-                    await outboxRepository.MarkAsFailedAsync(message.Id, $"Cannot resolve type '{message.EventType}'.", cancellationToken);
+                    await outboxRepository.MarkAsFailedAsync(message.Id, message.ClaimToken!.Value, $"Cannot resolve type '{message.EventType}'.", cancellationToken);
                     continue;
                 }
 
                 var notification = (INotification?)JsonSerializer.Deserialize(message.Payload, type);
                 if (notification is null)
                 {
-                    await outboxRepository.MarkAsFailedAsync(message.Id, "Payload deserialization returned null.", cancellationToken);
+                    await outboxRepository.MarkAsFailedAsync(message.Id, message.ClaimToken!.Value, "Payload deserialization returned null.", cancellationToken);
                     continue;
                 }
 
                 await publisher.Publish(notification, cancellationToken);
-                await outboxRepository.MarkAsProcessedAsync(message.Id, now, cancellationToken);
+                await outboxRepository.MarkAsProcessedAsync(message.Id, message.ClaimToken!.Value, now, cancellationToken);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 _logger.LogError(ex, "Failed to process outbox message {Id}.", message.Id);
-                await outboxRepository.MarkAsFailedAsync(message.Id, ex.Message, cancellationToken);
+                await outboxRepository.MarkAsFailedAsync(message.Id, message.ClaimToken!.Value, ex.Message, cancellationToken);
             }
         }
     }
