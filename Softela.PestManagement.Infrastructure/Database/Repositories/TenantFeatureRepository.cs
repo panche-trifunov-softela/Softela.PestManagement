@@ -15,7 +15,7 @@ public class TenantFeatureRepository : ITenantFeatureRepository
         _dapperDataContext = dapperDataContext;
     }
 
-    public async Task UpsertAsync(TenantFeature feature)
+    public async Task<int> UpsertAsync(TenantFeature feature)
     {
         var parameters = new DynamicParameters();
         parameters.Add("p_tenant_id", feature.TenantId, DbType.Int32);
@@ -24,7 +24,7 @@ public class TenantFeatureRepository : ITenantFeatureRepository
         parameters.Add("p_created_at", feature.CreatedAt, DbType.DateTimeOffset);
         parameters.Add("p_modified_at", feature.ModifiedAt, DbType.DateTimeOffset);
 
-        await _dapperDataContext.Connection!.ExecuteAsync(
+        return await _dapperDataContext.Connection!.ExecuteAsync(
             sql: "CALL UpsertTenantFeature(@p_tenant_id, @p_feature_key, @p_is_enabled, @p_created_at, @p_modified_at)",
             param: parameters,
             commandType: CommandType.Text,
