@@ -1,0 +1,2 @@
+ALTER TABLE OutboxMessages
+    ADD COLUMN ClaimedAt TIMESTAMPTZ NULL;

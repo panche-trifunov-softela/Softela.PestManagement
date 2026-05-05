@@ -1,6 +1,8 @@
 using System.Text.Json;
 using MediatR;
 using Softela.PestManagement.Application.Core.Tenant;
+using Softela.PestManagement.Application.Events;
+using Softela.PestManagement.Application.Outbox;
 using Softela.PestManagement.Application.Repositories;
 using Softela.PestManagement.Domain.Entities;
 using Softela.PestManagement.Domain.Enums;
@@ -11,15 +13,21 @@ public class UpdateCustomerHandler : IRequestHandler<UpdateCustomerRequest, bool
 {
     private readonly ICustomerRepository _customerRepository;
     private readonly ICustomerContactRepository _contactRepository;
+    private readonly IOutboxRepository _outboxRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantContext _tenantContext;
 
     public UpdateCustomerHandler(
         ICustomerRepository customerRepository,
         ICustomerContactRepository contactRepository,
+        IOutboxRepository outboxRepository,
+        IUnitOfWork unitOfWork,
         ITenantContext tenantContext)
     {
         _customerRepository = customerRepository;
         _contactRepository = contactRepository;
+        _outboxRepository = outboxRepository;
+        _unitOfWork = unitOfWork;
         _tenantContext = tenantContext;
     }
 
@@ -27,6 +35,7 @@ public class UpdateCustomerHandler : IRequestHandler<UpdateCustomerRequest, bool
     {
         var customerType = Enum.Parse<CustomerType>(request.CustomerType, ignoreCase: true);
         var now = DateTime.UtcNow;
+        var nowOffset = DateTimeOffset.UtcNow;
         var userId = _tenantContext.UserId;
 
         var customer = new Domain.Entities.Customer
@@ -50,56 +59,73 @@ public class UpdateCustomerHandler : IRequestHandler<UpdateCustomerRequest, bool
             ModifiedBy = userId
         };
 
-        await _customerRepository.UpdateAsync(customer);
-
-        if (request.BillingContact != null)
+        await _unitOfWork.BeginTransactionAsync(cancellationToken);
+        try
         {
-            var existingContacts = await _contactRepository.GetByCustomerIdAsync(request.Id, _tenantContext.TenantId);
-            var existingBilling = existingContacts.FirstOrDefault(c => c.ContactType == "Billing");
+            await _customerRepository.UpdateAsync(customer);
+            await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
+                new CustomerUpdatedEvent(customer.Id, customer.TenantId, customer.Name), nowOffset));
 
-            var contact = new CustomerContact
+            if (request.BillingContact != null)
             {
-                Id = existingBilling?.Id ?? 0,
-                TenantId = _tenantContext.TenantId,
-                CustomerId = request.Id,
-                ContactType = "Billing",
-                FirstName = request.BillingContact.FirstName,
-                MiddleName = request.BillingContact.MiddleName,
-                LastName = request.BillingContact.LastName,
-                Email = request.BillingContact.Email,
-                AlternateEmails = request.BillingContact.AlternateEmails != null
-                    ? JsonSerializer.Serialize(request.BillingContact.AlternateEmails)
-                    : null,
-                IsDeleted = false,
-                CreatedAt = existingBilling?.CreatedAt ?? now,
-                ModifiedAt = now,
-                CreatedBy = existingBilling?.CreatedBy ?? userId,
-                ModifiedBy = userId
-            };
+                var existingContacts = await _contactRepository.GetByCustomerIdAsync(request.Id, _tenantContext.TenantId);
+                var existingBilling = existingContacts.FirstOrDefault(c => c.ContactType == ContactType.Billing.ToString());
 
-            var contactId = await _contactRepository.UpsertAsync(contact);
-
-            // Replace phones: delete existing, then insert new
-            await _contactRepository.DeletePhonesByContactIdAsync(contactId, _tenantContext.TenantId, now, userId);
-
-            if (request.BillingContact.Phones != null)
-            {
-                foreach (var phone in request.BillingContact.Phones)
+                var contact = new CustomerContact
                 {
-                    await _contactRepository.UpsertPhoneAsync(new CustomerContactPhone
+                    Id = existingBilling?.Id ?? 0,
+                    TenantId = _tenantContext.TenantId,
+                    CustomerId = request.Id,
+                    ContactType = ContactType.Billing.ToString(),
+                    FirstName = request.BillingContact.FirstName,
+                    MiddleName = request.BillingContact.MiddleName,
+                    LastName = request.BillingContact.LastName,
+                    Email = request.BillingContact.Email,
+                    AlternateEmails = request.BillingContact.AlternateEmails != null
+                        ? JsonSerializer.Serialize(request.BillingContact.AlternateEmails)
+                        : null,
+                    IsDeleted = false,
+                    CreatedAt = existingBilling?.CreatedAt ?? now,
+                    ModifiedAt = now,
+                    CreatedBy = existingBilling?.CreatedBy ?? userId,
+                    ModifiedBy = userId
+                };
+
+                var contactId = await _contactRepository.UpsertAsync(contact);
+                await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
+                    new CustomerContactUpsertedEvent(contactId, request.Id, _tenantContext.TenantId), nowOffset));
+
+                await _contactRepository.DeletePhonesByContactIdAsync(contactId, _tenantContext.TenantId, now, userId);
+                await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
+                    new CustomerContactPhoneDeletedEvent(contactId, _tenantContext.TenantId), nowOffset));
+
+                if (request.BillingContact.Phones != null)
+                {
+                    foreach (var phone in request.BillingContact.Phones)
                     {
-                        TenantId = _tenantContext.TenantId,
-                        CustomerContactId = contactId,
-                        PhoneType = phone.Type,
-                        PhoneNumber = phone.Number,
-                        IsDeleted = false,
-                        CreatedAt = now,
-                        ModifiedAt = now
-                    });
+                        var phoneId = await _contactRepository.UpsertPhoneAsync(new CustomerContactPhone
+                        {
+                            TenantId = _tenantContext.TenantId,
+                            CustomerContactId = contactId,
+                            PhoneType = phone.Type,
+                            PhoneNumber = phone.Number,
+                            IsDeleted = false,
+                            CreatedAt = now,
+                            ModifiedAt = now
+                        });
+                        await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
+                            new CustomerContactPhoneUpsertedEvent(phoneId, contactId, _tenantContext.TenantId), nowOffset));
+                    }
                 }
             }
-        }
 
-        return true;
+            await _unitOfWork.CommitAsync(cancellationToken);
+            return true;
+        }
+        catch
+        {
+            await _unitOfWork.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 }

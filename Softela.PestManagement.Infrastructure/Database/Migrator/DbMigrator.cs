@@ -1,12 +1,7 @@
 ﻿using EvolveDb;
 using Softela.PestManagement.Infrastructure.Database.Connections;
-using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Softela.PestManagement.Infrastructure.Database.Migrator
 {

@@ -87,7 +87,6 @@ public class CustomerRepository : ICustomerRepository
         parameters.Add("@ModifiedAt", modifiedAt, DbType.DateTimeOffset);
         parameters.Add("@ModifiedBy", modifiedBy, DbType.Guid);
 
-        // delete_customer is a PostgreSQL function
         await _dapperDataContext.Connection!.ExecuteAsync(
             sql: "SELECT delete_customer(@Id, @TenantId, @ModifiedAt, @ModifiedBy)",
             param: parameters,

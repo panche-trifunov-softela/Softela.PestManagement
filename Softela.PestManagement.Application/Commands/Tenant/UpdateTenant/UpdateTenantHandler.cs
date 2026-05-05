@@ -1,5 +1,7 @@
 using MediatR;
 using Softela.PestManagement.Application.Core.Tenant;
+using Softela.PestManagement.Application.Events;
+using Softela.PestManagement.Application.Outbox;
 using Softela.PestManagement.Application.Repositories;
 
 namespace Softela.PestManagement.Application.Commands.Tenant.UpdateTenant;
@@ -7,11 +9,19 @@ namespace Softela.PestManagement.Application.Commands.Tenant.UpdateTenant;
 public class UpdateTenantHandler : IRequestHandler<UpdateTenantRequest, bool>
 {
     private readonly ITenantRepository _tenantRepository;
+    private readonly IOutboxRepository _outboxRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantContext _tenantContext;
 
-    public UpdateTenantHandler(ITenantRepository tenantRepository, ITenantContext tenantContext)
+    public UpdateTenantHandler(
+        ITenantRepository tenantRepository,
+        IOutboxRepository outboxRepository,
+        IUnitOfWork unitOfWork,
+        ITenantContext tenantContext)
     {
         _tenantRepository = tenantRepository;
+        _outboxRepository = outboxRepository;
+        _unitOfWork = unitOfWork;
         _tenantContext = tenantContext;
     }
 
@@ -33,7 +43,19 @@ public class UpdateTenantHandler : IRequestHandler<UpdateTenantRequest, bool>
             ModifiedBy = _tenantContext.UserId
         };
 
-        await _tenantRepository.UpsertAsync(tenant);
-        return true;
+        await _unitOfWork.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            await _tenantRepository.UpsertAsync(tenant);
+            await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
+                new TenantUpsertedEvent(tenant.Id, tenant.Name, tenant.Slug), DateTimeOffset.UtcNow));
+            await _unitOfWork.CommitAsync(cancellationToken);
+            return true;
+        }
+        catch
+        {
+            await _unitOfWork.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 }

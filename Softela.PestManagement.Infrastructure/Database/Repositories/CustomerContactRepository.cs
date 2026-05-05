@@ -95,6 +95,7 @@ public class CustomerContactRepository : ICustomerContactRepository
         parameters.Add("@TenantId", tenantId, DbType.Int32);
         parameters.Add("@ModifiedAt", modifiedAt, DbType.DateTimeOffset);
         parameters.Add("@ModifiedBy", modifiedBy, DbType.Guid);
+
         await _dapperDataContext.Connection!.ExecuteAsync(
             sql: "SELECT delete_customer_contact_phones(@CustomerContactId, @TenantId, @ModifiedAt, @ModifiedBy)",
             param: parameters,
