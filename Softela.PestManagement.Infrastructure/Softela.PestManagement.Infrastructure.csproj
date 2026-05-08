@@ -13,6 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Core\Outbox\**" />
+    <EmbeddedResource Remove="Core\Outbox\**" />
+    <None Remove="Core\Outbox\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Evolve" Version="3.2.0" />
@@ -27,10 +33,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Softela.PestManagement.Application\Softela.PestManagement.Application.csproj" />
     <ProjectReference Include="..\Softela.PestManagement.Domain\Softela.PestManagement.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Core\Outbox\" />
   </ItemGroup>
 
 </Project>
