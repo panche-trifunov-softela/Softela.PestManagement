@@ -6,4 +6,5 @@ public interface IEstimateRepository
 {
     Task<int> CreateAsync(Estimate estimate);
     Task UpdateAsync(Estimate estimate);
+    Task DeleteAsync(int id, DateTimeOffset modifiedAt, Guid modifiedBy);
 }

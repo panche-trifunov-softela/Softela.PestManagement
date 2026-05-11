@@ -6,6 +6,7 @@ CREATE TABLE Estimates (
     ServiceInterest VARCHAR(255),
     AssignedSalesRep INT NOT NULL,
     Source SMALLINT NOT NULL,
+    IsDeleted BOOLEAN NOT NULL DEFAULT FALSE,
     CreatedAt TIMESTAMPTZ NOT NULL,
     ModifiedAt TIMESTAMPTZ NOT NULL,
     CreatedBy UUID NOT NULL,

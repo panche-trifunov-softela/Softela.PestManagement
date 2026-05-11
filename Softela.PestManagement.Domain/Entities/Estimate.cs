@@ -10,4 +10,5 @@ public class Estimate : BaseEntity
     public string ServiceInterest { get; set; }
     public int AssignedSalesRep { get; set; }
     public LeadSource Source { get; set; }
+    public bool IsDeleted { get; set; }
 }

@@ -63,4 +63,19 @@ public class EstimateRepository : IEstimateRepository
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }
+
+    public async Task DeleteAsync(int id, DateTimeOffset modifiedAt, Guid modifiedBy)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("@Id", id, DbType.Int32);
+        parameters.Add("@ModifiedAt", modifiedAt, DbType.DateTimeOffset);
+        parameters.Add("@ModifiedBy", modifiedBy, DbType.Guid);
+
+        await _dapperDataContext.Connection!.ExecuteAsync(
+            sql: "SELECT delete_estimate(@Id, @ModifiedAt, @ModifiedBy)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
+    }
 }

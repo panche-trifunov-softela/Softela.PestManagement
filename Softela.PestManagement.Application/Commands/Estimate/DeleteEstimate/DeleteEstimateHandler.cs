@@ -4,16 +4,16 @@ using Softela.PestManagement.Application.Events;
 using Softela.PestManagement.Application.Outbox;
 using Softela.PestManagement.Application.Repositories;
 
-namespace Softela.PestManagement.Application.Commands.Estimate.CreateEstimate;
+namespace Softela.PestManagement.Application.Commands.Estimate.DeleteEstimate;
 
-public class CreateEstimateHandler : IRequestHandler<CreateEstimateRequest, int>
+public class DeleteEstimateHandler : IRequestHandler<DeleteEstimateRequest, bool>
 {
     private readonly IEstimateRepository _estimateRepository;
     private readonly IOutboxRepository _outboxRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantContext _tenantContext;
 
-    public CreateEstimateHandler(
+    public DeleteEstimateHandler(
         IEstimateRepository estimateRepository,
         IOutboxRepository outboxRepository,
         IUnitOfWork unitOfWork,
@@ -25,21 +25,17 @@ public class CreateEstimateHandler : IRequestHandler<CreateEstimateRequest, int>
         _tenantContext = tenantContext;
     }
 
-    public async Task<int> Handle(CreateEstimateRequest request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(DeleteEstimateRequest request, CancellationToken cancellationToken)
     {
-        var now = DateTime.UtcNow;
-        var nowOffset = DateTimeOffset.UtcNow;
-        var userId = _tenantContext.UserId;
-
-        var estimate = CreateEstimateMapper.ToDomainEntity(request, now, userId);
-
+        var now = DateTimeOffset.UtcNow;
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            var id = await _estimateRepository.CreateAsync(estimate);
-            await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(new EstimateCreatedEvent(id, estimate.ServiceAddressId), nowOffset));
+            await _estimateRepository.DeleteAsync(request.Id, now, _tenantContext.UserId);
+            await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
+                new EstimateDeletedEvent(request.Id), now));
             await _unitOfWork.CommitAsync(cancellationToken);
-            return id;
+            return true;
         }
         catch
         {

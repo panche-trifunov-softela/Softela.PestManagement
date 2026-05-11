@@ -31,18 +31,7 @@ public class UpdateEstimateHandler : IRequestHandler<UpdateEstimateRequest, bool
         var nowOffset = DateTimeOffset.UtcNow;
         var userId = _tenantContext.UserId;
 
-        var estimate = new Domain.Entities.Estimate
-        {
-            Id = request.Id,
-            ServiceAddressId = request.ServiceAddressId,
-            Name = request.Name,
-            Status = request.Status,
-            ServiceInterest = request.ServiceInterest,
-            AssignedSalesRep = request.AssignedSalesRep,
-            Source = request.Source,
-            ModifiedAt = now,
-            ModifiedBy = userId
-        };
+        var estimate = UpdateEstimateMapper.ToDomainEntity(request, now, userId);
 
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try
