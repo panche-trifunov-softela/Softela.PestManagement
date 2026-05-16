@@ -2,7 +2,7 @@ using Softela.PestManagement.Domain.Enums;
 
 namespace Softela.PestManagement.Domain.Entities;
 
-public class Estimate : BaseEntity
+public class Estimate : TenantScopedEntity
 {
     public string Name { get; set; }
     public LeadStatus Status { get; set; }

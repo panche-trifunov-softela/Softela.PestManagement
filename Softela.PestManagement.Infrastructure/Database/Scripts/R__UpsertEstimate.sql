@@ -1,5 +1,6 @@
 CREATE OR REPLACE PROCEDURE UpsertEstimate(
     IN p_id INT,
+    IN p_tenant_id INT,
     IN p_service_address_id INT,
     IN p_name VARCHAR,
     IN p_status SMALLINT,
@@ -14,9 +15,9 @@ CREATE OR REPLACE PROCEDURE UpsertEstimate(
 ) LANGUAGE plpgsql AS $$
 BEGIN
     IF p_id = 0 OR p_id IS NULL THEN
-        INSERT INTO Estimates (ServiceAddressId, Name, Status, ServiceInterest, AssignedSalesRep, Source,
+        INSERT INTO Estimates (TenantId, ServiceAddressId, Name, Status, ServiceInterest, AssignedSalesRep, Source,
             CreatedAt, ModifiedAt, CreatedBy, ModifiedBy)
-        VALUES (p_service_address_id, p_name, p_status, p_service_interest, p_assigned_sales_rep, p_source,
+        VALUES (p_tenant_id, p_service_address_id, p_name, p_status, p_service_interest, p_assigned_sales_rep, p_source,
             p_created_at, p_modified_at, p_created_by, p_modified_by)
         RETURNING Id INTO result_id;
     ELSE
@@ -28,7 +29,7 @@ BEGIN
             Source = p_source,
             ModifiedAt = p_modified_at,
             ModifiedBy = p_modified_by
-        WHERE Id = p_id;
+        WHERE Id = p_id AND TenantId = p_tenant_id;
 
         result_id := p_id;
     END IF;

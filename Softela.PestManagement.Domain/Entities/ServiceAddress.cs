@@ -1,8 +1,7 @@
 namespace Softela.PestManagement.Domain.Entities;
 
-public class ServiceAddress : BaseEntity
+public class ServiceAddress : TenantScopedEntity
 {
-    public int TenantId { get; set; }
     public int CustomerId { get; set; }
     public string ServiceAddressName { get; set; }
     public string ServiceAddressType { get; set; }

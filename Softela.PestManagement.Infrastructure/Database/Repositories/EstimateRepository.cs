@@ -78,4 +78,20 @@ public class EstimateRepository : IEstimateRepository
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }
+
+    public async Task<List<Estimate>> GetByServiceAddressIdAsync(int serviceAddressId, int tenantId)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("@ServiceAddressId", serviceAddressId, DbType.Int32);
+        parameters.Add("@TenantId", tenantId, DbType.Int32);
+
+        var estimates = await _dapperDataContext.Connection!.QueryAsync<Estimate>(
+            sql: "SELECT * FROM get_estimates_by_service_address_id(@ServiceAddressId, @TenantId)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
+
+        return estimates.ToList();
+    }
 }

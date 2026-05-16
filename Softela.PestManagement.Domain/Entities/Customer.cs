@@ -2,9 +2,8 @@ using Softela.PestManagement.Domain.Enums;
 
 namespace Softela.PestManagement.Domain.Entities;
 
-public class Customer : BaseEntity
+public class Customer : TenantScopedEntity
 {
-    public int TenantId { get; set; }
     public string CustomerNum { get; set; }
     public string Name { get; set; }
     public CustomerType CustomerType { get; set; }
