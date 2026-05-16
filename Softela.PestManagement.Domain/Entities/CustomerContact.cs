@@ -1,8 +1,7 @@
 namespace Softela.PestManagement.Domain.Entities;
 
-public class CustomerContact : BaseEntity
+public class CustomerContact : TenantScopedEntity
 {
-    public int TenantId { get; set; }
     public int CustomerId { get; set; }
     public string ContactType { get; set; }
     public string FirstName { get; set; }

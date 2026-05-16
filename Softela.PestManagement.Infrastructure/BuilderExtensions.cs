@@ -31,6 +31,7 @@ namespace Softela.PestManagement.Infrastructure
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerContactRepository, CustomerContactRepository>();
             services.AddScoped<IServiceAddressRepository, ServiceAddressRepository>();
+            services.AddScoped<IEstimateRepository, EstimateRepository>();
             services.AddScoped<IOutboxRepository, OutboxRepository>();
             services.AddScoped<IFeatureFlagService, FeatureFlagService>();
 
