@@ -1,13 +1,13 @@
-DROP INDEX IF EXISTS IX_OutboxMessages_Unprocessed;
+DROP INDEX IF EXISTS ix_outbox_messages_unprocessed;
 
-CREATE INDEX IX_OutboxMessages_Unprocessed
-    ON OutboxMessages (OccurredAt)
-    WHERE ProcessedAt IS NULL
-      AND Error IS NULL
-      AND ClaimedAt IS NULL;
+CREATE INDEX ix_outbox_messages_unprocessed
+    ON outbox_messages (occurred_at)
+    WHERE processed_at IS NULL
+      AND error IS NULL
+      AND claimed_at IS NULL;
 
-CREATE INDEX IX_OutboxMessages_StaleClaimed
-    ON OutboxMessages (ClaimedAt, OccurredAt)
-    WHERE ProcessedAt IS NULL
-      AND Error IS NULL
-      AND ClaimedAt IS NOT NULL;
+CREATE INDEX ix_outbox_messages_stale_claimed
+    ON outbox_messages (claimed_at, occurred_at)
+    WHERE processed_at IS NULL
+      AND error IS NULL
+      AND claimed_at IS NOT NULL;

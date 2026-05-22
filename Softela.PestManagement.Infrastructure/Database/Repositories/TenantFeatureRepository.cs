@@ -24,12 +24,14 @@ public class TenantFeatureRepository : ITenantFeatureRepository
         parameters.Add("p_created_at", feature.CreatedAt, DbType.DateTimeOffset);
         parameters.Add("p_modified_at", feature.ModifiedAt, DbType.DateTimeOffset);
 
-        return await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "CALL UpsertTenantFeature(@p_tenant_id, @p_feature_key, @p_is_enabled, @p_created_at, @p_modified_at)",
+        await _dapperDataContext.Connection!.ExecuteAsync(
+            sql: "SELECT upsert_tenant_feature(@p_tenant_id, @p_feature_key, @p_is_enabled, @p_created_at, @p_modified_at)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
+
+        return 0;
     }
 
     public async Task<List<TenantFeature>> GetByTenantIdAsync(int tenantId)

@@ -35,16 +35,13 @@ public class ServiceAddressRepository : IServiceAddressRepository
         parameters.Add("p_modified_at", serviceAddress.ModifiedAt, DbType.DateTimeOffset);
         parameters.Add("p_created_by", serviceAddress.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", serviceAddress.ModifiedBy, DbType.Guid);
-        parameters.Add("result_id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-        await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "UpsertServiceAddress",
+        return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
+            sql: "SELECT upsert_service_address(@p_id, @p_tenant_id, @p_customer_id, @p_service_address_name, @p_service_address_type, @p_address, @p_city, @p_state, @p_zip, @p_contact_name, @p_contact_phone, @p_contact_email, @p_is_active, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
-
-        return parameters.Get<int>("result_id");
     }
 
     public async Task UpdateAsync(ServiceAddress serviceAddress)
@@ -69,9 +66,9 @@ public class ServiceAddressRepository : IServiceAddressRepository
         parameters.Add("p_modified_by", serviceAddress.ModifiedBy, DbType.Guid);
 
         await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "UpsertServiceAddress",
+            sql: "SELECT upsert_service_address(@p_id, @p_tenant_id, @p_customer_id, @p_service_address_name, @p_service_address_type, @p_address, @p_city, @p_state, @p_zip, @p_contact_name, @p_contact_phone, @p_contact_email, @p_is_active, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }
@@ -122,4 +119,3 @@ public class ServiceAddressRepository : IServiceAddressRepository
         return serviceAddresses.ToList();
     }
 }
-

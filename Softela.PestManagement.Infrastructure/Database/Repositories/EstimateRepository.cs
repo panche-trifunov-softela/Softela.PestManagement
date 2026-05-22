@@ -19,6 +19,7 @@ public class EstimateRepository : IEstimateRepository
     {
         var parameters = new DynamicParameters();
         parameters.Add("p_id", 0, DbType.Int32);
+        parameters.Add("p_tenant_id", estimate.TenantId, DbType.Int32);
         parameters.Add("p_service_address_id", estimate.ServiceAddressId, DbType.Int32);
         parameters.Add("p_name", estimate.Name, DbType.String);
         parameters.Add("p_status", (short)estimate.Status, DbType.Int16);
@@ -29,22 +30,20 @@ public class EstimateRepository : IEstimateRepository
         parameters.Add("p_modified_at", estimate.ModifiedAt, DbType.DateTimeOffset);
         parameters.Add("p_created_by", estimate.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", estimate.ModifiedBy, DbType.Guid);
-        parameters.Add("result_id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-        await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "UpsertEstimate",
+        return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
+            sql: "SELECT upsert_estimate(@p_id, @p_tenant_id, @p_service_address_id, @p_name, @p_status, @p_service_interest, @p_assigned_sales_rep, @p_source, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
-
-        return parameters.Get<int>("result_id");
     }
 
     public async Task UpdateAsync(Estimate estimate)
     {
         var parameters = new DynamicParameters();
         parameters.Add("p_id", estimate.Id, DbType.Int32);
+        parameters.Add("p_tenant_id", estimate.TenantId, DbType.Int32);
         parameters.Add("p_service_address_id", estimate.ServiceAddressId, DbType.Int32);
         parameters.Add("p_name", estimate.Name, DbType.String);
         parameters.Add("p_status", (short)estimate.Status, DbType.Int16);
@@ -57,9 +56,9 @@ public class EstimateRepository : IEstimateRepository
         parameters.Add("p_modified_by", estimate.ModifiedBy, DbType.Guid);
 
         await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "UpsertEstimate",
+            sql: "SELECT upsert_estimate(@p_id, @p_tenant_id, @p_service_address_id, @p_name, @p_status, @p_service_interest, @p_assigned_sales_rep, @p_source, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
-            commandType: CommandType.StoredProcedure,
+            commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }

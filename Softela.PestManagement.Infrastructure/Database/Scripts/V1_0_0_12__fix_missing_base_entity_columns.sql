@@ -1,21 +1,21 @@
--- TenantFeatures: add missing CreatedBy / ModifiedBy from BaseEntity
-ALTER TABLE TenantFeatures
-    ADD COLUMN CreatedBy UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000',
-    ADD COLUMN ModifiedBy UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000';
+-- tenant_features: add missing created_by / modified_by from BaseEntity
+ALTER TABLE tenant_features
+    ADD COLUMN created_by UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000',
+    ADD COLUMN modified_by UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000';
 
-ALTER TABLE TenantFeatures
-    ALTER COLUMN CreatedBy DROP DEFAULT,
-    ALTER COLUMN ModifiedBy DROP DEFAULT;
+ALTER TABLE tenant_features
+    ALTER COLUMN created_by DROP DEFAULT,
+    ALTER COLUMN modified_by DROP DEFAULT;
 
--- CustomerContactPhones: tighten nullable CreatedBy / ModifiedBy to NOT NULL
-UPDATE CustomerContactPhones
-SET CreatedBy  = '00000000-0000-0000-0000-000000000000'
-WHERE CreatedBy IS NULL;
+-- customer_contact_phones: tighten nullable created_by / modified_by to NOT NULL
+UPDATE customer_contact_phones
+SET created_by  = '00000000-0000-0000-0000-000000000000'
+WHERE created_by IS NULL;
 
-UPDATE CustomerContactPhones
-SET ModifiedBy = '00000000-0000-0000-0000-000000000000'
-WHERE ModifiedBy IS NULL;
+UPDATE customer_contact_phones
+SET modified_by = '00000000-0000-0000-0000-000000000000'
+WHERE modified_by IS NULL;
 
-ALTER TABLE CustomerContactPhones
-    ALTER COLUMN CreatedBy  SET NOT NULL,
-    ALTER COLUMN ModifiedBy SET NOT NULL;
+ALTER TABLE customer_contact_phones
+    ALTER COLUMN created_by  SET NOT NULL,
+    ALTER COLUMN modified_by SET NOT NULL;

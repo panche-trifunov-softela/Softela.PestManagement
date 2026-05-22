@@ -1,12 +1,12 @@
-ALTER TABLE Estimates
-    ADD COLUMN TenantId INT NOT NULL DEFAULT 0;
+ALTER TABLE estimates
+    ADD COLUMN tenant_id INT NOT NULL DEFAULT 0;
 
-UPDATE Estimates e
-SET TenantId = sa.TenantId
-FROM ServiceAddresses sa
-WHERE e.ServiceAddressId = sa.Id;
+UPDATE estimates e
+SET tenant_id = sa.tenant_id
+FROM service_addresses sa
+WHERE e.service_address_id = sa.id;
 
-ALTER TABLE Estimates ALTER COLUMN TenantId DROP DEFAULT;
+ALTER TABLE estimates ALTER COLUMN tenant_id DROP DEFAULT;
 
-ALTER TABLE Estimates
-    ADD CONSTRAINT FK_Estimates_Tenants FOREIGN KEY (TenantId) REFERENCES Tenants(Id);
+ALTER TABLE estimates
+    ADD CONSTRAINT fk_estimates_tenants FOREIGN KEY (tenant_id) REFERENCES tenants(id);

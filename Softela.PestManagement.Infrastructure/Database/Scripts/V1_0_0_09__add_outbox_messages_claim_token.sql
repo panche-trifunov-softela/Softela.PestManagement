@@ -1,2 +1,2 @@
-ALTER TABLE OutboxMessages
-    ADD COLUMN ClaimToken UUID NULL;
+ALTER TABLE outbox_messages
+    ADD COLUMN claim_token UUID NULL;

@@ -1,2 +1,2 @@
-ALTER TABLE OutboxMessages
-    ADD COLUMN ClaimedAt TIMESTAMPTZ NULL;
+ALTER TABLE outbox_messages
+    ADD COLUMN claimed_at TIMESTAMPTZ NULL;

@@ -40,7 +40,7 @@ public class CustomerRepository : ICustomerRepository
         parameters.Add("p_modified_by", customer.ModifiedBy, DbType.Guid);
 
         return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
-            sql: "CALL UpsertCustomer(@p_id, @p_tenant_id, @p_customer_num, @p_name, @p_customer_type, @p_is_active, @p_send_invoice, @p_email_invoice, @p_instructions, @p_primary_note, @p_registration_num, @p_preferred_contact_method, @p_billing_address_street, @p_billing_address_city, @p_billing_address_state, @p_billing_address_zip, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
+            sql: "SELECT upsert_customer(@p_id, @p_tenant_id, @p_customer_num, @p_name, @p_customer_type, @p_is_active, @p_send_invoice, @p_email_invoice, @p_instructions, @p_primary_note, @p_registration_num, @p_preferred_contact_method, @p_billing_address_street, @p_billing_address_city, @p_billing_address_state, @p_billing_address_zip, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
@@ -71,8 +71,8 @@ public class CustomerRepository : ICustomerRepository
         parameters.Add("p_created_by", customer.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", customer.ModifiedBy, DbType.Guid);
 
-        _ = await _dapperDataContext.Connection!.QuerySingleAsync<int>(
-            sql: "CALL UpsertCustomer(@p_id, @p_tenant_id, @p_customer_num, @p_name, @p_customer_type, @p_is_active, @p_send_invoice, @p_email_invoice, @p_instructions, @p_primary_note, @p_registration_num, @p_preferred_contact_method, @p_billing_address_street, @p_billing_address_city, @p_billing_address_state, @p_billing_address_zip, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
+        await _dapperDataContext.Connection!.ExecuteAsync(
+            sql: "SELECT upsert_customer(@p_id, @p_tenant_id, @p_customer_num, @p_name, @p_customer_type, @p_is_active, @p_send_invoice, @p_email_invoice, @p_instructions, @p_primary_note, @p_registration_num, @p_preferred_contact_method, @p_billing_address_street, @p_billing_address_city, @p_billing_address_state, @p_billing_address_zip, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
@@ -124,4 +124,3 @@ public class CustomerRepository : ICustomerRepository
         return customers.ToList();
     }
 }
-
