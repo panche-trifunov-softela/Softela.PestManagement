@@ -5,14 +5,16 @@ var pg = builder.AddPostgres("postgres");
 var db = pg.AddDatabase("pestmanagement");
 
 var keycloak = builder.AddKeycloak("keycloak", 8080)
-    .WithRealmImport("./KeycloakConfiguration")
-    .WithBindMount("./keycloak/themes/bugworx", "/opt/keycloak/themes/bugworx");
+    .WithDockerfile(contextPath: ".", dockerfilePath: "Dockerfile.keycloak");
 
 var api = builder.AddProject<Projects.Softela_PestManagement_API>("api")
     .WithEndpoint("http", e =>
     {
-        e.Port = 5250;
-        e.IsProxied = false;
+        if (builder.ExecutionContext.IsRunMode)
+        {
+            e.Port = 5250;
+            e.IsProxied = false;
+        }
     })
     .WithExternalHttpEndpoints()
     .WithReference(db)

@@ -23,7 +23,7 @@ public class OutboxRepository : IOutboxRepository
         parameters.Add("p_occurred_at", message.OccurredAt, DbType.DateTimeOffset);
 
         await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "INSERT INTO OutboxMessages (EventType, Payload, OccurredAt) VALUES (@p_event_type, @p_payload::jsonb, @p_occurred_at)",
+            sql: "INSERT INTO outbox_messages (event_type, payload, occurred_at) VALUES (@p_event_type, @p_payload::jsonb, @p_occurred_at)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
@@ -42,18 +42,18 @@ public class OutboxRepository : IOutboxRepository
         parameters.Add("stale_threshold", staleThreshold, DbType.DateTimeOffset);
 
         const string sql = """
-            UPDATE OutboxMessages
-            SET ClaimedAt = @claimed_at, ClaimToken = @claim_token
-            WHERE Id IN (
-                SELECT Id FROM OutboxMessages
-                WHERE ProcessedAt IS NULL
-                  AND Error IS NULL
-                  AND (ClaimedAt IS NULL OR ClaimedAt < @stale_threshold)
-                ORDER BY OccurredAt
+            UPDATE outbox_messages
+            SET claimed_at = @claimed_at, claim_token = @claim_token
+            WHERE id IN (
+                SELECT id FROM outbox_messages
+                WHERE processed_at IS NULL
+                  AND error IS NULL
+                  AND (claimed_at IS NULL OR claimed_at < @stale_threshold)
+                ORDER BY occurred_at
                 LIMIT @batch_size
                 FOR UPDATE SKIP LOCKED
             )
-            RETURNING Id, EventType, Payload, OccurredAt, ClaimedAt, ClaimToken, ProcessedAt, Error
+            RETURNING id, event_type, payload, occurred_at, claimed_at, claim_token, processed_at, error
             """;
 
         var command = new CommandDefinition(
@@ -76,7 +76,7 @@ public class OutboxRepository : IOutboxRepository
         parameters.Add("p_processed_at", processedAt, DbType.DateTimeOffset);
 
         var command = new CommandDefinition(
-            commandText: "UPDATE OutboxMessages SET ProcessedAt = @p_processed_at WHERE Id = @p_id AND ClaimToken = @p_claim_token",
+            commandText: "UPDATE outbox_messages SET processed_at = @p_processed_at WHERE id = @p_id AND claim_token = @p_claim_token",
             parameters: parameters,
             transaction: _dapperDataContext.Transaction,
             commandType: CommandType.Text,
@@ -94,7 +94,7 @@ public class OutboxRepository : IOutboxRepository
         parameters.Add("p_error", error, DbType.String);
 
         var command = new CommandDefinition(
-            commandText: "UPDATE OutboxMessages SET Error = @p_error WHERE Id = @p_id AND ClaimToken = @p_claim_token",
+            commandText: "UPDATE outbox_messages SET error = @p_error WHERE id = @p_id AND claim_token = @p_claim_token",
             parameters: parameters,
             transaction: _dapperDataContext.Transaction,
             commandType: CommandType.Text,
