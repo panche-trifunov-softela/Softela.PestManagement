@@ -366,3 +366,6 @@ FodyWeavers.xsd
 .claude/
 CLAUDE.md
 .azure
+
+# azd generated boilerplate
+next-steps.md
