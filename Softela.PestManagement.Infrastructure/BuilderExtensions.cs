@@ -1,3 +1,4 @@
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Softela.PestManagement.Application.Core.FeatureFlags;
@@ -15,6 +16,8 @@ namespace Softela.PestManagement.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            DefaultTypeMap.MatchNamesWithUnderscores = true;
+
             var connectionString = new DatabaseConnectionStringProvider(configuration).GetConnectionString();
 
             services

@@ -1,30 +1,30 @@
 CREATE OR REPLACE FUNCTION get_service_address_by_id(p_id INT, p_tenant_id INT)
 RETURNS TABLE (
-    Id INT,
-    TenantId INT,
-    CustomerId INT,
-    ServiceAddressName VARCHAR,
-    ServiceAddressType VARCHAR,
-    Address VARCHAR,
-    City VARCHAR,
-    State VARCHAR,
-    Zip VARCHAR,
-    ContactName VARCHAR,
-    ContactPhone VARCHAR,
-    ContactEmail VARCHAR,
-    IsActive BOOLEAN,
-    IsDeleted BOOLEAN,
-    CreatedAt TIMESTAMPTZ,
-    ModifiedAt TIMESTAMPTZ,
-    CreatedBy UUID,
-    ModifiedBy UUID
+    id INT,
+    tenant_id INT,
+    customer_id INT,
+    service_address_name VARCHAR,
+    service_address_type VARCHAR,
+    address VARCHAR,
+    city VARCHAR,
+    state VARCHAR,
+    zip VARCHAR,
+    contact_name VARCHAR,
+    contact_phone VARCHAR,
+    contact_email VARCHAR,
+    is_active BOOLEAN,
+    is_deleted BOOLEAN,
+    created_at TIMESTAMPTZ,
+    modified_at TIMESTAMPTZ,
+    created_by UUID,
+    modified_by UUID
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT Id, TenantId, CustomerId, ServiceAddressName, ServiceAddressType,
-        Address, City, State, Zip, ContactName, ContactPhone, ContactEmail,
-        IsActive, IsDeleted, CreatedAt, ModifiedAt, CreatedBy, ModifiedBy
-    FROM ServiceAddresses
-    WHERE Id = p_id AND TenantId = p_tenant_id AND IsDeleted = FALSE;
+    SELECT id, tenant_id, customer_id, service_address_name, service_address_type,
+        address, city, state, zip, contact_name, contact_phone, contact_email,
+        is_active, is_deleted, created_at, modified_at, created_by, modified_by
+    FROM service_addresses
+    WHERE id = p_id AND tenant_id = p_tenant_id AND is_deleted = FALSE;
 END;
 $$ LANGUAGE plpgsql;

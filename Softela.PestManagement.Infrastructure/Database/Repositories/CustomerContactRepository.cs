@@ -33,7 +33,7 @@ public class CustomerContactRepository : ICustomerContactRepository
         parameters.Add("p_modified_by", contact.ModifiedBy, DbType.Guid);
 
         return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
-            sql: "CALL UpsertCustomerContact(@p_id, @p_tenant_id, @p_customer_id, @p_contact_type, @p_first_name, @p_middle_name, @p_last_name, @p_email, @p_alternate_emails, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
+            sql: "SELECT upsert_customer_contact(@p_id, @p_tenant_id, @p_customer_id, @p_contact_type, @p_first_name, @p_middle_name, @p_last_name, @p_email, @p_alternate_emails, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
@@ -47,7 +47,7 @@ public class CustomerContactRepository : ICustomerContactRepository
         parameters.Add("@TenantId", tenantId, DbType.Int32);
 
         var contacts = await _dapperDataContext.Connection!.QueryAsync<CustomerContact>(
-            sql: "SELECT * FROM CustomerContacts WHERE CustomerId = @CustomerId AND TenantId = @TenantId AND IsDeleted = FALSE",
+            sql: "SELECT * FROM customer_contacts WHERE customer_id = @CustomerId AND tenant_id = @TenantId AND is_deleted = FALSE",
             param: parameters,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
@@ -60,8 +60,9 @@ public class CustomerContactRepository : ICustomerContactRepository
         var parameters = new DynamicParameters();
         parameters.Add("@CustomerContactId", contactId, DbType.Int32);
         parameters.Add("@TenantId", tenantId, DbType.Int32);
+
         var phones = await _dapperDataContext.Connection!.QueryAsync<CustomerContactPhone>(
-            sql: "SELECT * FROM CustomerContactPhones WHERE CustomerContactId = @CustomerContactId AND TenantId = @TenantId AND IsDeleted = FALSE",
+            sql: "SELECT * FROM customer_contact_phones WHERE customer_contact_id = @CustomerContactId AND tenant_id = @TenantId AND is_deleted = FALSE",
             param: parameters,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
@@ -81,7 +82,7 @@ public class CustomerContactRepository : ICustomerContactRepository
         parameters.Add("p_modified_at", phone.ModifiedAt, DbType.DateTimeOffset);
 
         return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
-            sql: "CALL UpsertCustomerContactPhone(@p_id, @p_tenant_id, @p_customer_contact_id, @p_phone_type, @p_phone_number, @p_created_at, @p_modified_at)",
+            sql: "SELECT upsert_customer_contact_phone(@p_id, @p_tenant_id, @p_customer_contact_id, @p_phone_type, @p_phone_number, @p_created_at, @p_modified_at)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
@@ -104,4 +105,3 @@ public class CustomerContactRepository : ICustomerContactRepository
         ).ConfigureAwait(false);
     }
 }
-

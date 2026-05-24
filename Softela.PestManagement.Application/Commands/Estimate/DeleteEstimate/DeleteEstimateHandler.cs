@@ -31,7 +31,7 @@ public class DeleteEstimateHandler : IRequestHandler<DeleteEstimateRequest, bool
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            await _estimateRepository.DeleteAsync(request.Id, now, _tenantContext.UserId);
+            await _estimateRepository.DeleteAsync(request.Id, _tenantContext.TenantId, now, _tenantContext.UserId);
             await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
                 new EstimateDeletedEvent(request.Id), now));
             await _unitOfWork.CommitAsync(cancellationToken);

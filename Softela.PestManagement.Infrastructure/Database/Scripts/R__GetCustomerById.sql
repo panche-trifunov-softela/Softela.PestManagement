@@ -1,39 +1,34 @@
--- Function to return a single customer by id and tenant id
 CREATE OR REPLACE FUNCTION get_customer_by_id(p_id INT, p_tenant_id INT)
 RETURNS TABLE (
-    Id INT,
-    TenantId INT,
-    CustomerNum VARCHAR,
-    Name VARCHAR,
-    CustomerType INT,
-    IsActive BOOLEAN,
-    SendInvoice BOOLEAN,
-    EmailInvoice BOOLEAN,
-    Instructions TEXT,
-    PrimaryNote TEXT,
-    RegistrationNum VARCHAR,
-    PreferredContactMethod VARCHAR,
-    BillingAddressStreet VARCHAR,
-    BillingAddressCity VARCHAR,
-    BillingAddressState VARCHAR,
-    BillingAddressZip VARCHAR,
-    IsDeleted BOOLEAN,
-    CreatedAt TIMESTAMPTZ,
-    ModifiedAt TIMESTAMPTZ,
-    CreatedBy UUID,
-    ModifiedBy UUID
+    id INT,
+    tenant_id INT,
+    customer_num VARCHAR,
+    name VARCHAR,
+    customer_type INT,
+    is_active BOOLEAN,
+    send_invoice BOOLEAN,
+    email_invoice BOOLEAN,
+    instructions TEXT,
+    primary_note TEXT,
+    registration_num VARCHAR,
+    preferred_contact_method VARCHAR,
+    billing_address_street VARCHAR,
+    billing_address_city VARCHAR,
+    billing_address_state VARCHAR,
+    billing_address_zip VARCHAR,
+    is_deleted BOOLEAN,
+    created_at TIMESTAMPTZ,
+    modified_at TIMESTAMPTZ,
+    created_by UUID,
+    modified_by UUID
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT Id, TenantId, CustomerNum, Name, CustomerType, IsActive, SendInvoice, EmailInvoice,
-        Instructions, PrimaryNote, RegistrationNum, PreferredContactMethod,
-        BillingAddressStreet, BillingAddressCity, BillingAddressState, BillingAddressZip,
-        IsDeleted, CreatedAt, ModifiedAt, CreatedBy, ModifiedBy
-    FROM Customers
-    WHERE Id = p_id AND TenantId = p_tenant_id AND IsDeleted = FALSE;
+    SELECT id, tenant_id, customer_num, name, customer_type, is_active, send_invoice, email_invoice,
+        instructions, primary_note, registration_num, preferred_contact_method,
+        billing_address_street, billing_address_city, billing_address_state, billing_address_zip,
+        is_deleted, created_at, modified_at, created_by, modified_by
+    FROM customers
+    WHERE id = p_id AND tenant_id = p_tenant_id AND is_deleted = FALSE;
 END;
 $$ LANGUAGE plpgsql;
-
--- Note: callers can use SELECT * FROM get_customer_by_id(p_id, p_tenant_id).
-
--- Note: Callers should use SELECT * FROM get_customer_by_id(p_id, p_tenant_id) if expecting result sets.

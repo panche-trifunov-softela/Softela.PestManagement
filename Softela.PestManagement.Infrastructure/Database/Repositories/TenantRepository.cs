@@ -27,7 +27,7 @@ public class TenantRepository : ITenantRepository
         parameters.Add("p_created_by", tenant.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", tenant.ModifiedBy, DbType.Guid);
 
-        return await _dapperDataContext.Connection!.ExecuteScalarAsync<int>(
+        return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
             sql: "SELECT upsert_tenant(@p_id, @p_name, @p_slug, @p_is_active, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
