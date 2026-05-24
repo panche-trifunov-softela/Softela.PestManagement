@@ -39,7 +39,7 @@ public class EstimateRepository : IEstimateRepository
         ).ConfigureAwait(false);
     }
 
-    public async Task UpdateAsync(Estimate estimate)
+    public async Task<int> UpdateAsync(Estimate estimate)
     {
         var parameters = new DynamicParameters();
         parameters.Add("p_id", estimate.Id, DbType.Int32);
@@ -55,7 +55,7 @@ public class EstimateRepository : IEstimateRepository
         parameters.Add("p_created_by", estimate.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", estimate.ModifiedBy, DbType.Guid);
 
-        await _dapperDataContext.Connection!.ExecuteAsync(
+        return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
             sql: "SELECT upsert_estimate(@p_id, @p_tenant_id, @p_service_address_id, @p_name, @p_status, @p_service_interest, @p_assigned_sales_rep, @p_source, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,

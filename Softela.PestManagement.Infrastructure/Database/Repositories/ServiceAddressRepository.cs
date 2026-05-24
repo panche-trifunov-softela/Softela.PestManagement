@@ -44,7 +44,7 @@ public class ServiceAddressRepository : IServiceAddressRepository
         ).ConfigureAwait(false);
     }
 
-    public async Task UpdateAsync(ServiceAddress serviceAddress)
+    public async Task<int> UpdateAsync(ServiceAddress serviceAddress)
     {
         var parameters = new DynamicParameters();
         parameters.Add("p_id", serviceAddress.Id, DbType.Int32);
@@ -65,7 +65,7 @@ public class ServiceAddressRepository : IServiceAddressRepository
         parameters.Add("p_created_by", serviceAddress.CreatedBy, DbType.Guid);
         parameters.Add("p_modified_by", serviceAddress.ModifiedBy, DbType.Guid);
 
-        await _dapperDataContext.Connection!.ExecuteAsync(
+        return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
             sql: "SELECT upsert_service_address(@p_id, @p_tenant_id, @p_customer_id, @p_service_address_name, @p_service_address_type, @p_address, @p_city, @p_state, @p_zip, @p_contact_name, @p_contact_phone, @p_contact_email, @p_is_active, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
