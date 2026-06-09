@@ -18,5 +18,4 @@ public class Customer : TenantScopedEntity
     public string BillingAddressCity { get; set; }
     public string BillingAddressState { get; set; }
     public string BillingAddressZip { get; set; }
-    public bool IsDeleted { get; set; }
 }

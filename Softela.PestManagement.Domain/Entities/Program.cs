@@ -1,7 +1,4 @@
 ﻿using Softela.PestManagement.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Softela.PestManagement.Domain.Entities
 {
@@ -16,7 +13,6 @@ namespace Softela.PestManagement.Domain.Entities
         public DateTimeOffset? RenewalDate { get; set; }
         public DateTimeOffset? CanceledDate { get; set; }
         public DateTimeOffset? PendingCancelDate { get; set; }
-        public bool IsDeleted { get; set; }
         public ProgramFrequency Frequency { get; set; }
     }
 }
