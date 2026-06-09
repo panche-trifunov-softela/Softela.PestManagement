@@ -2,7 +2,7 @@ namespace Softela.PestManagement.Application.Commands.Program.UpdateProgram;
 
 public static class UpdateProgramMapper
 {
-    public static Domain.Entities.Program ToDomainEntity(UpdateProgramRequest request, DateTimeOffset now, Guid userId)
+    public static Domain.Entities.Program ToDomainEntity(UpdateProgramRequest request, DateTimeOffset now, Guid userId, int tenantId)
     {
         return new Domain.Entities.Program
         {
@@ -17,7 +17,8 @@ public static class UpdateProgramMapper
             PendingCancelDate = request.PendingCancelDate,
             Frequency = request.Frequency,
             ModifiedAt = now,
-            ModifiedBy = userId
+            ModifiedBy = userId,
+            TenantId = tenantId
         };
     }
 }

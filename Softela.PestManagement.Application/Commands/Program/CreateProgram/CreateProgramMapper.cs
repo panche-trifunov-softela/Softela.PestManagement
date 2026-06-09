@@ -2,7 +2,7 @@ namespace Softela.PestManagement.Application.Commands.Program.CreateProgram;
 
 public static class CreateProgramMapper
 {
-    public static Domain.Entities.Program ToDomainEntity(CreateProgramRequest request, DateTimeOffset now, Guid userId)
+    public static Domain.Entities.Program ToDomainEntity(CreateProgramRequest request, DateTimeOffset now, Guid userId, int tenantId)
     {
         return new Domain.Entities.Program
         {
@@ -19,7 +19,8 @@ public static class CreateProgramMapper
             CreatedAt = now,
             ModifiedAt = now,
             CreatedBy = userId,
-            ModifiedBy = userId
+            ModifiedBy = userId,
+            TenantId = tenantId
         };
     }
 }

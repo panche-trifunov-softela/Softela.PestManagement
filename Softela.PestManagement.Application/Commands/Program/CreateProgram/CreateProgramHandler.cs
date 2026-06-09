@@ -29,8 +29,7 @@ public class CreateProgramHandler : IRequestHandler<CreateProgramRequest, int>
     {
         var now = DateTimeOffset.UtcNow;
 
-        var program = CreateProgramMapper.ToDomainEntity(request, now, _tenantContext.UserId);
-        program.TenantId = _tenantContext.TenantId;
+        var program = CreateProgramMapper.ToDomainEntity(request, now, _tenantContext.UserId, _tenantContext.TenantId);
 
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try

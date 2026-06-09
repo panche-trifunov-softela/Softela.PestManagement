@@ -27,17 +27,15 @@ public class CreateEstimateHandler : IRequestHandler<CreateEstimateRequest, int>
 
     public async Task<int> Handle(CreateEstimateRequest request, CancellationToken cancellationToken)
     {
-        var now = DateTime.UtcNow;
-        var nowOffset = DateTimeOffset.UtcNow;
-        var userId = _tenantContext.UserId;
+        var now = DateTimeOffset.UtcNow;
 
-        var estimate = CreateEstimateMapper.ToDomainEntity(request, now, userId);
+        var estimate = CreateEstimateMapper.ToDomainEntity(request, now, _tenantContext.UserId, _tenantContext.TenantId);
 
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
             var id = await _estimateRepository.CreateAsync(estimate);
-            await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(new EstimateCreatedEvent(id, estimate.ServiceAddressId), nowOffset));
+            await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(new EstimateCreatedEvent(id, estimate.ServiceAddressId), now));
             await _unitOfWork.CommitAsync(cancellationToken);
             return id;
         }
