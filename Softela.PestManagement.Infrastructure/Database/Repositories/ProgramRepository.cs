@@ -83,7 +83,7 @@ public class ProgramRepository : IProgramRepository
         ).ConfigureAwait(false);
     }
 
-    public async Task<Program> GetByIdAsync(int id, int tenantId)
+    public async Task<Program?> GetByIdAsync(int id, int tenantId)
     {
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id, DbType.Int32);

@@ -17,7 +17,8 @@ public class GetProgramByIdHandler : IRequestHandler<GetProgramByIdRequest, GetP
 
     public async Task<GetProgramByIdResponse> Handle(GetProgramByIdRequest request, CancellationToken cancellationToken)
     {
-        var program = await _programRepository.GetByIdAsync(request.Id, _tenantContext.TenantId);
+        var program = await _programRepository.GetByIdAsync(request.Id, _tenantContext.TenantId)
+            ?? throw new KeyNotFoundException($"Program {request.Id} not found.");
 
         return new GetProgramByIdResponse
         {
