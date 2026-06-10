@@ -46,7 +46,7 @@ public class ServiceAddressController : ControllerBase
     public async Task<IActionResult> CreateServiceAddress([FromBody] CreateServiceAddressRequest request, CancellationToken cancellationToken)
     {
         var id = await _commandDispatcher.SendAsync<int, CreateServiceAddressRequest>(request, cancellationToken);
-        return CreatedAtAction(nameof(GetServiceAddressById), new { id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{id}")]

@@ -44,7 +44,7 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> CreateTenant([FromBody] CreateTenantRequest request, CancellationToken cancellationToken)
     {
         var id = await _commandDispatcher.SendAsync<int, CreateTenantRequest>(request, cancellationToken);
-        return CreatedAtAction(nameof(GetTenantById), new { id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("tenants/{id}")]

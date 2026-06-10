@@ -44,7 +44,7 @@ public class CustomerController : ControllerBase
     public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerRequest request, CancellationToken cancellationToken)
     {
         var id = await _commandDispatcher.SendAsync<int, CreateCustomerRequest>(request, cancellationToken);
-        return CreatedAtAction(nameof(GetCustomerById), new { id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{id}")]
