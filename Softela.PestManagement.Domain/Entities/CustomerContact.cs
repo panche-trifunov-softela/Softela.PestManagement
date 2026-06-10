@@ -9,5 +9,4 @@ public class CustomerContact : TenantScopedEntity
     public string LastName { get; set; }
     public string Email { get; set; }
     public string AlternateEmails { get; set; }
-    public bool IsDeleted { get; set; }
 }

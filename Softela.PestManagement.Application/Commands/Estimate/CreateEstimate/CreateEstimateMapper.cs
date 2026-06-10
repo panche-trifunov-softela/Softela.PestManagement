@@ -6,7 +6,7 @@ namespace Softela.PestManagement.Application.Commands.Estimate.CreateEstimate
 {
     public static class CreateEstimateMapper
     {
-        public static Domain.Entities.Estimate ToDomainEntity(CreateEstimateRequest request, DateTime now, Guid userId)
+        public static Domain.Entities.Estimate ToDomainEntity(CreateEstimateRequest request, DateTimeOffset now, Guid userId, int tenantId)
         {
             return new Domain.Entities.Estimate
             {
@@ -16,6 +16,7 @@ namespace Softela.PestManagement.Application.Commands.Estimate.CreateEstimate
                 ServiceInterest = request.ServiceInterest,
                 AssignedSalesRep = request.AssignedSalesRep,
                 Source = request.Source,
+                TenantId = tenantId,
                 CreatedAt = now,
                 ModifiedAt = now,
                 CreatedBy = userId,

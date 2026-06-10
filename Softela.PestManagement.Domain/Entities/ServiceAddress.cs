@@ -13,5 +13,4 @@ public class ServiceAddress : TenantScopedEntity
     public string ContactPhone { get; set; }
     public string ContactEmail { get; set; }
     public bool IsActive { get; set; }
-    public bool IsDeleted { get; set; }
 }

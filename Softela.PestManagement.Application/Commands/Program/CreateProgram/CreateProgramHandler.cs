@@ -4,41 +4,41 @@ using Softela.PestManagement.Application.Events;
 using Softela.PestManagement.Application.Outbox;
 using Softela.PestManagement.Application.Repositories;
 
-namespace Softela.PestManagement.Application.Commands.Estimate.UpdateEstimate;
+namespace Softela.PestManagement.Application.Commands.Program.CreateProgram;
 
-public class UpdateEstimateHandler : IRequestHandler<UpdateEstimateRequest, bool>
+public class CreateProgramHandler : IRequestHandler<CreateProgramRequest, int>
 {
-    private readonly IEstimateRepository _estimateRepository;
+    private readonly IProgramRepository _programRepository;
     private readonly IOutboxRepository _outboxRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantContext _tenantContext;
 
-    public UpdateEstimateHandler(
-        IEstimateRepository estimateRepository,
+    public CreateProgramHandler(
+        IProgramRepository programRepository,
         IOutboxRepository outboxRepository,
         IUnitOfWork unitOfWork,
         ITenantContext tenantContext)
     {
-        _estimateRepository = estimateRepository;
+        _programRepository = programRepository;
         _outboxRepository = outboxRepository;
         _unitOfWork = unitOfWork;
         _tenantContext = tenantContext;
     }
 
-    public async Task<bool> Handle(UpdateEstimateRequest request, CancellationToken cancellationToken)
+    public async Task<int> Handle(CreateProgramRequest request, CancellationToken cancellationToken)
     {
         var now = DateTimeOffset.UtcNow;
 
-        var estimate = UpdateEstimateMapper.ToDomainEntity(request, now, _tenantContext.UserId, _tenantContext.TenantId);
+        var program = CreateProgramMapper.ToDomainEntity(request, now, _tenantContext.UserId, _tenantContext.TenantId);
 
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            await _estimateRepository.UpdateAsync(estimate);
-            await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
-                new EstimateUpdatedEvent(estimate.Id, estimate.ServiceAddressId), now));
+            var id = await _programRepository.CreateAsync(program);
+            await _outboxRepository.InsertAsync(
+                OutboxMessageFactory.Create(new ProgramCreatedEvent(id, program.EstimateId), now));
             await _unitOfWork.CommitAsync(cancellationToken);
-            return true;
+            return id;
         }
         catch
         {

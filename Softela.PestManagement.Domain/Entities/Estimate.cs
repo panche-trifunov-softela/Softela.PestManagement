@@ -10,5 +10,4 @@ public class Estimate : TenantScopedEntity
     public string ServiceInterest { get; set; }
     public int AssignedSalesRep { get; set; }
     public LeadSource Source { get; set; }
-    public bool IsDeleted { get; set; }
 }

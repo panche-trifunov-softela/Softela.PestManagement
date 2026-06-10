@@ -4,39 +4,36 @@ using Softela.PestManagement.Application.Events;
 using Softela.PestManagement.Application.Outbox;
 using Softela.PestManagement.Application.Repositories;
 
-namespace Softela.PestManagement.Application.Commands.Estimate.UpdateEstimate;
+namespace Softela.PestManagement.Application.Commands.Program.DeleteProgram;
 
-public class UpdateEstimateHandler : IRequestHandler<UpdateEstimateRequest, bool>
+public class DeleteProgramHandler : IRequestHandler<DeleteProgramRequest, bool>
 {
-    private readonly IEstimateRepository _estimateRepository;
+    private readonly IProgramRepository _programRepository;
     private readonly IOutboxRepository _outboxRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantContext _tenantContext;
 
-    public UpdateEstimateHandler(
-        IEstimateRepository estimateRepository,
+    public DeleteProgramHandler(
+        IProgramRepository programRepository,
         IOutboxRepository outboxRepository,
         IUnitOfWork unitOfWork,
         ITenantContext tenantContext)
     {
-        _estimateRepository = estimateRepository;
+        _programRepository = programRepository;
         _outboxRepository = outboxRepository;
         _unitOfWork = unitOfWork;
         _tenantContext = tenantContext;
     }
 
-    public async Task<bool> Handle(UpdateEstimateRequest request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(DeleteProgramRequest request, CancellationToken cancellationToken)
     {
         var now = DateTimeOffset.UtcNow;
-
-        var estimate = UpdateEstimateMapper.ToDomainEntity(request, now, _tenantContext.UserId, _tenantContext.TenantId);
-
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            await _estimateRepository.UpdateAsync(estimate);
+            await _programRepository.DeleteAsync(request.Id, _tenantContext.TenantId, now, _tenantContext.UserId);
             await _outboxRepository.InsertAsync(OutboxMessageFactory.Create(
-                new EstimateUpdatedEvent(estimate.Id, estimate.ServiceAddressId), now));
+                new ProgramDeletedEvent(request.Id), now));
             await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
