@@ -4,5 +4,5 @@ namespace Softela.PestManagement.Application.Queries.Program.GetProgramById;
 
 public sealed record GetProgramByIdResponse
 {
-    public ProgramDto Data { get; init; }
+    public required ProgramDto Data { get; init; }
 }
