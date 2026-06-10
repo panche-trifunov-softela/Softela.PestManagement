@@ -35,7 +35,7 @@ public class EstimateController : ControllerBase
     public async Task<IActionResult> CreateEstimate([FromBody] CreateEstimateRequest request, CancellationToken cancellationToken)
     {
         var id = await _commandDispatcher.SendAsync<int, CreateEstimateRequest>(request, cancellationToken);
-        return Ok(new { id });
+        return Created(string.Empty, new { id });
     }
 
     [HttpPut("{id}")]

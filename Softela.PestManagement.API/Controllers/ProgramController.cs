@@ -35,23 +35,16 @@ public class ProgramController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProgramById(int id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var result = await _queryDispatcher.QueryAsync(
-                new GetProgramByIdRequest { Id = id }, cancellationToken);
-            return Ok(result.Data);
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound();
-        }
+        var result = await _queryDispatcher.QueryAsync(
+            new GetProgramByIdRequest { Id = id }, cancellationToken);
+        return Ok(result.Data);
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateProgram([FromBody] CreateProgramRequest request, CancellationToken cancellationToken)
     {
         var id = await _commandDispatcher.SendAsync<int, CreateProgramRequest>(request, cancellationToken);
-        return Ok(new { id });
+        return Created(string.Empty, new { id });
     }
 
     [HttpPut("{id}")]
