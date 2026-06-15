@@ -1,7 +1,8 @@
 CREATE OR REPLACE FUNCTION update_program(
     p_id                  INT,
     p_tenant_id           INT,
-    p_name                VARCHAR,
+    p_ops_estimate_id     INT,
+    p_cfg_program_id      INT,
     p_status              BOOLEAN,
     p_notes               TEXT,
     p_start_date          TIMESTAMPTZ,
@@ -14,9 +15,10 @@ CREATE OR REPLACE FUNCTION update_program(
     p_modified_by         UUID
 ) RETURNS INT AS $$
 BEGIN
-    UPDATE programs
-    SET name                = p_name,
-        status              = p_status,
+    UPDATE ops_programs
+    SET cfg_program_id      = p_cfg_program_id,
+        ops_estimate_id     = p_ops_estimate_id,
+        is_active           = p_status,
         notes               = p_notes,
         start_date          = p_start_date,
         end_date            = p_end_date,

@@ -5,8 +5,8 @@ namespace Softela.PestManagement.Application.Dtos;
 public sealed record ProgramDto
 {
     public int Id { get; init; }
-    public int EstimateId { get; init; }
-    public required string Name { get; init; }
+    public int OpsEstimateId { get; init; }
+    public int CfgProgramId { get; set; }
     public bool Status { get; init; }
     public string? Notes { get; init; }
     public DateTimeOffset StartDate { get; init; }

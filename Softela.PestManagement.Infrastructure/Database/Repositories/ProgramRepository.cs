@@ -15,13 +15,13 @@ public class ProgramRepository : IProgramRepository
         _dapperDataContext = dapperDataContext;
     }
 
-    public async Task<int> CreateAsync(Program program)
+    public async Task<int> CreateAsync(OpsProgram program)
     {
         var parameters = new DynamicParameters();
         parameters.Add("p_tenant_id", program.TenantId, DbType.Int32);
-        parameters.Add("p_estimate_id", program.EstimateId, DbType.Int32);
-        parameters.Add("p_name", program.Name, DbType.String);
-        parameters.Add("p_status", program.Status, DbType.Boolean);
+        parameters.Add("p_ops_estimate_id", program.OpsEstimateId, DbType.Int32);
+        parameters.Add("p_cfg_program_id", program.CfgProgramId, DbType.Int32);
+        parameters.Add("p_status", program.IsActive, DbType.Boolean);
         parameters.Add("p_notes", program.Notes, DbType.String);
         parameters.Add("p_start_date", program.StartDate, DbType.DateTimeOffset);
         parameters.Add("p_end_date", program.EndDate, DbType.DateTimeOffset);
@@ -35,20 +35,21 @@ public class ProgramRepository : IProgramRepository
         parameters.Add("p_modified_by", program.ModifiedBy, DbType.Guid);
 
         return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
-            sql: "SELECT insert_program(@p_tenant_id, @p_estimate_id, @p_name, @p_status, @p_notes, @p_start_date, @p_end_date, @p_renewal_date, @p_canceled_date, @p_pending_cancel_date, @p_frequency, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
+            sql: "SELECT insert_program(@p_tenant_id, @p_ops_estimate_id, @p_cfg_program_id, @p_status, @p_notes, @p_start_date, @p_end_date, @p_renewal_date, @p_canceled_date, @p_pending_cancel_date, @p_frequency, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
         ).ConfigureAwait(false);
     }
 
-    public async Task<int> UpdateAsync(Program program)
+    public async Task<int> UpdateAsync(OpsProgram program)
     {
         var parameters = new DynamicParameters();
         parameters.Add("p_id", program.Id, DbType.Int32);
         parameters.Add("p_tenant_id", program.TenantId, DbType.Int32);
-        parameters.Add("p_name", program.Name, DbType.String);
-        parameters.Add("p_status", program.Status, DbType.Boolean);
+        parameters.Add("p_ops_estimate_id", program.OpsEstimateId, DbType.Int32);
+        parameters.Add("p_cfg_program_id", program.CfgProgramId, DbType.Int32);
+        parameters.Add("p_status", program.IsActive, DbType.Boolean);
         parameters.Add("p_notes", program.Notes, DbType.String);
         parameters.Add("p_start_date", program.StartDate, DbType.DateTimeOffset);
         parameters.Add("p_end_date", program.EndDate, DbType.DateTimeOffset);
@@ -60,7 +61,7 @@ public class ProgramRepository : IProgramRepository
         parameters.Add("p_modified_by", program.ModifiedBy, DbType.Guid);
 
         return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
-            sql: "SELECT update_program(@p_id, @p_tenant_id, @p_name, @p_status, @p_notes, @p_start_date, @p_end_date, @p_renewal_date, @p_canceled_date, @p_pending_cancel_date, @p_frequency, @p_modified_at, @p_modified_by)",
+            sql: "SELECT update_program(@p_id, @p_tenant_id, @p_ops_estimate_id, @p_cfg_program_id, @p_status, @p_notes, @p_start_date, @p_end_date, @p_renewal_date, @p_canceled_date, @p_pending_cancel_date, @p_frequency, @p_modified_at, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
@@ -83,13 +84,13 @@ public class ProgramRepository : IProgramRepository
         ).ConfigureAwait(false);
     }
 
-    public async Task<Program?> GetByIdAsync(int id, int tenantId)
+    public async Task<OpsProgram?> GetByIdAsync(int id, int tenantId)
     {
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id, DbType.Int32);
         parameters.Add("@TenantId", tenantId, DbType.Int32);
 
-        return await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<Program>(
+        return await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<OpsProgram>(
             sql: "SELECT * FROM get_program_by_id(@Id, @TenantId)",
             param: parameters,
             commandType: CommandType.Text,
@@ -97,13 +98,13 @@ public class ProgramRepository : IProgramRepository
         ).ConfigureAwait(false);
     }
 
-    public async Task<List<Program>> GetByEstimateIdAsync(int estimateId, int tenantId)
+    public async Task<List<OpsProgram>> GetByEstimateIdAsync(int estimateId, int tenantId)
     {
         var parameters = new DynamicParameters();
         parameters.Add("@EstimateId", estimateId, DbType.Int32);
         parameters.Add("@TenantId", tenantId, DbType.Int32);
 
-        var programs = await _dapperDataContext.Connection!.QueryAsync<Program>(
+        var programs = await _dapperDataContext.Connection!.QueryAsync<OpsProgram>(
             sql: "SELECT * FROM get_programs_by_estimate_id(@EstimateId, @TenantId)",
             param: parameters,
             commandType: CommandType.Text,

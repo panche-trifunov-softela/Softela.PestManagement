@@ -2,13 +2,12 @@ namespace Softela.PestManagement.Application.Commands.Program.CreateProgram;
 
 public static class CreateProgramMapper
 {
-    public static Domain.Entities.Program ToDomainEntity(CreateProgramRequest request, DateTimeOffset now, Guid userId, int tenantId)
+    public static Domain.Entities.OpsProgram ToDomainEntity(CreateProgramRequest request, DateTimeOffset now, Guid userId, int tenantId)
     {
-        return new Domain.Entities.Program
+        return new Domain.Entities.OpsProgram
         {
-            EstimateId = request.EstimateId,
-            Name = request.Name,
-            Status = request.Status,
+            OpsEstimateId = request.EstimateId,
+            IsActive = request.Status,
             Notes = request.Notes,
             StartDate = request.StartDate,
             EndDate = request.EndDate,

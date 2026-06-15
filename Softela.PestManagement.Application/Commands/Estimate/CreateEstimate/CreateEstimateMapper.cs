@@ -6,12 +6,11 @@ namespace Softela.PestManagement.Application.Commands.Estimate.CreateEstimate
 {
     public static class CreateEstimateMapper
     {
-        public static Domain.Entities.Estimate ToDomainEntity(CreateEstimateRequest request, DateTimeOffset now, Guid userId, int tenantId)
+        public static Domain.Entities.OpsEstimate ToDomainEntity(CreateEstimateRequest request, DateTimeOffset now, Guid userId, int tenantId)
         {
-            return new Domain.Entities.Estimate
+            return new Domain.Entities.OpsEstimate
             {
                 ServiceAddressId = request.ServiceAddressId,
-                Name = request.Name,
                 Status = request.Status,
                 ServiceInterest = request.ServiceInterest,
                 AssignedSalesRep = request.AssignedSalesRep,

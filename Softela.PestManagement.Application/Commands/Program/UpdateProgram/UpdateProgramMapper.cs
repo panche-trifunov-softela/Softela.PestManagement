@@ -2,13 +2,12 @@ namespace Softela.PestManagement.Application.Commands.Program.UpdateProgram;
 
 public static class UpdateProgramMapper
 {
-    public static Domain.Entities.Program ToDomainEntity(UpdateProgramRequest request, DateTimeOffset now, Guid userId, int tenantId)
+    public static Domain.Entities.OpsProgram ToDomainEntity(UpdateProgramRequest request, DateTimeOffset now, Guid userId, int tenantId)
     {
-        return new Domain.Entities.Program
+        return new Domain.Entities.OpsProgram
         {
             Id = request.Id,
-            Name = request.Name,
-            Status = request.Status,
+            IsActive = request.Status,
             Notes = request.Notes,
             StartDate = request.StartDate,
             EndDate = request.EndDate,

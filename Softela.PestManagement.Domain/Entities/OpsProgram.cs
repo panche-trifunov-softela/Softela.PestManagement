@@ -2,11 +2,11 @@
 
 namespace Softela.PestManagement.Domain.Entities
 {
-    public class Program : TenantScopedEntity
+    public class OpsProgram : TenantScopedEntity
     {
-        public required string Name { get; set; }
-        public bool Status { get; set; }
-        public int EstimateId { get; set; }
+        public int CfgProgramId { get; set; }
+        public bool IsActive { get; set; }
+        public int OpsEstimateId { get; set; }
         public string? Notes { get; set; }
         public DateTimeOffset StartDate { get; set; }
         public DateTimeOffset? EndDate { get; set; }
