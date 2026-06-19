@@ -5,10 +5,10 @@ CREATE OR REPLACE FUNCTION delete_program(
     p_modified_by UUID
 ) RETURNS VOID AS $$
 BEGIN
-    UPDATE programs
+    UPDATE ops_programs
     SET is_deleted  = TRUE,
         modified_at = p_modified_at,
         modified_by = p_modified_by
-    WHERE id = p_id AND tenant_id = p_tenant_id;
+    WHERE id = p_id AND tenant_id = p_tenant_id AND is_deleted = FALSE;
 END;
 $$ LANGUAGE plpgsql;

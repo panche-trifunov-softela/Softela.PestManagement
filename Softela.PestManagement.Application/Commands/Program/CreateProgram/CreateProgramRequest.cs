@@ -6,8 +6,8 @@ namespace Softela.PestManagement.Application.Commands.Program.CreateProgram;
 public sealed record CreateProgramRequest : IRequest<int>
 {
     public int EstimateId { get; init; }
-    public required string Name { get; init; }
-    public bool Status { get; init; }
+    public int CfgProgramId { get; init; }
+    public bool IsActive { get; init; }
     public string? Notes { get; init; }
     public DateTimeOffset StartDate { get; init; }
     public DateTimeOffset? EndDate { get; init; }

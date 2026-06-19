@@ -36,7 +36,7 @@ public class CreateProgramHandler : IRequestHandler<CreateProgramRequest, int>
         {
             var id = await _programRepository.CreateAsync(program);
             await _outboxRepository.InsertAsync(
-                OutboxMessageFactory.Create(new ProgramCreatedEvent(id, program.EstimateId), now));
+                OutboxMessageFactory.Create(new ProgramCreatedEvent(id, program.OpsEstimateId), now));
             await _unitOfWork.CommitAsync(cancellationToken);
             return id;
         }

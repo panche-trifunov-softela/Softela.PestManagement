@@ -2,8 +2,8 @@ CREATE OR REPLACE FUNCTION get_estimates_by_service_address_id(p_service_address
 RETURNS TABLE (
     id INT,
     tenant_id INT,
+    cfg_estimate_id INT,
     service_address_id INT,
-    name VARCHAR,
     status SMALLINT,
     service_interest VARCHAR,
     assigned_sales_rep INT,
@@ -16,11 +16,11 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT e.id, e.tenant_id, e.service_address_id, e.name, e.status, e.service_interest,
+    SELECT e.id, e.tenant_id, e.cfg_estimate_id, e.service_address_id, e.status, e.service_interest,
         e.assigned_sales_rep, e.source, e.is_deleted, e.created_at, e.modified_at,
         e.created_by, e.modified_by
-    FROM estimates e
+    FROM ops_estimates e
     WHERE e.service_address_id = p_service_address_id AND e.tenant_id = p_tenant_id AND e.is_deleted = FALSE
-    ORDER BY e.name;
+    ORDER BY e.id;
 END;
 $$ LANGUAGE plpgsql;

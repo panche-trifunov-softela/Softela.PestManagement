@@ -7,7 +7,7 @@ public sealed record UpdateEstimateRequest : IRequest<bool>
 {
     public int Id { get; init; }
     public int ServiceAddressId { get; init; }
-    public string Name { get; init; }
+    public int CfgEstimateId { get; init; }
     public LeadStatus Status { get; init; }
     public string? ServiceInterest { get; init; }
     public int AssignedSalesRep { get; init; }

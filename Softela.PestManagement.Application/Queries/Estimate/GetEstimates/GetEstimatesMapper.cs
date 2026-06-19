@@ -4,13 +4,13 @@ namespace Softela.PestManagement.Application.Queries.Estimate.GetEstimates;
 
 public static class GetEstimatesMapper
 {
-    public static EstimateDto ToDto(Domain.Entities.Estimate estimate)
+    public static EstimateDto ToDto(Domain.Entities.OpsEstimate estimate)
     {
         return new EstimateDto
         {
             Id = estimate.Id,
             ServiceAddressId = estimate.ServiceAddressId,
-            Name = estimate.Name,
+            CfgEstimateId = estimate.CfgEstimateId,
             Status = estimate.Status,
             ServiceInterest = estimate.ServiceInterest,
             AssignedSalesRep = estimate.AssignedSalesRep,
