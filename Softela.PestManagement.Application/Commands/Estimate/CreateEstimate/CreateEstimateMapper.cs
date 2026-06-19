@@ -11,6 +11,7 @@ namespace Softela.PestManagement.Application.Commands.Estimate.CreateEstimate
             return new Domain.Entities.OpsEstimate
             {
                 ServiceAddressId = request.ServiceAddressId,
+                CfgEstimateId = request.CfgEstimateId,
                 Status = request.Status,
                 ServiceInterest = request.ServiceInterest,
                 AssignedSalesRep = request.AssignedSalesRep,

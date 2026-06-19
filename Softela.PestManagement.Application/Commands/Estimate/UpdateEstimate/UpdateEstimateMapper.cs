@@ -12,6 +12,7 @@ namespace Softela.PestManagement.Application.Commands.Estimate.UpdateEstimate
             {
                 Id = request.Id,
                 ServiceAddressId = request.ServiceAddressId,
+                CfgEstimateId = request.CfgEstimateId,
                 Status = request.Status,
                 ServiceInterest = request.ServiceInterest,
                 AssignedSalesRep = request.AssignedSalesRep,

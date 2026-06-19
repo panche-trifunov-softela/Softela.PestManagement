@@ -10,6 +10,7 @@ public static class GetEstimatesMapper
         {
             Id = estimate.Id,
             ServiceAddressId = estimate.ServiceAddressId,
+            CfgEstimateId = estimate.CfgEstimateId,
             Status = estimate.Status,
             ServiceInterest = estimate.ServiceInterest,
             AssignedSalesRep = estimate.AssignedSalesRep,
