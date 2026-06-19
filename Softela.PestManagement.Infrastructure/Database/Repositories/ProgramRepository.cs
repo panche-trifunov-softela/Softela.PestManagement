@@ -21,7 +21,7 @@ public class ProgramRepository : IProgramRepository
         parameters.Add("p_tenant_id", program.TenantId, DbType.Int32);
         parameters.Add("p_ops_estimate_id", program.OpsEstimateId, DbType.Int32);
         parameters.Add("p_cfg_program_id", program.CfgProgramId, DbType.Int32);
-        parameters.Add("p_status", program.IsActive, DbType.Boolean);
+        parameters.Add("p_is_active", program.IsActive, DbType.Boolean);
         parameters.Add("p_notes", program.Notes, DbType.String);
         parameters.Add("p_start_date", program.StartDate, DbType.DateTimeOffset);
         parameters.Add("p_end_date", program.EndDate, DbType.DateTimeOffset);
@@ -35,7 +35,7 @@ public class ProgramRepository : IProgramRepository
         parameters.Add("p_modified_by", program.ModifiedBy, DbType.Guid);
 
         return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
-            sql: "SELECT insert_program(@p_tenant_id, @p_ops_estimate_id, @p_cfg_program_id, @p_status, @p_notes, @p_start_date, @p_end_date, @p_renewal_date, @p_canceled_date, @p_pending_cancel_date, @p_frequency, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
+            sql: "SELECT insert_program(@p_tenant_id, @p_ops_estimate_id, @p_cfg_program_id, @p_is_active, @p_notes, @p_start_date, @p_end_date, @p_renewal_date, @p_canceled_date, @p_pending_cancel_date, @p_frequency, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
@@ -49,7 +49,7 @@ public class ProgramRepository : IProgramRepository
         parameters.Add("p_tenant_id", program.TenantId, DbType.Int32);
         parameters.Add("p_ops_estimate_id", program.OpsEstimateId, DbType.Int32);
         parameters.Add("p_cfg_program_id", program.CfgProgramId, DbType.Int32);
-        parameters.Add("p_status", program.IsActive, DbType.Boolean);
+        parameters.Add("p_is_active", program.IsActive, DbType.Boolean);
         parameters.Add("p_notes", program.Notes, DbType.String);
         parameters.Add("p_start_date", program.StartDate, DbType.DateTimeOffset);
         parameters.Add("p_end_date", program.EndDate, DbType.DateTimeOffset);
@@ -61,7 +61,7 @@ public class ProgramRepository : IProgramRepository
         parameters.Add("p_modified_by", program.ModifiedBy, DbType.Guid);
 
         return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
-            sql: "SELECT update_program(@p_id, @p_tenant_id, @p_ops_estimate_id, @p_cfg_program_id, @p_status, @p_notes, @p_start_date, @p_end_date, @p_renewal_date, @p_canceled_date, @p_pending_cancel_date, @p_frequency, @p_modified_at, @p_modified_by)",
+            sql: "SELECT update_program(@p_id, @p_tenant_id, @p_ops_estimate_id, @p_cfg_program_id, @p_is_active, @p_notes, @p_start_date, @p_end_date, @p_renewal_date, @p_canceled_date, @p_pending_cancel_date, @p_frequency, @p_modified_at, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction

@@ -1,8 +1,11 @@
+-- Parameter p_status was renamed to p_is_active; CREATE OR REPLACE cannot rename input parameters, so drop the old signature first.
+DROP FUNCTION IF EXISTS insert_program(INT, INT, INT, BOOLEAN, TEXT, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ, SMALLINT, TIMESTAMPTZ, TIMESTAMPTZ, UUID, UUID);
+
 CREATE OR REPLACE FUNCTION insert_program(
     p_tenant_id           INT,
     p_ops_estimate_id     INT,
     p_cfg_program_id      INT,
-    p_status              BOOLEAN,
+    p_is_active           BOOLEAN,
     p_notes               TEXT,
     p_start_date          TIMESTAMPTZ,
     p_end_date            TIMESTAMPTZ,
@@ -23,7 +26,7 @@ BEGIN
         start_date, end_date, renewal_date, canceled_date, pending_cancel_date,
         frequency, is_deleted, created_at, modified_at, created_by, modified_by
     ) VALUES (
-        p_tenant_id, p_cfg_program_id, p_ops_estimate_id, p_status, p_notes,
+        p_tenant_id, p_cfg_program_id, p_ops_estimate_id, p_is_active, p_notes,
         p_start_date, p_end_date, p_renewal_date, p_canceled_date, p_pending_cancel_date,
         p_frequency, FALSE, p_created_at, p_modified_at, p_created_by, p_modified_by
     )
