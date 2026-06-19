@@ -7,6 +7,8 @@ public static class UpdateProgramMapper
         return new Domain.Entities.OpsProgram
         {
             Id = request.Id,
+            OpsEstimateId = request.EstimateId,
+            CfgProgramId = request.CfgProgramId,
             IsActive = request.Status,
             Notes = request.Notes,
             StartDate = request.StartDate,

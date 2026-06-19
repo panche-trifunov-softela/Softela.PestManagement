@@ -7,6 +7,7 @@ public static class CreateProgramMapper
         return new Domain.Entities.OpsProgram
         {
             OpsEstimateId = request.EstimateId,
+            CfgProgramId = request.CfgProgramId,
             IsActive = request.Status,
             Notes = request.Notes,
             StartDate = request.StartDate,
