@@ -9,7 +9,7 @@ public static class UpdateProgramMapper
             Id = request.Id,
             OpsEstimateId = request.EstimateId,
             CfgProgramId = request.CfgProgramId,
-            IsActive = request.Status,
+            IsActive = request.IsActive,
             Notes = request.Notes,
             StartDate = request.StartDate,
             EndDate = request.EndDate,

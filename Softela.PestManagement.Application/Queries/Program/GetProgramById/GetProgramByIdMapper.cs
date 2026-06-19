@@ -11,7 +11,7 @@ public static class GetProgramByIdMapper
             Id = program.Id,
             OpsEstimateId = program.OpsEstimateId,
             CfgProgramId = program.CfgProgramId,
-            Status = program.IsActive,
+            IsActive = program.IsActive,
             Notes = program.Notes,
             StartDate = program.StartDate,
             EndDate = program.EndDate,
