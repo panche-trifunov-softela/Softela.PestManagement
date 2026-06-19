@@ -6,7 +6,7 @@ public sealed record ProgramDto
 {
     public int Id { get; init; }
     public int OpsEstimateId { get; init; }
-    public int CfgProgramId { get; set; }
+    public int CfgProgramId { get; init; }
     public bool Status { get; init; }
     public string? Notes { get; init; }
     public DateTimeOffset StartDate { get; init; }
