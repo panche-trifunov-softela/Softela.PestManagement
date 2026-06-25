@@ -1,0 +1,99 @@
+using System.Data;
+using Dapper;
+using Softela.PestManagement.Application.Repositories;
+using Softela.PestManagement.Domain.Entities;
+using Softela.PestManagement.Infrastructure.Database.Dapper;
+
+namespace Softela.PestManagement.Infrastructure.Database.Repositories;
+
+public class CfgEstimateRepository : ICfgEstimateRepository
+{
+    private readonly IDapperDataContext _dapperDataContext;
+
+    public CfgEstimateRepository(IDapperDataContext dapperDataContext)
+    {
+        _dapperDataContext = dapperDataContext;
+    }
+
+    public async Task<int> CreateAsync(CfgEstimate cfgEstimate)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("p_tenant_id", cfgEstimate.TenantId, DbType.Int32);
+        parameters.Add("p_name", cfgEstimate.Name, DbType.String);
+        parameters.Add("p_description", cfgEstimate.Description, DbType.String);
+        parameters.Add("p_created_at", cfgEstimate.CreatedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_at", cfgEstimate.ModifiedAt, DbType.DateTimeOffset);
+        parameters.Add("p_created_by", cfgEstimate.CreatedBy, DbType.Guid);
+        parameters.Add("p_modified_by", cfgEstimate.ModifiedBy, DbType.Guid);
+
+        return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
+            sql: "SELECT insert_cfg_estimate(@p_tenant_id, @p_name, @p_description, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
+    }
+
+    public async Task<int> UpdateAsync(CfgEstimate cfgEstimate)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("p_id", cfgEstimate.Id, DbType.Int32);
+        parameters.Add("p_tenant_id", cfgEstimate.TenantId, DbType.Int32);
+        parameters.Add("p_name", cfgEstimate.Name, DbType.String);
+        parameters.Add("p_description", cfgEstimate.Description, DbType.String);
+        parameters.Add("p_modified_at", cfgEstimate.ModifiedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_by", cfgEstimate.ModifiedBy, DbType.Guid);
+
+        return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
+            sql: "SELECT update_cfg_estimate(@p_id, @p_tenant_id, @p_name, @p_description, @p_modified_at, @p_modified_by)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
+    }
+
+    public async Task DeleteAsync(int id, int tenantId, DateTimeOffset modifiedAt, Guid modifiedBy)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("@Id", id, DbType.Int32);
+        parameters.Add("@TenantId", tenantId, DbType.Int32);
+        parameters.Add("@ModifiedAt", modifiedAt, DbType.DateTimeOffset);
+        parameters.Add("@ModifiedBy", modifiedBy, DbType.Guid);
+
+        await _dapperDataContext.Connection!.ExecuteAsync(
+            sql: "SELECT delete_cfg_estimate(@Id, @TenantId, @ModifiedAt, @ModifiedBy)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
+    }
+
+    public async Task<CfgEstimate?> GetByIdAsync(int id, int tenantId)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("@Id", id, DbType.Int32);
+        parameters.Add("@TenantId", tenantId, DbType.Int32);
+
+        return await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<CfgEstimate>(
+            sql: "SELECT * FROM get_cfg_estimate_by_id(@Id, @TenantId)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
+    }
+
+    public async Task<List<CfgEstimate>> GetByTenantIdAsync(int tenantId)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("@TenantId", tenantId, DbType.Int32);
+
+        var cfgEstimates = await _dapperDataContext.Connection!.QueryAsync<CfgEstimate>(
+            sql: "SELECT * FROM get_cfg_estimates_by_tenant_id(@TenantId)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
+
+        return cfgEstimates.ToList();
+    }
+}
