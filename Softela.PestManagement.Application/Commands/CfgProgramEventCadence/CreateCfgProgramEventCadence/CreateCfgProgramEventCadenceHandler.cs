@@ -36,7 +36,7 @@ public class CreateCfgProgramEventCadenceHandler : IRequestHandler<CreateCfgProg
         {
             var id = await _cfgProgramEventCadenceRepository.CreateAsync(cfgProgramEventCadence);
             await _outboxRepository.InsertAsync(
-                OutboxMessageFactory.Create(new CfgProgramEventCadenceCreatedEvent(id, cfgProgramEventCadence.CfgProgramId), now));
+                OutboxMessageFactory.Create(new CfgProgramEventCadenceCreatedEvent(id, cfgProgramEventCadence.TenantId, cfgProgramEventCadence.CfgProgramId), now));
             await _unitOfWork.CommitAsync(cancellationToken);
             return id;
         }

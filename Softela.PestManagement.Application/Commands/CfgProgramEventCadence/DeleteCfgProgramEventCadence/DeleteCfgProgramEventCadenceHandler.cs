@@ -33,7 +33,7 @@ public class DeleteCfgProgramEventCadenceHandler : IRequestHandler<DeleteCfgProg
         {
             await _cfgProgramEventCadenceRepository.DeleteAsync(request.Id, _tenantContext.TenantId, now, _tenantContext.UserId);
             await _outboxRepository.InsertAsync(
-                OutboxMessageFactory.Create(new CfgProgramEventCadenceDeletedEvent(request.Id), now));
+                OutboxMessageFactory.Create(new CfgProgramEventCadenceDeletedEvent(request.Id, _tenantContext.TenantId), now));
             await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
