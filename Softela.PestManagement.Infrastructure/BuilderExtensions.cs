@@ -41,6 +41,8 @@ namespace Softela.PestManagement.Infrastructure
             services.AddScoped<ICfgEventRepository, CfgEventRepository>();
             services.AddScoped<ICfgCadenceRepository, CfgCadenceRepository>();
             services.AddScoped<ICfgProgramEventCadenceRepository, CfgProgramEventCadenceRepository>();
+            services.AddScoped<ICfgEmployeeRepository, CfgEmployeeRepository>();
+            services.AddScoped<ICfgRouteRepository, CfgRouteRepository>();
             services.AddScoped<IOutboxRepository, OutboxRepository>();
             services.AddScoped<IFeatureFlagService, FeatureFlagService>();
 
