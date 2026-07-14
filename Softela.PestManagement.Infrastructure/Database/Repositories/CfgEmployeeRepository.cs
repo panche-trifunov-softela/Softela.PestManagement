@@ -61,13 +61,13 @@ public class CfgEmployeeRepository : ICfgEmployeeRepository
     public async Task DeleteAsync(int id, int tenantId, DateTimeOffset modifiedAt, Guid modifiedBy)
     {
         var parameters = new DynamicParameters();
-        parameters.Add("@Id", id, DbType.Int32);
-        parameters.Add("@TenantId", tenantId, DbType.Int32);
-        parameters.Add("@ModifiedAt", modifiedAt, DbType.DateTimeOffset);
-        parameters.Add("@ModifiedBy", modifiedBy, DbType.Guid);
+        parameters.Add("p_id", id, DbType.Int32);
+        parameters.Add("p_tenant_id", tenantId, DbType.Int32);
+        parameters.Add("p_modified_at", modifiedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_by", modifiedBy, DbType.Guid);
 
         await _dapperDataContext.Connection!.ExecuteAsync(
-            sql: "SELECT delete_cfg_employee(@Id, @TenantId, @ModifiedAt, @ModifiedBy)",
+            sql: "SELECT delete_cfg_employee(@p_id, @p_tenant_id, @p_modified_at, @p_modified_by)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
@@ -77,11 +77,11 @@ public class CfgEmployeeRepository : ICfgEmployeeRepository
     public async Task<CfgEmployee?> GetByIdAsync(int id, int tenantId)
     {
         var parameters = new DynamicParameters();
-        parameters.Add("@Id", id, DbType.Int32);
-        parameters.Add("@TenantId", tenantId, DbType.Int32);
+        parameters.Add("p_id", id, DbType.Int32);
+        parameters.Add("p_tenant_id", tenantId, DbType.Int32);
 
         return await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<CfgEmployee>(
-            sql: "SELECT * FROM get_cfg_employee_by_id(@Id, @TenantId)",
+            sql: "SELECT * FROM get_cfg_employee_by_id(@p_id, @p_tenant_id)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
@@ -91,10 +91,10 @@ public class CfgEmployeeRepository : ICfgEmployeeRepository
     public async Task<List<CfgEmployee>> GetByTenantIdAsync(int tenantId)
     {
         var parameters = new DynamicParameters();
-        parameters.Add("@TenantId", tenantId, DbType.Int32);
+        parameters.Add("p_tenant_id", tenantId, DbType.Int32);
 
         var cfgEmployees = await _dapperDataContext.Connection!.QueryAsync<CfgEmployee>(
-            sql: "SELECT * FROM get_cfg_employees_by_tenant_id(@TenantId)",
+            sql: "SELECT * FROM get_cfg_employees_by_tenant_id(@p_tenant_id)",
             param: parameters,
             commandType: CommandType.Text,
             transaction: _dapperDataContext.Transaction
