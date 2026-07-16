@@ -1,0 +1,105 @@
+using System.Data;
+using Dapper;
+using Softela.PestManagement.Application.Repositories;
+using Softela.PestManagement.Domain.Entities;
+using Softela.PestManagement.Infrastructure.Database.Dapper;
+
+namespace Softela.PestManagement.Infrastructure.Database.Repositories;
+
+public class CfgEmployeeRepository : ICfgEmployeeRepository
+{
+    private readonly IDapperDataContext _dapperDataContext;
+
+    public CfgEmployeeRepository(IDapperDataContext dapperDataContext)
+    {
+        _dapperDataContext = dapperDataContext;
+    }
+
+    public async Task<int> CreateAsync(CfgEmployee cfgEmployee)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("p_tenant_id", cfgEmployee.TenantId, DbType.Int32);
+        parameters.Add("p_name", cfgEmployee.Name, DbType.String);
+        parameters.Add("p_certification_number", cfgEmployee.CertificationNumber, DbType.String);
+        parameters.Add("p_employee_number", cfgEmployee.EmployeeNumber, DbType.String);
+        parameters.Add("p_role", (short)cfgEmployee.Role, DbType.Int16);
+        parameters.Add("p_is_active", cfgEmployee.IsActive, DbType.Boolean);
+        parameters.Add("p_created_at", cfgEmployee.CreatedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_at", cfgEmployee.ModifiedAt, DbType.DateTimeOffset);
+        parameters.Add("p_created_by", cfgEmployee.CreatedBy, DbType.Guid);
+        parameters.Add("p_modified_by", cfgEmployee.ModifiedBy, DbType.Guid);
+
+        return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
+            sql: "SELECT insert_cfg_employee(@p_tenant_id, @p_name, @p_certification_number, @p_employee_number, @p_role, @p_is_active, @p_created_at, @p_modified_at, @p_created_by, @p_modified_by)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
+    }
+
+    public async Task<int> UpdateAsync(CfgEmployee cfgEmployee)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("p_id", cfgEmployee.Id, DbType.Int32);
+        parameters.Add("p_tenant_id", cfgEmployee.TenantId, DbType.Int32);
+        parameters.Add("p_name", cfgEmployee.Name, DbType.String);
+        parameters.Add("p_certification_number", cfgEmployee.CertificationNumber, DbType.String);
+        parameters.Add("p_employee_number", cfgEmployee.EmployeeNumber, DbType.String);
+        parameters.Add("p_role", (short)cfgEmployee.Role, DbType.Int16);
+        parameters.Add("p_is_active", cfgEmployee.IsActive, DbType.Boolean);
+        parameters.Add("p_modified_at", cfgEmployee.ModifiedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_by", cfgEmployee.ModifiedBy, DbType.Guid);
+
+        return await _dapperDataContext.Connection!.QuerySingleAsync<int>(
+            sql: "SELECT update_cfg_employee(@p_id, @p_tenant_id, @p_name, @p_certification_number, @p_employee_number, @p_role, @p_is_active, @p_modified_at, @p_modified_by)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
+    }
+
+    public async Task DeleteAsync(int id, int tenantId, DateTimeOffset modifiedAt, Guid modifiedBy)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("p_id", id, DbType.Int32);
+        parameters.Add("p_tenant_id", tenantId, DbType.Int32);
+        parameters.Add("p_modified_at", modifiedAt, DbType.DateTimeOffset);
+        parameters.Add("p_modified_by", modifiedBy, DbType.Guid);
+
+        await _dapperDataContext.Connection!.ExecuteAsync(
+            sql: "SELECT delete_cfg_employee(@p_id, @p_tenant_id, @p_modified_at, @p_modified_by)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
+    }
+
+    public async Task<CfgEmployee?> GetByIdAsync(int id, int tenantId)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("p_id", id, DbType.Int32);
+        parameters.Add("p_tenant_id", tenantId, DbType.Int32);
+
+        return await _dapperDataContext.Connection!.QueryFirstOrDefaultAsync<CfgEmployee>(
+            sql: "SELECT * FROM get_cfg_employee_by_id(@p_id, @p_tenant_id)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
+    }
+
+    public async Task<List<CfgEmployee>> GetByTenantIdAsync(int tenantId)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("p_tenant_id", tenantId, DbType.Int32);
+
+        var cfgEmployees = await _dapperDataContext.Connection!.QueryAsync<CfgEmployee>(
+            sql: "SELECT * FROM get_cfg_employees_by_tenant_id(@p_tenant_id)",
+            param: parameters,
+            commandType: CommandType.Text,
+            transaction: _dapperDataContext.Transaction
+        ).ConfigureAwait(false);
+
+        return cfgEmployees.ToList();
+    }
+}

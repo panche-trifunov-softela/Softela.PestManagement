@@ -1,0 +1,23 @@
+CREATE OR REPLACE FUNCTION get_cfg_routes_by_employee_id(p_cfg_employee_id INT, p_tenant_id INT)
+RETURNS TABLE (
+    id              INT,
+    tenant_id       INT,
+    cfg_employee_id INT,
+    name            VARCHAR,
+    is_active       BOOLEAN,
+    note            TEXT,
+    is_deleted      BOOLEAN,
+    created_at      TIMESTAMPTZ,
+    modified_at     TIMESTAMPTZ,
+    created_by      UUID,
+    modified_by     UUID
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT c.id, c.tenant_id, c.cfg_employee_id, c.name, c.is_active, c.note,
+        c.is_deleted, c.created_at, c.modified_at, c.created_by, c.modified_by
+    FROM cfg_routes c
+    WHERE c.cfg_employee_id = p_cfg_employee_id AND c.tenant_id = p_tenant_id AND c.is_deleted = FALSE
+    ORDER BY c.name;
+END;
+$$ LANGUAGE plpgsql;
