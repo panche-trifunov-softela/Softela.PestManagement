@@ -33,7 +33,6 @@ public class CreateCustomerHandler : IRequestHandler<CreateCustomerRequest, int>
 
     public async Task<int> Handle(CreateCustomerRequest request, CancellationToken cancellationToken)
     {
-        var customerType = Enum.Parse<CustomerType>(request.CustomerType, ignoreCase: true);
         var now = DateTime.UtcNow;
         var nowOffset = DateTimeOffset.UtcNow;
         var userId = _tenantContext.UserId;
@@ -43,7 +42,7 @@ public class CreateCustomerHandler : IRequestHandler<CreateCustomerRequest, int>
             TenantId = _tenantContext.TenantId,
             CustomerNum = $"CUST-{DateTime.UtcNow:yyyyMMddHHmmss}",
             Name = request.Name,
-            CustomerType = customerType,
+            CustomerType = request.CustomerType,
             IsActive = request.IsActive,
             SendInvoice = request.SendInvoice,
             EmailInvoice = request.EmailInvoice,

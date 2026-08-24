@@ -33,7 +33,6 @@ public class UpdateCustomerHandler : IRequestHandler<UpdateCustomerRequest, bool
 
     public async Task<bool> Handle(UpdateCustomerRequest request, CancellationToken cancellationToken)
     {
-        var customerType = Enum.Parse<CustomerType>(request.CustomerType, ignoreCase: true);
         var now = DateTime.UtcNow;
         var nowOffset = DateTimeOffset.UtcNow;
         var userId = _tenantContext.UserId;
@@ -43,7 +42,7 @@ public class UpdateCustomerHandler : IRequestHandler<UpdateCustomerRequest, bool
             Id = request.Id,
             TenantId = _tenantContext.TenantId,
             Name = request.Name,
-            CustomerType = customerType,
+            CustomerType = request.CustomerType,
             IsActive = request.IsActive,
             SendInvoice = request.SendInvoice,
             EmailInvoice = request.EmailInvoice,
